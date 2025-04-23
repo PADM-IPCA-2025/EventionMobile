@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -29,11 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evention.ui.theme.EventionBlue
+import com.example.evention.ui.theme.EventionTheme
 
 @Composable
 fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modifier) {
@@ -50,7 +51,7 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
                 .padding(bottom = 24.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 modifier = Modifier
                     .size(28.dp)
@@ -66,7 +67,7 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
                 Text(
                     text = "Checkout",
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold // Título em negrito
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -157,10 +158,22 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
         ) {
             Text(
                 text = "PAY",
+                style = MaterialTheme.typography.labelLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
         }
 
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    EventionTheme {
+        PaymentScreen(listOf(
+            PaymentMethod("Paypal", true),
+            PaymentMethod("Credit Card", false)
+        ))
     }
 }
