@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evention.ui.screens.home.payment.PaymentMethod
+import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.ui.theme.EventionTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +21,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EventionTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun Preview() {
     EventionTheme {
-        Greeting("Android")
+        PaymentScreen(listOf(
+            PaymentMethod("Paypal", true),
+            PaymentMethod("Credit Card", false)
+        ))
     }
 }
