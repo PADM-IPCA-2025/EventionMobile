@@ -35,13 +35,13 @@ val CustomTypography = Typography(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = EventionBlue,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = EventionBlue,
     secondary = PurpleGrey40,
     tertiary = Pink40
 )
