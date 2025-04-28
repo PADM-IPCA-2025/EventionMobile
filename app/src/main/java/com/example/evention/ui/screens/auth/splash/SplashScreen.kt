@@ -20,8 +20,8 @@ import com.example.evention.R
 
 @Composable
 fun SplashScreen() {
-    val context = LocalContext.current
-    val lifecycleScope = rememberCoroutineScope()
+    //val context = LocalContext.current
+    //val lifecycleScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         // Simula carregamento
@@ -40,7 +40,7 @@ fun SplashScreen() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.logosplash), // logo
-            contentDescription = "Logo da App",
+            contentDescription = "Logo App Splash",
             modifier = Modifier.size(280.dp)
         )
     }
