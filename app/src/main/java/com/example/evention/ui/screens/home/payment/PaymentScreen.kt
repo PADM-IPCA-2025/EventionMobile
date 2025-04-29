@@ -1,6 +1,5 @@
 package com.example.evention.ui.screens.home.payment
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,36 +13,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evention.ui.components.payments.PaymentMethodRow
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modifier) {
+fun PaymentScreen(modifier: Modifier = Modifier) {
+    val paymentMethods = remember {
+        mutableListOf(
+            PaymentMethod("Paypal", true),
+            PaymentMethod("Credit Card", false)
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -78,49 +82,18 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
             text = "Payment",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(bottom = 24.dp),
-            fontWeight = FontWeight.Bold // Subtítulo em negrito
+            fontWeight = FontWeight.Bold
         )
 
         LazyColumn {
             items(paymentMethods.size) { index ->
                 val paymentMethod = paymentMethods[index]
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(Color.LightGray)
-                            .padding(12.dp)
-                    ) {
-                        /*Icon(
-                            imageVector = paymentMethod.icon,
-                            contentDescription = paymentMethod.name,
-                            modifier = Modifier.fillMaxSize()
-                        )*/
+                PaymentMethodRow(
+                    paymentMethod = paymentMethod,
+                    onCheckedChange = { isChecked ->
+                        paymentMethod.isSelected = isChecked
                     }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Text(
-                        text = paymentMethod.method,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight= FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Checkbox(
-                        checked = paymentMethod.isSelected,
-                        onCheckedChange = { isChecked ->
-                            paymentMethod.isSelected = isChecked
-                        }
-                    )
-                }
+                )
             }
         }
 
@@ -146,8 +119,7 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
             )
         }
 
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             onClick = { /* TODO: ação de finalizar pagamento */ },
@@ -163,7 +135,6 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
                 fontWeight = FontWeight.Bold
             )
         }
-
     }
 }
 
@@ -171,9 +142,6 @@ fun PaymentScreen(paymentMethods: List<PaymentMethod>, modifier: Modifier = Modi
 @Composable
 fun Preview() {
     EventionTheme {
-        PaymentScreen(listOf(
-            PaymentMethod("Paypal", true),
-            PaymentMethod("Credit Card", false)
-        ))
+        PaymentScreen()
     }
 }
