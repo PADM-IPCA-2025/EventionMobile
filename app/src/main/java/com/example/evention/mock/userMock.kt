@@ -68,7 +68,7 @@ object MockUserData {
             userType = userTypes[1],
             usertype_id = "2",
             address = addresses[0],
-            profilePicture = null
+            profilePicture = "user1"
         ),
         User(
             userID = "u2",
@@ -82,7 +82,7 @@ object MockUserData {
             userType = userTypes[0],
             usertype_id = "1",
             address = addresses[1],
-            profilePicture = null
+            profilePicture = "user2"
         ),
         User(
             userID = "u3",
@@ -96,7 +96,7 @@ object MockUserData {
             userType = userTypes[2],
             usertype_id = "3",
             address = addresses[2],
-            profilePicture = null
+            profilePicture = "user3"
         ),
         User(
             userID = "u4",
@@ -110,7 +110,7 @@ object MockUserData {
             userType = userTypes[1],
             usertype_id = "2",
             address = addresses[3],
-            profilePicture = null
+            profilePicture = "user4"
         ),
         User(
             userID = "u5",
@@ -124,7 +124,7 @@ object MockUserData {
             userType = userTypes[2],
             usertype_id = "3",
             address = addresses[0],
-            profilePicture = null
+            profilePicture = "user5"
         ),
         User(
             userID = "u6",
@@ -138,7 +138,7 @@ object MockUserData {
             userType = userTypes[0],
             usertype_id = "1",
             address = addresses[1],
-            profilePicture = null
+            profilePicture = "user6"
         ),
         User(
             userID = "u7",
@@ -152,7 +152,7 @@ object MockUserData {
             userType = userTypes[2],
             usertype_id = "3",
             address = addresses[2],
-            profilePicture = null
+            profilePicture = "user7"
         )
     )
 }
