@@ -64,7 +64,7 @@ object MockData {
             eventStatus = eventStatuses[0],
             eventstatus_id = "1",
             addressEvents = addressEvents,
-            eventPicture = ""
+            eventPicture = "event1"
         ),
         Event(
             eventID = "e2",
@@ -78,7 +78,7 @@ object MockData {
             eventStatus = eventStatuses[1],
             eventstatus_id = "2",
             addressEvents = listOf(addressEvents[0]),
-            eventPicture = ""
+            eventPicture = "event2"
         ),
         Event(
             eventID = "e3",
@@ -92,7 +92,7 @@ object MockData {
             eventStatus = eventStatuses[2],
             eventstatus_id = "3",
             addressEvents = listOf(addressEvents[2]),
-            eventPicture = ""
+            eventPicture = "event3"
         ),
         Event(
             eventID = "e4",
@@ -106,7 +106,7 @@ object MockData {
             eventStatus = eventStatuses[0],
             eventstatus_id = "1",
             addressEvents = listOf(addressEvents[1]),
-            eventPicture = ""
+            eventPicture = "event4"
         ),
         Event(
             eventID = "e5",
@@ -120,7 +120,7 @@ object MockData {
             eventStatus = eventStatuses[1],
             eventstatus_id = "2",
             addressEvents = listOf(addressEvents[3]),
-            eventPicture = ""
+            eventPicture = "event5"
         ),
         Event(
             eventID = "e6",
@@ -134,7 +134,7 @@ object MockData {
             eventStatus = eventStatuses[0],
             eventstatus_id = "1",
             addressEvents = listOf(addressEvents[0]),
-            eventPicture = ""
+            eventPicture = "event6"
         ),
         Event(
             eventID = "e7",
@@ -148,7 +148,7 @@ object MockData {
             eventStatus = eventStatuses[2],
             eventstatus_id = "3",
             addressEvents = listOf(addressEvents[2]),
-            eventPicture = ""
+            eventPicture = "event7"
         ),
         Event(
             eventID = "e8",
@@ -162,7 +162,7 @@ object MockData {
             eventStatus = eventStatuses[1],
             eventstatus_id = "2",
             addressEvents = listOf(addressEvents[1]),
-            eventPicture = ""
+            eventPicture = "event8"
         ),
         Event(
             eventID = "e9",
@@ -176,7 +176,7 @@ object MockData {
             eventStatus = eventStatuses[0],
             eventstatus_id = "1",
             addressEvents = listOf(addressEvents[3]),
-            eventPicture = ""
+            eventPicture = "event9"
         ),
         Event(
             eventID = "e10",
@@ -190,7 +190,7 @@ object MockData {
             eventStatus = eventStatuses[2],
             eventstatus_id = "3",
             addressEvents = listOf(addressEvents[0]),
-            eventPicture = ""
+            eventPicture = "event10"
         )
     )
 }
