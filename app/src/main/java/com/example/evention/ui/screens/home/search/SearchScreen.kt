@@ -32,7 +32,13 @@ import androidx.compose.ui.unit.dp
 import com.example.evention.R
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionTheme
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Date
+import com.google.maps.android.compose.*
+
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
@@ -46,7 +52,15 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                 .weight(1.3f)
                 .background(Color.Gray)
         ) {
+            val portugal = LatLng(38.7169, -9.1399) // substitua pela sua localização desejada
+            val cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(portugal, 10f)
+            }
 
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState
+            )
 
             Row(
                 modifier = Modifier
