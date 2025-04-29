@@ -28,4 +28,4 @@
 
 1. **Clonar o repositório**
    ```bash
-   git clone https://github.com/seu-usuario/evention-mobile.git
+   git clone https://github.com/Eventionn/EventionMobile.git
