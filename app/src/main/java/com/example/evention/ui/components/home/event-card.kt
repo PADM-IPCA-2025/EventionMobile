@@ -118,6 +118,7 @@ fun EventCard(event: Event, modifier: Modifier = Modifier) {
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodySmall
                     )
+
                 }
             }
         }
