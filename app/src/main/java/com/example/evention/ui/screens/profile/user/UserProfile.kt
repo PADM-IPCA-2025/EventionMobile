@@ -64,7 +64,7 @@ fun UserProfile(user: User) {
     ) {
         Text(
             text = "Profile",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 24.dp)
         )
