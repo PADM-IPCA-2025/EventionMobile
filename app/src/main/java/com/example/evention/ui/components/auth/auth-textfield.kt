@@ -1,21 +1,18 @@
-package com.example.evention.ui.components.auth
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.evention.R
 
@@ -25,8 +22,11 @@ fun AuthTextField(
     iconResId: Int,
     onValueChange: (String) -> Unit,
     value: String,
+    password: Boolean,
     modifier: Modifier = Modifier
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -43,11 +43,21 @@ fun AuthTextField(
                 modifier = Modifier.size(24.dp)
             )
         },
-        //textStyle = TextStyle(
-        //    color = Color(0xFF747688), // Cor do texto
-        //    fontSize = 16.sp,
-        //    fontWeight = FontWeight.Normal
-        //),
+        trailingIcon = {
+            if (password) {
+                val image = if (passwordVisible) R.drawable.eye else R.drawable.hiddeneye
+                val description = if (passwordVisible) "Ocultar senha" else "Mostrar senha"
+
+                Image(
+                    painter = painterResource(id = image),
+                    contentDescription = description,
+                    modifier = Modifier
+                        .clickable { passwordVisible = !passwordVisible }
+                        .size(24.dp)
+                )
+            }
+        },
+        visualTransformation = if (password && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         modifier = modifier
             .fillMaxWidth()
             .background(Color(0xFFFFFFFF), shape = RoundedCornerShape(16.dp)),
@@ -60,3 +70,10 @@ fun AuthTextField(
         )
     )
 }
+
+
+//textStyle = TextStyle(
+//    color = Color(0xFF747688), // Cor do texto
+//    fontSize = 16.sp,
+//    fontWeight = FontWeight.Normal
+//),
