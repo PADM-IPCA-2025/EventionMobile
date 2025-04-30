@@ -1,12 +1,17 @@
 package com.example.evention.ui.components.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -31,6 +36,7 @@ import com.example.evention.ui.theme.EventionBlue
 fun ProfileMenuItem(
     icon: ImageVector,
     label: String,
+    sublabel: String? = null,
     isNotification: Boolean = false
 ) {
     var switchState by remember { mutableStateOf(true) }
@@ -42,21 +48,41 @@ fun ProfileMenuItem(
             .clickable(enabled = !isNotification) { /* TODO: ação correspondente */ }
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = EventionBlue,
-            modifier = Modifier.size(24.dp)
-        )
+        Box(
+            modifier = Modifier
+                .size(45.dp)
+                .background(Color(0xFFEEF0FF), RoundedCornerShape(20.dp))
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = EventionBlue,
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.Center)
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
-        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            sublabel?.let {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFFABABAB)
+                )
+            }
+        }
 
         if (isNotification) {
             Switch(

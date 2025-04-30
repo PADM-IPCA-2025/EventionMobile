@@ -30,15 +30,15 @@ fun MenuCard(){
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            ProfileMenuItem(icon = Icons.Outlined.Person, label = "Admin Menu")
-            ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "My Events")
+            ProfileMenuItem(icon = Icons.Outlined.Person, label = "Admin Menu", sublabel = "Manage users and events")
+            ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "My Events", sublabel = "Manage and explore your events")
             ProfileMenuItem(
                 icon = Icons.Outlined.Notifications,
                 label = "Notifications",
-                isNotification = true
+                isNotification = true, sublabel = "Turn on/off your notifications"
             )
-            ProfileMenuItem(icon = Icons.Outlined.Build, label = "Change Password")
-            ProfileMenuItem(icon = Icons.Outlined.Info, label = "Logout")
+            ProfileMenuItem(icon = Icons.Outlined.Build, label = "Change Password", sublabel = "Change your password")
+            ProfileMenuItem(icon = Icons.Outlined.Info, label = "Logout", sublabel = "Log out of your account")
         }
     }
 }
