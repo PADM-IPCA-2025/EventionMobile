@@ -1,10 +1,9 @@
-package com.example.evention.ui.screens.auth.login
-import AuthConfirmButton
+package com.example.evention.ui.screens.auth.register
+
 import AuthTextField
-import androidx.compose.foundation.Image
+import AuthConfirmButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,34 +12,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.style.TextAlign
 import com.example.evention.R
 import com.example.evention.ui.components.auth.AuthGoogle
-import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 
 @Composable
-fun LoginScreen() {
+fun RegisterScreen() {
 
     Column(
         modifier = Modifier
@@ -48,29 +43,45 @@ fun LoginScreen() {
             .padding(horizontal = 24.dp)
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.logosimple),
-            contentDescription = "Logo App Login",
-            modifier = Modifier.size(200.dp)
+    ) {
+
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = "Arrow Back",
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(top = 16.dp)
+                .size(24.dp),
+            tint = Color.Black
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Sign in",
+            text = "Sign up",
             fontSize = 24.sp,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
+        var fullname by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var confirmpassword by remember { mutableStateOf("") }
+
+        AuthTextField(
+            placeholderText = "Full Name",
+            iconResId = R.drawable.profile,
+            value = fullname,
+            password = false,
+            onValueChange = { fullname = it }
+        )
+
+        Spacer(modifier = Modifier.height(22.dp))
 
         AuthTextField(
             placeholderText = "abc@email.com",
@@ -90,54 +101,19 @@ fun LoginScreen() {
             onValueChange = { password = it }
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
-        var rememberMeChecked by remember { mutableStateOf(true) }
+        AuthTextField(
+            placeholderText = "Confirm Password",
+            iconResId = R.drawable.lock,
+            value = confirmpassword,
+            password = true,
+            onValueChange = { confirmpassword = it }
+        )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Spacer(modifier = Modifier.height(50.dp))
 
-            Switch(
-                checked = rememberMeChecked,
-                onCheckedChange = { rememberMeChecked = it },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,
-                    uncheckedThumbColor = Color.White,
-                    checkedTrackColor = EventionBlue,
-                    uncheckedTrackColor = Color.LightGray,
-                    checkedBorderColor = Color.Transparent,
-                    uncheckedBorderColor = Color.Transparent
-                ),
-                modifier = Modifier.scale(0.75f) // scale do botao
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "Remember Me",
-                fontSize = 14.sp,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF120D26),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "Forgot Password?",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF120D26),
-                fontSize = 14.sp,
-                textAlign = TextAlign.End
-            )
-        }
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        AuthConfirmButton("SIGN IN", onClick = { /* Lógica do login */ })
+        AuthConfirmButton("SIGN UP", onClick = { /* Lógica do registo */ })
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -151,19 +127,19 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        AuthGoogle("Login with Google", onClick = { /* Lógica do login c/google */ })
+        AuthGoogle("Sign Up with Google", onClick = { /* Lógica do login c/google */ })
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(120.dp))
 
         Row {
             Text(
-                text = "Don’t have an account?",
+                text = "Already have an account?",
                 color = Color(0xFF120D26),
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 15.sp,
             )
             Text(
-                text = " Sign up",
+                text = " Sign in",
                 modifier = Modifier.clickable { /* Lógica de enviar para o Sign Up */ },
                 color = Color(0xFF5669FF),
                 style = MaterialTheme.typography.titleMedium,
@@ -175,11 +151,10 @@ fun LoginScreen() {
 
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
     EventionTheme {
-        LoginScreen()
+        RegisterScreen()
     }
 }
