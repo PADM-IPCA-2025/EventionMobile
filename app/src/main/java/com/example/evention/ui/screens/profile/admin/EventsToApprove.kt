@@ -28,7 +28,7 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun AllEvents(events: List<Event>) {
+fun EventsToApprove(events: List<Event>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +56,7 @@ fun AllEvents(events: List<Event>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Events",
+                    text = "Approve Events",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -69,10 +69,10 @@ fun AllEvents(events: List<Event>) {
             items(events.size) { index ->
                 EventListRow(
                     event = events[index],
-                    firstSection = "Edit event",
-                    secondSection = "Delete event",
-                    onEdit = { /* ação para editar */ },
-                    onRemove = { /* ação para remover */ }
+                    firstSection = "Approve event",
+                    secondSection = "Reject event",
+                    onEdit = { /* ação para aprovar */ },
+                    onRemove = { /* ação para recusar */ }
                 )
             }
         }
@@ -81,8 +81,8 @@ fun AllEvents(events: List<Event>) {
 
 @Preview(showBackground = true)
 @Composable
-fun AllEventsPreview() {
+fun EventsToApprovePreview() {
     EventionTheme {
-        AllEvents(MockData.events)
+        EventsToApprove(MockData.events)
     }
 }

@@ -53,6 +53,8 @@ fun formatDate(date: Date): String {
 @Composable
 fun EventListRow(
     event: Event,
+    firstSection: String,
+    secondSection : String,
     onEdit: (Event) -> Unit,
     onRemove: (Event) -> Unit
 ) {
@@ -119,14 +121,14 @@ fun EventListRow(
                     onDismissRequest = { expanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Edit") },
+                        text = { Text(text = firstSection) },
                         onClick = {
                             expanded = false
                             onEdit(event)
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text(text = secondSection) },
                         onClick = {
                             expanded = false
                             onRemove(event)
