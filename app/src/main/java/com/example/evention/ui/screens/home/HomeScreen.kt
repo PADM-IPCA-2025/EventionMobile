@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +28,7 @@ import com.example.evention.ui.components.home.EventCard
 import com.example.evention.ui.components.home.FilterButton
 import com.example.evention.ui.components.home.HomeSearch
 import com.example.evention.ui.theme.EventionTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
@@ -79,6 +82,12 @@ fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
 @Composable
 fun HomePreview() {
     EventionTheme {
+        /*
+        // Eventos da API
+        val viewModel: HomeScreenViewModel = viewModel()
+        val eventsApi by viewModel.events.collectAsState()
+        */
+
         val events = MockData.events
         HomeScreen(events)
     }
