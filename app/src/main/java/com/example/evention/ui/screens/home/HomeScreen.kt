@@ -82,6 +82,7 @@ fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
 @Composable
 fun HomePreview() {
     EventionTheme {
+
         /*
         // Eventos da API
         val viewModel: HomeScreenViewModel = viewModel()

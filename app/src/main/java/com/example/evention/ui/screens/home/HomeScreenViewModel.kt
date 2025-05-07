@@ -6,16 +6,18 @@ import com.example.evention.model.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.example.evention.data.remote.events.EventRemoteDataSource
 
-class HomeScreenViewModel : ViewModel() {
-    private val repository = NetworkModule.eventRepository
+class HomeScreenViewModel(
+    private val remoteDataSource: EventRemoteDataSource
+) : ViewModel() {
 
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events
 
     init {
         viewModelScope.launch {
-            _events.value = repository.getEvents()
+            _events.value = remoteDataSource.getEvents()
         }
     }
 }
