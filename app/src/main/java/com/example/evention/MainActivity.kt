@@ -1,5 +1,6 @@
 package com.example.evention
 
+import SearchScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,11 +18,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             EventionTheme {
                 val event = MockData.events.first()
-                EventDetails(event)
+                //EventDetails(event)
+                SearchScreen()
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
