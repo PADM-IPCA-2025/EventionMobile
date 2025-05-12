@@ -54,17 +54,17 @@ fun formatDate(date: Date): String {
 fun EventListRow(
     event: Event,
     firstSection: String,
-    secondSection : String,
+    secondSection: String,
     onEdit: (Event) -> Unit,
     onRemove: (Event) -> Unit
 ) {
+    val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
+
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp, top = 8.dp),
+            .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -104,40 +104,44 @@ fun EventListRow(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = event.addressEvents[0].road,
+                    text = event.addressEvents.getOrNull(0)?.road.orEmpty(),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
             }
 
-            var expanded by remember { mutableStateOf(false) }
+            if (showMenu) {
+                var expanded by remember { mutableStateOf(false) }
 
-            Box {
-                IconButton(onClick = { expanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Mais opções")
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(text = firstSection) },
-                        onClick = {
-                            expanded = false
-                            onEdit(event)
+                Box {
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "Mais opções")
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        if (firstSection.isNotBlank()) {
+                            DropdownMenuItem(
+                                text = { Text(text = firstSection) },
+                                onClick = {
+                                    expanded = false
+                                    onEdit(event)
+                                }
+                            )
                         }
-                    )
-                    DropdownMenuItem(
-                        text = { Text(text = secondSection) },
-                        onClick = {
-                            expanded = false
-                            onRemove(event)
+                        if (secondSection.isNotBlank()) {
+                            DropdownMenuItem(
+                                text = { Text(text = secondSection) },
+                                onClick = {
+                                    expanded = false
+                                    onRemove(event)
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
         }
     }
-
-
 }
