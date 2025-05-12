@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -122,53 +124,59 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun EventRow(imageUrl: String, title: String, location: String, date: Date) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
-            .shadow(2.dp, shape = RoundedCornerShape(13.dp))
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(13.dp),
+        elevation = CardDefaults.cardElevation(5.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(end = 8.dp, top = 3.dp)
-                .size(80.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.LightGray)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.event1),
-                contentDescription = "Imagem do Evento",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 8.dp, top = 3.dp)
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.event1),
+                    contentDescription = "Imagem do Evento",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.padding(top = 5.dp))
-            Text(
-                text = "30 Mai 2025",
-                color = Color(0xFF0081FF),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Text(
-                text = location,
-                color = Color.Gray,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.padding(top = 5.dp))
+                Text(
+                    text = "30 Mai 2025",
+                    color = Color(0xFF0081FF),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.padding(top = 10.dp))
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.padding(top = 10.dp))
+                Text(
+                    text = location,
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
