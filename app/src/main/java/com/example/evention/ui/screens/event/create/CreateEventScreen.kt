@@ -32,117 +32,115 @@ import androidx.compose.ui.unit.sp
 import com.example.evention.R
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
+import androidx.compose.material3.Scaffold
+import com.example.evention.ui.components.MenuComponent
 
 @Composable
 fun CreateEventScreen() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 25.dp, vertical = 18.dp)
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color.White,
+        bottomBar = {
+            MenuComponent(
+                currentPage = "Create",
+                onMenuClick = { /* navegação aqui */ }
+            )
+        }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
+                .fillMaxSize()
+                .padding(horizontal = 25.dp, vertical = 18.dp)
+                .padding(innerPadding)
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp)
+            ) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Create Event",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .border(
+                        width = 1.dp,
+                        color = EventionBlue,
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                    .background(
+                        color = Color(0xFF8296AA).copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                    .height(180.dp)
+                    .clickable {
+                        // TODO: Ação para fazer upload da imagem
+                    },
                 contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.blue_camera),
+                        contentDescription = "Blue camera icon",
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = "CHANGE",
+                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF0081FF),
+                    )
+                }
+            }
+
+            CustomCreateEventTextField("Event Duration")
+            CustomCreateEventTextField("Event Name")
+            CustomCreateEventTextField("Description")
+            CustomCreateEventTextField("Address")
+            CustomCreateEventTextField("Price")
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = { /* Lógica para criar evento */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0081FF)
+                )
             ) {
                 Text(
                     text = "Create Event",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .border(
-                    width = 1.dp,
-                    color = EventionBlue,
-                    shape = RoundedCornerShape(15.dp)
-                )
-                .background(
-                    color = Color(0xFF8296AA).copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(15.dp)
-                )
-                .height(180.dp)
-                .clickable {
-                    // TODO: Ação para fazer upload da imagem
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.blue_camera),
-                    contentDescription = "Blue camera icon",
-                )
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Text(
-                    text = "CHANGE",
-                    fontSize = 12.sp,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF0081FF),
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
                 )
             }
         }
-
-        // Fields
-        val fieldModifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-
-        CustomCreateEventTextField("Event Duration")
-
-        CustomCreateEventTextField("Event Name")
-
-        CustomCreateEventTextField("Description")
-
-        CustomCreateEventTextField("Address")
-
-        CustomCreateEventTextField("Price")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = { /* Lógica para criar evento */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF0081FF)
-            )
-        ) {
-
-            Text(
-                text = "Create Event",
-                fontSize = 16.sp,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFFFFFF),
-            )
-        }
-
-
     }
-
 }
 
 @Preview(showBackground = true)

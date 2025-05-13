@@ -1,6 +1,5 @@
 package com.example.evention.ui.screens.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,8 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,52 +25,64 @@ import com.example.evention.ui.components.home.EventCard
 import com.example.evention.ui.components.home.FilterButton
 import com.example.evention.ui.components.home.HomeSearch
 import com.example.evention.ui.theme.EventionTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.evention.ui.components.MenuComponent
+import androidx.compose.material3.Scaffold
 
 @Composable
 fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White),
-        contentPadding = PaddingValues(bottom = 30.dp),
-    ) {
-        item {
-            HomeSearch()
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(15.dp))
-        }
-
-        item {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp)
-            ) {
-                Text(
-                    text = "Upcoming Events",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                FilterButton()
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(15.dp))
-        }
-
-        items(events) { event ->
-            EventCard(
-                event = event,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp, vertical = 8.dp)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = Color.White,
+        bottomBar = {
+            MenuComponent(
+                currentPage = "Home",
+                onMenuClick = { /* navegação */ }
             )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(bottom = 30.dp),
+        ) {
+            item {
+                HomeSearch()
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 25.dp)
+                ) {
+                    Text(
+                        text = "Upcoming Events",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    FilterButton()
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+            items(events) { event ->
+                EventCard(
+                    event = event,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 25.dp, vertical = 8.dp)
+                )
+            }
         }
     }
 }
