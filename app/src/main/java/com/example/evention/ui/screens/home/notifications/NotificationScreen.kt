@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evention.R
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.notifications.NotificationRow
 import com.example.evention.ui.theme.EventionTheme
 
@@ -38,35 +39,7 @@ fun NotificationScreen(notifications: List<NotificationItem>, modifier: Modifier
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable {
-                        // TODO: ação de voltar
-                    }
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Notifications",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Notifications", true)
 
         if (notifications.isEmpty()) {
             Box(

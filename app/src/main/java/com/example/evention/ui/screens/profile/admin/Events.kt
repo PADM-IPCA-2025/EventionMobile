@@ -30,6 +30,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.painterResource
 import com.example.evention.R
+import com.example.evention.ui.components.TitleComponent
 
 
 @Composable
@@ -40,35 +41,7 @@ fun AllEvents(events: List<Event>) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable {
-                        // TODO: ação de voltar
-                    }
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Events",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Events", true)
 
         if (events.isEmpty()) {
             Box(

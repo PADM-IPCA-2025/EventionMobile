@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evention.R
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
@@ -56,51 +57,35 @@ fun CreateEventScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+        TitleComponent("Create Event", false)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+                .border(
+                    width = 1.dp,
+                    color = EventionBlue,
+                    shape = RoundedCornerShape(15.dp)
+                )
+                .background(
+                    color = Color(0xFF8296AA).copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(15.dp)
+                )
+                .height(180.dp)
+                .clickable {
+                    // TODO: Ação para fazer upload da imagem
+                },
+            contentAlignment = Alignment.Center
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                horizontalArrangement = Arrangement.Center
             ) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Create Event",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-                    .border(
-                        width = 1.dp,
-                        color = EventionBlue,
-                        shape = RoundedCornerShape(15.dp)
-                    )
-                    .background(
-                        color = Color(0xFF8296AA).copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(15.dp)
-                    )
-                    .height(180.dp)
-                    .clickable {
-                        // TODO: Ação para fazer upload da imagem
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_camera),
-                        contentDescription = "Blue camera icon",
-                    )
+                Image(
+                    painter = painterResource(id = R.drawable.blue_camera),
+                    contentDescription = "Blue camera icon",
+                )
 
                     Spacer(modifier = Modifier.width(4.dp))
 

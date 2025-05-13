@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.MenuItem
 import com.example.evention.ui.theme.EventionTheme
 
@@ -32,35 +33,7 @@ fun AdminMenu() {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable {
-                        // TODO: ação de voltar
-                    }
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Admin Menu",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Admin Menu", true)
 
         MenuItem()
     }

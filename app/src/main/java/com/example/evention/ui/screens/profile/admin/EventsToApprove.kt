@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.evention.R
 import com.example.evention.mock.MockData
 import com.example.evention.model.Event
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
@@ -39,35 +40,7 @@ fun EventsToApprove(events: List<Event>) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable {
-                        // TODO: ação de voltar
-                    }
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Approve Events",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Approve Events", true)
 
         if (events.isEmpty()) {
             Box(
