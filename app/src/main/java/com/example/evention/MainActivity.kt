@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evention.mock.MockData
 import com.example.evention.ui.screens.home.details.EventDetails
+import com.example.evention.ui.screens.profile.user.ScanQRCodeScreen
 import com.example.evention.ui.theme.EventionTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
             EventionTheme {
                 val event = MockData.events.first()
                 //EventDetails(event)
-                SearchScreen()
+                ScanQRCodeScreen()
             }
         }
     }
