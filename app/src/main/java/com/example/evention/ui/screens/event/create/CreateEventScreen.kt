@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evention.R
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
@@ -44,25 +45,7 @@ fun CreateEventScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ){
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Create Event",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-        }
+        TitleComponent("Create Event", false)
 
         Box(
             modifier = Modifier
@@ -70,7 +53,7 @@ fun CreateEventScreen() {
                 .padding(vertical = 16.dp)
                 .border(
                     width = 1.dp,
-                    color = EventionBlue,
+                    color = Color.Black,
                     shape = RoundedCornerShape(15.dp)
                 )
                 .background(

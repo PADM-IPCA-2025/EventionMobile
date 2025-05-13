@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.evention.R
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import java.time.LocalDateTime
@@ -40,35 +41,7 @@ fun TicketDetailsScreen(ticket: Ticket) {
             .padding(horizontal = 25.dp, vertical = 28.dp)
     ) {
 
-        // Top bar
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable {
-                        // TODO: ação de voltar
-                    }
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Ticket Details",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Ticket Details", true)
 
         // Nome do evento
         Box(

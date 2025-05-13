@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evention.mock.MockUserData
 import com.example.evention.model.User
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.profile.MenuCard
 import com.example.evention.ui.components.profile.UserInfo
 import com.example.evention.ui.theme.EventionTheme
@@ -27,12 +28,8 @@ fun UserProfile(user: User) {
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
-        Text(
-            text = "Profile",
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+
+        TitleComponent("Profile", false)
 
         UserInfo(user)
 

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.evention.R
 import com.example.evention.mock.MockData
 import com.example.evention.model.Event
+import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
@@ -42,27 +43,7 @@ fun TicketsScreen(tickets: List<Ticket>) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
-        ) {
-
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Tickets",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(28.dp))
-        }
+        TitleComponent("Tickets", false)
 
         if (tickets.isEmpty()) {
             Box(

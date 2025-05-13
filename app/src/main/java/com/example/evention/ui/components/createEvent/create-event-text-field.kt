@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,17 +18,17 @@ fun CustomCreateEventTextField(labelText: String) {
     OutlinedTextField(
         value = text,
         onValueChange = { text = it },
-        label = { Text(labelText, color = EventionBlue) },
-        textStyle = TextStyle(color = EventionBlue, fontWeight = FontWeight.Bold),
+        label = { Text(labelText, color = Color.Black) },
+        textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = EventionBlue,
-            unfocusedBorderColor = EventionBlue,
-            cursorColor = EventionBlue,
-            focusedLabelColor = EventionBlue,
-            unfocusedLabelColor = EventionBlue
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.Black,
+            cursorColor = Color.Black,
+            focusedLabelColor = Color.Black,
+            unfocusedLabelColor = Color.Black
         )
     )
 }
