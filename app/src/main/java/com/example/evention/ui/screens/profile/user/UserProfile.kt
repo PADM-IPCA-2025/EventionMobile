@@ -18,29 +18,45 @@ import com.example.evention.model.User
 import com.example.evention.ui.components.profile.MenuCard
 import com.example.evention.ui.components.profile.UserInfo
 import com.example.evention.ui.theme.EventionTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.graphics.Color
+import com.example.evention.ui.components.MenuComponent
 
 @Composable
 fun UserProfile(user: User) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 25.dp, vertical = 18.dp)
-    ) {
-        Text(
-            text = "Profile",
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color.White,
+        bottomBar = {
+            MenuComponent(
+                currentPage = "Profile",
+                onMenuClick = { /* navegação aqui */ }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 25.dp, vertical = 18.dp)
+                .padding(innerPadding)
+        ) {
+            Text(
+                text = "Profile",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-        UserInfo(user)
+            UserInfo(user)
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-        MenuCard()
+            MenuCard()
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
