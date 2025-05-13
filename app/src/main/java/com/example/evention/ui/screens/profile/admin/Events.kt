@@ -26,6 +26,11 @@ import com.example.evention.mock.MockData
 import com.example.evention.model.Event
 import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.res.painterResource
+import com.example.evention.R
+
 
 @Composable
 fun AllEvents(events: List<Event>) {
@@ -65,15 +70,37 @@ fun AllEvents(events: List<Event>) {
             Spacer(modifier = Modifier.width(28.dp))
         }
 
-        LazyColumn {
-            items(events.size) { index ->
-                EventListRow(
-                    event = events[index],
-                    firstSection = "Edit event",
-                    secondSection = "Delete event",
-                    onEdit = { /* ação para editar */ },
-                    onRemove = { /* ação para remover */ }
-                )
+        if (events.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.noevents),
+                        contentDescription = "No Events"
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "No events yet",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            }
+
+        } else {
+            LazyColumn {
+                items(events.size) { index ->
+                    EventListRow(
+                        event = events[index],
+                        firstSection = "Edit event",
+                        secondSection = "Delete event",
+                        onEdit = { /* ação para editar */ },
+                        onRemove = { /* ação para remover */ }
+                    )
+                }
             }
         }
     }
@@ -83,6 +110,7 @@ fun AllEvents(events: List<Event>) {
 @Composable
 fun AllEventsPreview() {
     EventionTheme {
-        AllEvents(MockData.events)
+        var events = listOf<Event>()
+        AllEvents(events)
     }
 }
