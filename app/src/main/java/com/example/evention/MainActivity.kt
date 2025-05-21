@@ -20,7 +20,8 @@ class MainActivity : ComponentActivity() {
             EventionTheme {
                 val event = MockData.events.first()
                 //EventDetails(event)
-                ScanQRCodeScreen()
+                SearchScreen()
+                //ScanQRCodeScreen()
             }
         }
     }
