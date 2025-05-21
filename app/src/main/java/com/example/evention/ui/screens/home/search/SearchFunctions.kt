@@ -32,7 +32,6 @@ fun fetchCoordinates(context: Context, query: String, cameraPositionState: Camer
             if (result?.isNotEmpty() == true) {
                 val latLng = LatLng(result[0].latitude, result[0].longitude)
 
-                // Atualiza a câmera (já está no Main Thread)
                 cameraPositionState.animate(
                     update = CameraUpdateFactory.newLatLngZoom(latLng, 15f),
                     durationMs = 1000

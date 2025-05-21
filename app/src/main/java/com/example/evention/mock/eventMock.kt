@@ -11,28 +11,40 @@ object MockData {
             road = "Rua Central",
             roadNumber = 123,
             postCode = "4750-123",
-            localtown = "Barcelos"
+            localtown = "Barcelos",
+            routes = listOf(
+                RoutesEvent("r1", 41.5381, -8.6151, 1)
+            )
         ),
         AddressEvent(
             addressEstablishmentID = "2",
             road = "Avenida Principal",
             roadNumber = 456,
             postCode = "4750-456",
-            localtown = "Braga"
+            localtown = "Braga",
+            routes = listOf(
+                RoutesEvent("r2", 38.7169, -9.1399, 1)
+            )
         ),
         AddressEvent(
             addressEstablishmentID = "3",
             road = "Rua da Liberdade",
             roadNumber = 789,
             postCode = "4700-789",
-            localtown = "Guimarães"
+            localtown = "Guimarães",
+            routes = listOf(
+                RoutesEvent("r3", 41.445, -8.2906, 1)
+            )
         ),
         AddressEvent(
             addressEstablishmentID = "4",
             road = "Avenida Marginal",
             roadNumber = 101,
             postCode = "4900-101",
-            localtown = "Viana do Castelo"
+            localtown = "Viana do Castelo",
+            routes = listOf(
+                RoutesEvent("r4", 41.6918, -8.8344, 1)
+            )
         )
     )
 
@@ -62,7 +74,6 @@ object MockData {
             price = 20.0,
             createdAt = Date(),
             eventStatus = eventStatuses[0],
-            eventstatus_id = "1",
             addressEvents = addressEvents,
             eventPicture = "event1"
         ),
@@ -76,7 +87,6 @@ object MockData {
             price = 0.0,
             createdAt = Date(),
             eventStatus = eventStatuses[1],
-            eventstatus_id = "2",
             addressEvents = listOf(addressEvents[0]),
             eventPicture = "event2"
         ),
@@ -90,7 +100,6 @@ object MockData {
             price = 12.5,
             createdAt = Date(),
             eventStatus = eventStatuses[2],
-            eventstatus_id = "3",
             addressEvents = listOf(addressEvents[2]),
             eventPicture = "event3"
         ),
@@ -104,7 +113,6 @@ object MockData {
             price = 30.0,
             createdAt = Date(),
             eventStatus = eventStatuses[0],
-            eventstatus_id = "1",
             addressEvents = listOf(addressEvents[1]),
             eventPicture = "event4"
         ),
@@ -118,7 +126,6 @@ object MockData {
             price = 5.0,
             createdAt = Date(),
             eventStatus = eventStatuses[1],
-            eventstatus_id = "2",
             addressEvents = listOf(addressEvents[3]),
             eventPicture = "event5"
         ),
@@ -132,7 +139,6 @@ object MockData {
             price = 7.5,
             createdAt = Date(),
             eventStatus = eventStatuses[0],
-            eventstatus_id = "1",
             addressEvents = listOf(addressEvents[0]),
             eventPicture = "event6"
         ),
@@ -146,7 +152,6 @@ object MockData {
             price = 10.0,
             createdAt = Date(),
             eventStatus = eventStatuses[2],
-            eventstatus_id = "3",
             addressEvents = listOf(addressEvents[2]),
             eventPicture = "event7"
         ),
@@ -160,7 +165,6 @@ object MockData {
             price = 15.0,
             createdAt = Date(),
             eventStatus = eventStatuses[1],
-            eventstatus_id = "2",
             addressEvents = listOf(addressEvents[1]),
             eventPicture = "event8"
         ),
@@ -174,7 +178,6 @@ object MockData {
             price = 8.0,
             createdAt = Date(),
             eventStatus = eventStatuses[0],
-            eventstatus_id = "1",
             addressEvents = listOf(addressEvents[3]),
             eventPicture = "event9"
         ),
@@ -188,7 +191,6 @@ object MockData {
             price = 18.0,
             createdAt = Date(),
             eventStatus = eventStatuses[2],
-            eventstatus_id = "3",
             addressEvents = listOf(addressEvents[0]),
             eventPicture = "event10"
         )

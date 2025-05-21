@@ -64,15 +64,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.core.app.ActivityCompat
+import com.example.evention.mock.MockData.events
+import com.example.evention.ui.theme.EventionBlue
 
 private const val REQUEST_LOCATION_PERMISSION = 1
 
-@SuppressLint("MissingPermission") // Certifique-se de verificar permissões antes!
+@SuppressLint("MissingPermission")
 fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionState) {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-    // Verificar se a permissão foi concedida
     if (ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -107,18 +110,21 @@ fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionS
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
+    val events = remember { events }
     val context = LocalContext.current
-    val query = remember { mutableStateOf("") }  // Estado para armazenar o nome digitado na pesquisa
+    val query = remember { mutableStateOf("") }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(38.7169, -9.1399), 10f)  // Posição inicial em Portugal
+        position = CameraPosition.fromLatLngZoom(LatLng(38.7169, -9.1399), 10f)
     }
+    val selectedEventIndex = remember { mutableStateOf(-1) }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.White,
         bottomBar = {
             MenuComponent(
                 currentPage = "Search",
-                onMenuClick = { /* navegação aqui */ }
+                onMenuClick = {  }
             )
         }
     ) { innerPadding ->
@@ -136,9 +142,19 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                 GoogleMap(
                     modifier = Modifier.fillMaxSize(),
                     cameraPositionState = cameraPositionState
-                )
-
-                // Barra de pesquisa
+                ) {
+                    events.forEach { event ->
+                        event.addressEvents.forEach { address ->
+                            address.routes.forEach { route ->
+                                Marker(
+                                    state = MarkerState(position = LatLng(route.latitude, route.longitude)),
+                                    title = event.name,
+                                    snippet = "${address.localtown}, ${address.road} ${address.roadNumber}"
+                                )
+                            }
+                        }
+                    }
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -210,13 +226,43 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                items(10) { index ->
-                    EventRow(
-                        imageUrl = "",
-                        title = "Evento $index",
-                        location = "Localização $index",
-                        date = Date("30/05/2025")
-                    )
+                items(events.size) { eventIndex ->
+                    val event = events[eventIndex]
+                    val address = event.addressEvents.firstOrNull()
+                    val route = address?.routes?.firstOrNull()
+
+                    val locationText = if (address != null) {
+                        "${address.localtown}, ${address.road} ${address.roadNumber}"
+                    } else {
+                        "Localização desconhecida"
+                    }
+
+                    val isSelected = selectedEventIndex.value == eventIndex
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedEventIndex.value = eventIndex
+                                route?.let {
+                                    val latLng = LatLng(it.latitude, it.longitude)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        cameraPositionState.animate(
+                                            update = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                                        )
+                                    }
+                                }
+                            }
+                    ) {
+                        EventRow(
+                            imageUrl = "",
+                            title = event.name,
+                            location = locationText,
+                            date = event.createdAt,
+                            isSelected = isSelected
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -225,11 +271,16 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun EventRow(imageUrl: String, title: String, location: String, date: Date) {
+fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSelected: Boolean = false) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp).border(
+                width = if (isSelected) 2.dp else 0.dp,
+                color = if (isSelected) EventionBlue else Color.Transparent,
+                shape = RoundedCornerShape(13.dp)
+            ),
+
         shape = RoundedCornerShape(13.dp),
         elevation = CardDefaults.cardElevation(5.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
