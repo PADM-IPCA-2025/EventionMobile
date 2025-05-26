@@ -34,16 +34,16 @@ fun AppNavHost() {
             HomeScreen(events = MockData.events, navController = navController)
         }
         composable("search"){
-            SearchScreen()
+            SearchScreen(navController = navController)
         }
         composable("create"){
-            CreateEventScreen()
+            CreateEventScreen(navController = navController)
         }
         composable("tickets"){
-            TicketsScreen(TicketMockData.tickets)
+            TicketsScreen(TicketMockData.tickets, navController = navController)
         }
         composable("profile"){
-            UserProfile(MockUserData.users.first())
+            UserProfile(MockUserData.users.first(), navController = navController)
         }
 
         composable("notifications") {
