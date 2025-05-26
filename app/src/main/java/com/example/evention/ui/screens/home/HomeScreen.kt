@@ -29,6 +29,7 @@ import com.example.evention.ui.components.MenuComponent
 import androidx.compose.material3.Scaffold
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.evention.ui.components.home.FilterButtonWithDateRange
 
 @Composable
 fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modifier = Modifier) {
@@ -69,7 +70,7 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    FilterButton()
+                    FilterButtonWithDateRange()
                 }
             }
 

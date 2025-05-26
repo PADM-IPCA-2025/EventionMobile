@@ -20,6 +20,7 @@ import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.profile.user.UserProfile
+import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
 
 @Composable
@@ -40,7 +41,9 @@ fun AppNavHost() {
             CreateEventScreen(navController = navController)
         }
         composable("tickets"){
-            TicketsScreen(TicketMockData.tickets, navController = navController)
+            val viewModel: TicketScreenViewModel = viewModel()
+            val tickets by viewModel.tickets.collectAsState()
+            TicketsScreen(tickets, navController = navController) // TicketMockData.tickets
         }
         composable("profile"){
             UserProfile(MockUserData.users.first(), navController = navController)
