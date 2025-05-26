@@ -18,6 +18,7 @@ lifecycleRuntimeKtxVersion = "2.6.2"
 retrofit = "2.9.0"
 navigation-compose = "2.6.0"
 navigationCommonAndroid = "2.9.0"
+firebaseFirestoreKtx = "25.1.4"
 
 [libraries]
 androidx-compose-bom-v20250101 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -46,6 +47,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

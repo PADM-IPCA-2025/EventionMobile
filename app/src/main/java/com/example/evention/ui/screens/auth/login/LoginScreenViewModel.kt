@@ -1,5 +1,7 @@
 package com.example.evention.ui.screens.auth.login
 
+import LoginApiService
+import LoginRequest
 import UserPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +16,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
-    private val apiService: ApiService,
+    private val apiService: LoginApiService,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -27,8 +29,10 @@ class AuthViewModel @Inject constructor(
                 val response = apiService.login(LoginRequest(email, password))
 
                 if (response.isSuccessful) {
-                    val body = response.body() ?: return@launch
+                    val body = response.body() ?: throw Exception("Resposta vazia")
                     val token = body.token
+                    val userGuid = body.userGuid
+
                     userPreferences.saveToken(token)
 
                     val fcmToken = FirebaseMessaging.getInstance().token.await()
@@ -42,9 +46,10 @@ class AuthViewModel @Inject constructor(
                             )
                         ).await()
 
-                    _loginState.value = Result.success("Login e token guardado.")
+                    _loginState.value = Result.success("Login bem-sucedido!")
                 } else {
-                    _loginState.value = Result.failure(Exception("Login falhou"))
+                    val error = response.errorBody()?.string() ?: "Erro desconhecido"
+                    _loginState.value = Result.failure(Exception("Login falhou: $error"))
                 }
             } catch (e: Exception) {
                 _loginState.value = Result.failure(e)
