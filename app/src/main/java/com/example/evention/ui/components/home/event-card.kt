@@ -31,12 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.model.Event
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(event: Event, modifier: Modifier = Modifier) {
+fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {
+
     val context = LocalContext.current
     val imageRes = remember(event.eventPicture) {
         context.resources.getIdentifier(event.eventPicture, "drawable", context.packageName)
@@ -49,7 +52,10 @@ fun EventCard(event: Event, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .height(220.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = {
+            navController.navigate("eventDetails/${event.eventID}")
+        }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(

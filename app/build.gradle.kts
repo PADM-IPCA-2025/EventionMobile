@@ -52,7 +52,7 @@ dependencies {
     implementation(libs.androidx.animation.lint)
 
     implementation(platform(libs.androidx.compose.bom.v20250101))
-
+    implementation(libs.navigation.compose)
 
     // Retrofit e Gson
     implementation(libs.retrofit)
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx.v262)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.common.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

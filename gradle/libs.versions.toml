@@ -16,6 +16,8 @@ animationCoreLint = "1.8.0-rc03"
 animationLint = "1.8.0-rc03"
 lifecycleRuntimeKtxVersion = "2.6.2"
 retrofit = "2.9.0"
+navigation-compose = "2.6.0"
+navigationCommonAndroid = "2.9.0"
 
 [libraries]
 androidx-compose-bom-v20250101 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -42,6 +44,8 @@ androidx-animation-lint = { group = "androidx.compose.animation", name = "animat
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
+androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
