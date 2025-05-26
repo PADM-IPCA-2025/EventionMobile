@@ -5,6 +5,8 @@ import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
 import com.example.evention.data.remote.tickets.TicketRemoteDataSource
 import getUnsafeOkHttpClient
+import com.example.evention.data.remote.users.UserApiService
+import com.example.evention.data.remote.users.UserRemoteDataSource
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -28,6 +30,10 @@ object NetworkModule {
         retrofit.create(TicketApiService::class.java)
     }
 
+    private val userApi: UserApiService by lazy {
+        retrofit.create(UserApiService::class.java)
+    }
+
     // Data Source
     val eventRemoteDataSource: EventRemoteDataSource by lazy {
         EventRemoteDataSource(eventApi)
@@ -36,6 +42,8 @@ object NetworkModule {
     val ticketRemoteDataSource: TicketRemoteDataSource by lazy {
         TicketRemoteDataSource(ticketApi)
     }
+
+    val userRemoteDataSource: UserRemoteDataSource by lazy {
+        UserRemoteDataSource(userApi)
+    }
 }
-
-

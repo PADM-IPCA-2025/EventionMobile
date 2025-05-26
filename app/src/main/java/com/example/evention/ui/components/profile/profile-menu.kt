@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.evention.ui.theme.EventionBlue
 
 @Composable
@@ -37,7 +38,8 @@ fun ProfileMenuItem(
     icon: ImageVector,
     label: String,
     sublabel: String? = null,
-    isNotification: Boolean = false
+    isNotification: Boolean = false,
+    navController: NavController,
 ) {
     var switchState by remember { mutableStateOf(true) }
 
@@ -45,7 +47,17 @@ fun ProfileMenuItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = !isNotification) { /* TODO: ação correspondente */ }
+            .clickable(enabled = !isNotification) {
+                when (label) {
+                    "Admin Menu" -> navController.navigate("adminMenu")
+                    "My Events" -> navController.navigate("userEvents")
+                    "Change Password" -> navController.navigate("changePassword")
+                    "All Users" -> navController.navigate("allUsers")
+                    "All Events" -> navController.navigate("allEvents")
+                    "Events to approve" -> navController.navigate("approveEvents")
+                    "Logout" -> navController.navigate("login")
+                }
+            }
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Box(
