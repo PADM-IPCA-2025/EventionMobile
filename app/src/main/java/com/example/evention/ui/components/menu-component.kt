@@ -14,12 +14,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.evention.R
 import com.example.evention.ui.theme.EventionBlue
-import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun MenuComponent(currentPage: String, onMenuClick: (String) -> Unit) {
+fun MenuComponent(
+    currentPage: String,
+    navController: NavController
+) {
+    val menuItems = listOf(
+        Triple("Home", R.drawable.home, R.drawable.home_filled),
+        Triple("Search", R.drawable.search, R.drawable.search_filled),
+        Triple("Create", R.drawable.add, R.drawable.add_filled),
+        Triple("Tickets", R.drawable.ticket, R.drawable.ticket_filled),
+        Triple("Profile", R.drawable.profile_circle, R.drawable.profile_filled)
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -27,38 +38,27 @@ fun MenuComponent(currentPage: String, onMenuClick: (String) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MenuItem(
-            name = "Home",
-            iconRes = if (currentPage == "Home") R.drawable.home_filled else R.drawable.home,
-            currentPage = currentPage,
-            onClick = onMenuClick
-        )
-        MenuItem(
-            name = "Search",
-            iconRes = if (currentPage == "Search") R.drawable.search_filled else R.drawable.search,
-            currentPage = currentPage,
-            onClick = onMenuClick
-        )
-        MenuItem(
-            name = "Create",
-            iconRes = if (currentPage == "Create") R.drawable.add_filled else R.drawable.add,
-            currentPage = currentPage,
-            onClick = onMenuClick
-        )
-        MenuItem(
-            name = "Tickets",
-            iconRes = if (currentPage == "Tickets") R.drawable.ticket_filled else R.drawable.ticket,
-            currentPage = currentPage,
-            onClick = onMenuClick
-        )
-        MenuItem(
-            name = "Profile",
-            iconRes = if (currentPage == "Profile") R.drawable.profile_filled else R.drawable.profile_circle,
-            currentPage = currentPage,
-            onClick = onMenuClick
-        )
+        menuItems.forEach { (name, icon, iconFilled) ->
+            MenuItem(
+                name = name,
+                iconRes = if (currentPage == name) iconFilled else icon,
+                currentPage = currentPage,
+                onClick = {
+                    val route = when (name) {
+                        "Home" -> "home"
+                        "Search" -> "search"
+                        "Create" -> "create"
+                        "Tickets" -> "tickets"
+                        "Profile" -> "profile"
+                        else -> "home"
+                    }
+                    navController.navigate(route)
+                }
+            )
+        }
     }
 }
+
 
 @Composable
 fun MenuItem(
@@ -87,13 +87,5 @@ fun MenuItem(
             color = textColor,
             fontSize = 12.sp
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMenu() {
-    EventionTheme {
-        MenuComponent(currentPage = "Search", onMenuClick = {})
     }
 }

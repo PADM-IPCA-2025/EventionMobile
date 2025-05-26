@@ -38,7 +38,7 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
         bottomBar = {
             MenuComponent(
                 currentPage = "Home",
-                onMenuClick = { /* navegação */ }
+                navController = navController
             )
         }
     ) { innerPadding ->
