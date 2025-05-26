@@ -26,6 +26,8 @@ import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.asImageBitmap
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
@@ -36,6 +38,7 @@ import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
+import generateQrCodeBitmap
 
 
 @Composable
@@ -48,6 +51,11 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
     val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticket.ticketID }
 
     ticketNullable?.let { ticket ->
+
+        val qrBitmap = remember(ticket.ticketID) {
+            generateQrCodeBitmap(ticket.ticketID)
+        }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -138,7 +146,7 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.qrcodemock),
+                bitmap = qrBitmap.asImageBitmap(),    // painter = painterResource(id = R.drawable.qrcodemock),
                 contentDescription = "QR Code",
                 modifier = Modifier.size(180.dp)
             )
