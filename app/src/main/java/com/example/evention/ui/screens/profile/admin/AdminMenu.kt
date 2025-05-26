@@ -21,12 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.MenuItem
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun AdminMenu() {
+fun AdminMenu(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +37,7 @@ fun AdminMenu() {
 
         TitleComponent("Admin Menu", true)
 
-        MenuItem()
+        MenuItem(navController)
     }
 }
 
@@ -43,6 +45,7 @@ fun AdminMenu() {
 @Composable
 fun AdminMenuPreview() {
     EventionTheme {
-        AdminMenu()
+        val navController = rememberNavController()
+        AdminMenu(navController)
     }
 }

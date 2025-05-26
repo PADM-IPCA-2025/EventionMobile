@@ -44,6 +44,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 
 fun formatDate(date: Date): String {
@@ -71,8 +72,7 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventId: String, modifier: Modifier = Modifier, viewModel: EventDetailsViewModel = viewModel()) {
-    val navController = rememberNavController()
+fun EventDetails(eventId: String, modifier: Modifier = Modifier, navController: NavController, viewModel: EventDetailsViewModel = viewModel()) {
 
     /*LaunchedEffect(eventId) {
         viewModel.loadEventById(eventId)
@@ -161,7 +161,8 @@ fun EventDetails(eventId: String, modifier: Modifier = Modifier, viewModel: Even
 @Composable
 fun Preview() {
     EventionTheme {
+        val navController = rememberNavController()
         val event = MockData.events.first()
-        EventDetails(event.eventID)
+        EventDetails(event.eventID, navController = navController)
     }
 }
