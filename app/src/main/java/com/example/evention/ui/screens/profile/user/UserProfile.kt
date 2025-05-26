@@ -20,17 +20,19 @@ import com.example.evention.ui.components.profile.UserInfo
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
 
 @Composable
-fun UserProfile(user: User) {
+fun UserProfile(user: User, navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
         bottomBar = {
             MenuComponent(
                 currentPage = "Profile",
-                onMenuClick = { /* navegação aqui */ }
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -62,6 +64,7 @@ fun UserProfile(user: User) {
 @Composable
 fun HomePreview() {
     EventionTheme {
-        UserProfile(MockUserData.users.first())
+        val navController = rememberNavController()
+        UserProfile(MockUserData.users.first(), navController = navController)
     }
 }

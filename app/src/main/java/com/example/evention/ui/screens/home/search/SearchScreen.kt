@@ -67,6 +67,8 @@ import android.content.pm.PackageManager
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockData.events
 import com.example.evention.ui.theme.EventionBlue
 
@@ -109,7 +111,7 @@ fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionS
 }
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(modifier: Modifier = Modifier, navController: NavController) {
     val events = remember { events }
     val context = LocalContext.current
     val query = remember { mutableStateOf("") }
@@ -124,7 +126,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
         bottomBar = {
             MenuComponent(
                 currentPage = "Search",
-                onMenuClick = {  }
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -340,6 +342,7 @@ fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSe
 @Composable
 fun Previeww() {
     EventionTheme {
-        SearchScreen()
+        val navController = rememberNavController()
+        SearchScreen(navController = navController)
     }
 }

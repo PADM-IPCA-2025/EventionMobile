@@ -33,17 +33,19 @@ import com.example.evention.R
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
 
 @Composable
-fun CreateEventScreen() {
+fun CreateEventScreen(navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
         bottomBar = {
             MenuComponent(
                 currentPage = "Create",
-                onMenuClick = { /* navegação aqui */ }
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -147,6 +149,7 @@ fun CreateEventScreen() {
 @Composable
 fun Preview() {
     EventionTheme {
-        CreateEventScreen()
+        val navController = rememberNavController()
+        CreateEventScreen(navController = navController)
     }
 }

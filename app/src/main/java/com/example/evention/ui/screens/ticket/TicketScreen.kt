@@ -28,17 +28,19 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
 
 @Composable
-fun TicketsScreen(tickets: List<Ticket>) {
+fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
         bottomBar = {
             MenuComponent(
                 currentPage = "Tickets",
-                onMenuClick = { /* navegação aqui */ }
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -114,7 +116,8 @@ fun TicketsScreen(tickets: List<Ticket>) {
 @Composable
 fun TicketsScreenPreview() {
     EventionTheme {
-        TicketsScreen(TicketMockData.tickets)
+        val navController = rememberNavController()
+        TicketsScreen(TicketMockData.tickets, navController = navController)
         //TicketsScreen(tickets = emptyList())
     }
 }
