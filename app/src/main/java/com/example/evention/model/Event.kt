@@ -1,6 +1,8 @@
 package com.example.evention.model
 
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 data class Event(
     val eventID: String,
@@ -12,7 +14,6 @@ data class Event(
     val price: Double,
     val createdAt: Date,
     val eventStatus: EventStatus,
-    val eventstatus_id: String,
     val addressEvents: List<AddressEvent>,
     val eventPicture: String?
 )
@@ -27,5 +28,12 @@ data class AddressEvent(
     val road: String,
     val roadNumber: Int,
     val postCode: String,
-    val localtown: String
+    val localtown: String,
+    val routes: List<RoutesEvent>
+)
+data class RoutesEvent(
+    val routeID: String,
+    val latitude: Double,
+    val longitude: Double,
+    val order: Int
 )

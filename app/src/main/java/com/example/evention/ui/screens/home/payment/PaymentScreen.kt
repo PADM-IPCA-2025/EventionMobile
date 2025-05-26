@@ -30,13 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evention.ui.components.TitleComponent
+import com.example.evention.mock.MockData
 import com.example.evention.ui.components.payments.PaymentMethodRow
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun PaymentScreen(modifier: Modifier = Modifier) {
+fun PaymentScreen(eventId: String, modifier: Modifier = Modifier) {
     val paymentMethods = remember {
         mutableListOf(
             PaymentMethod("Paypal", true),
@@ -44,13 +44,43 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
         )
     }
 
+    val event = MockData.events.find { event -> event.eventID == eventId }
+    if (event == null) return
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable {
+                        // TODO: ação de voltar
+                    }
+            )
 
-        TitleComponent("Checkout", true)
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Checkout",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.width(28.dp))
+        }
 
         Text(
             text = "Payment",
@@ -86,7 +116,7 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "120 €",
+                text = "${event.price} €",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
@@ -116,6 +146,6 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
 @Composable
 fun Preview() {
     EventionTheme {
-        PaymentScreen()
+        PaymentScreen(MockData.events.first().eventID)
     }
 }

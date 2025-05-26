@@ -176,15 +176,6 @@ fun ScanQRCodeScreen() {
     }
 }
 
-private fun requestCameraPermission(context: android.content.Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        ActivityCompat.requestPermissions(
-            context as android.app.Activity,
-            arrayOf(Manifest.permission.CAMERA),
-            100
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    //Firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,7 +55,7 @@ dependencies {
     implementation(libs.androidx.animation.lint)
 
     implementation(platform(libs.androidx.compose.bom.v20250101))
-
+    implementation(libs.navigation.compose)
 
     // Retrofit e Gson
     implementation(libs.retrofit)
@@ -66,6 +69,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx.v262)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.common.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -84,7 +88,12 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.0")
     implementation("androidx.camera:camera-lifecycle:1.3.0")
     implementation("androidx.camera:camera-view:1.3.0")
+
     // ML Kit Barcode Scanning
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 }

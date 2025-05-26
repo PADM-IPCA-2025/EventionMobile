@@ -1,3 +1,7 @@
+import android.annotation.SuppressLint
+import android.location.Location
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,9 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,17 +46,85 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Date
 import com.google.maps.android.compose.*
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import android.Manifest
+import android.app.Activity
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import com.example.evention.ui.components.MenuComponent
+import com.example.evention.ui.screens.home.search.fetchCoordinates
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.core.app.ActivityCompat
+import com.example.evention.mock.MockData.events
+import com.example.evention.ui.theme.EventionBlue
+
+private const val REQUEST_LOCATION_PERMISSION = 1
+
+@SuppressLint("MissingPermission")
+fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionState) {
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    if (ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            REQUEST_LOCATION_PERMISSION
+        )
+        return
+    }
+
+    CoroutineScope(Dispatchers.Main).launch {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    cameraPositionState.move(
+                        update = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f),
+                    )
+                } else {
+                    Toast.makeText(context, "Localização não disponível.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("MapLocation", "Erro ao obter localização: ${e.message}")
+                Toast.makeText(context, "Erro ao obter localização.", Toast.LENGTH_SHORT).show()
+            }
+    }
+}
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
+    val events = remember { events }
+    val context = LocalContext.current
+    val query = remember { mutableStateOf("") }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(38.7169, -9.1399), 10f)
+    }
+    val selectedEventIndex = remember { mutableStateOf(-1) }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.White,
         bottomBar = {
             MenuComponent(
                 currentPage = "Search",
-                onMenuClick = { /* navegação aqui */ }
+                onMenuClick = {  }
             )
         }
     ) { innerPadding ->
@@ -62,16 +139,22 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                     .weight(1.3f)
                     .background(Color.Gray)
             ) {
-                val portugal = LatLng(38.7169, -9.1399)
-                val cameraPositionState = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(portugal, 10f)
-                }
-
                 GoogleMap(
                     modifier = Modifier.fillMaxSize(),
                     cameraPositionState = cameraPositionState
-                )
-
+                ) {
+                    events.forEach { event ->
+                        event.addressEvents.forEach { address ->
+                            address.routes.forEach { route ->
+                                Marker(
+                                    state = MarkerState(position = LatLng(route.latitude, route.longitude)),
+                                    title = event.name,
+                                    snippet = "${address.localtown}, ${address.road} ${address.roadNumber}"
+                                )
+                            }
+                        }
+                    }
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,34 +162,59 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                         .shadow(4.dp, shape = RoundedCornerShape(30))
                         .clip(RoundedCornerShape(20))
                         .background(Color.White)
-                        .padding(horizontal = 9.dp, vertical = 12.dp)
-                        .align(Alignment.TopCenter),
+                        .padding(horizontal = 9.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "",
-                        modifier = Modifier
+                        contentDescription = "Back",
+                        tint = Color.Gray,
+                        modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text(
-                        text = "Find for City, Localtown",
+
+                    TextField(
+                        value = query.value,
+                        onValueChange = { query.value = it },
+                        placeholder = {
+                            Text(
+                                "Find for city, localtown",
+                                color = Color.Gray,
+                                fontSize = 16.sp
+                            )
+                        },
+                        singleLine = true,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 6.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
+                            .padding(end = 8.dp)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            cursorColor = Color.Black,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        )
                     )
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.findme),
-                            contentDescription = "Imagem do Evento",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.White)
+
+                    IconButton(onClick = {
+                        fetchCoordinates(context, query.value, cameraPositionState)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = "Search",
+                            tint = Color.Gray
+                        )
+                    }
+                    IconButton(onClick = {
+                        moveToCurrentLocation(context, cameraPositionState)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.LocationOn,
+                            contentDescription = "Search",
+                            tint = Color.Gray
                         )
                     }
                 }
@@ -118,13 +226,43 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                items(10) { index ->
-                    EventRow(
-                        imageUrl = "",
-                        title = "Evento $index",
-                        location = "Localização $index",
-                        date = Date("30/05/2025")
-                    )
+                items(events.size) { eventIndex ->
+                    val event = events[eventIndex]
+                    val address = event.addressEvents.firstOrNull()
+                    val route = address?.routes?.firstOrNull()
+
+                    val locationText = if (address != null) {
+                        "${address.localtown}, ${address.road} ${address.roadNumber}"
+                    } else {
+                        "Localização desconhecida"
+                    }
+
+                    val isSelected = selectedEventIndex.value == eventIndex
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedEventIndex.value = eventIndex
+                                route?.let {
+                                    val latLng = LatLng(it.latitude, it.longitude)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        cameraPositionState.animate(
+                                            update = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                                        )
+                                    }
+                                }
+                            }
+                    ) {
+                        EventRow(
+                            imageUrl = "",
+                            title = event.name,
+                            location = locationText,
+                            date = event.createdAt,
+                            isSelected = isSelected
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -132,13 +270,17 @@ fun SearchScreen(modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
-fun EventRow(imageUrl: String, title: String, location: String, date: Date) {
+fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSelected: Boolean = false) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp).border(
+                width = if (isSelected) 2.dp else 0.dp,
+                color = if (isSelected) EventionBlue else Color.Transparent,
+                shape = RoundedCornerShape(13.dp)
+            ),
+
         shape = RoundedCornerShape(13.dp),
         elevation = CardDefaults.cardElevation(5.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
