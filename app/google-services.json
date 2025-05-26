@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1075095065902",
+    "project_id": "evention-f86f4",
+    "storage_bucket": "evention-f86f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075095065902:android:047447a49264d9cf8ad6bf",
+        "android_client_info": {
+          "package_name": "com.example.evention"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmgW7ZnbOyyVJzVk_dbP683cb76_DtsAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

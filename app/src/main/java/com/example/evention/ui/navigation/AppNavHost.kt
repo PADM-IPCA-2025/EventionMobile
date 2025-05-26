@@ -36,7 +36,6 @@ fun AppNavHost() {
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")
-
             EventDetails(eventId = eventId ?: "")
         }
         composable(
