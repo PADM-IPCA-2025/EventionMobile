@@ -25,9 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeSearch(){
+fun HomeSearch(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +85,7 @@ fun HomeSearch(){
                 tint = Color.White,
                 modifier = Modifier
                     .size(28.dp)
-                    .clickable { /* TODO: ação de abrir notificações */ }
+                    .clickable { navController.navigate("notifications") }
             )
         }
     }

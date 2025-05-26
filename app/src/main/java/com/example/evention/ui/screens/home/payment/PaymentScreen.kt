@@ -30,18 +30,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evention.mock.MockData
 import com.example.evention.ui.components.payments.PaymentMethodRow
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun PaymentScreen(modifier: Modifier = Modifier) {
+fun PaymentScreen(eventId: String, modifier: Modifier = Modifier) {
     val paymentMethods = remember {
         mutableListOf(
             PaymentMethod("Paypal", true),
             PaymentMethod("Credit Card", false)
         )
     }
+
+    val event = MockData.events.find { event -> event.eventID == eventId }
+    if (event == null) return
 
     Column(
         modifier = modifier
@@ -112,7 +116,7 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "120 €",
+                text = "${event.price} €",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
@@ -142,6 +146,6 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
 @Composable
 fun Preview() {
     EventionTheme {
-        PaymentScreen()
+        PaymentScreen(MockData.events.first().eventID)
     }
 }

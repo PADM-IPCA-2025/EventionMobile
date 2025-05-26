@@ -27,9 +27,11 @@ import com.example.evention.ui.components.home.HomeSearch
 import com.example.evention.ui.theme.EventionTheme
 import com.example.evention.ui.components.MenuComponent
 import androidx.compose.material3.Scaffold
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
+fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -47,7 +49,7 @@ fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
             contentPadding = PaddingValues(bottom = 30.dp),
         ) {
             item {
-                HomeSearch()
+                HomeSearch(navController = navController)
             }
 
             item {
@@ -80,7 +82,8 @@ fun HomeScreen(events: List<Event>, modifier: Modifier = Modifier) {
                     event = event,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 25.dp, vertical = 8.dp)
+                        .padding(horizontal = 25.dp, vertical = 8.dp),
+                    navController = navController
                 )
             }
         }
@@ -98,7 +101,7 @@ fun HomePreview() {
         val eventsApi by viewModel.events.collectAsState()
         */
 
-        val events = MockData.events
-        HomeScreen(events)
+        val navController = rememberNavController()
+        HomeScreen(events = MockData.events, navController = navController)
     }
 }
