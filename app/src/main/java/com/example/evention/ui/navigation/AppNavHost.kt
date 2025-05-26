@@ -20,6 +20,8 @@ import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.profile.user.UserProfile
+import com.example.evention.ui.screens.ticket.TicketDetailsPreview
+import com.example.evention.ui.screens.ticket.TicketDetailsScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
 
@@ -41,16 +43,23 @@ fun AppNavHost() {
             CreateEventScreen(navController = navController)
         }
         composable("tickets"){
-            val viewModel: TicketScreenViewModel = viewModel()
-            val tickets by viewModel.tickets.collectAsState()
-            TicketsScreen(tickets, navController = navController) // TicketMockData.tickets
+//            val viewModel: TicketScreenViewModel = viewModel()
+//            val tickets by viewModel.tickets.collectAsState()
+            TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
+        }
+        composable(
+            "ticketDetails/{ticketId}",
+            arguments = listOf(navArgument("ticketId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ticketId = backStackEntry.arguments?.getString("ticketId")
+            TicketDetailsScreen(ticketId = ticketId ?: "", navController)
         }
         composable("profile"){
             UserProfile(MockUserData.users.first(), navController = navController)
         }
 
         composable("notifications") {
-            NotificationScreen(notifications = listOf())
+            NotificationScreen(notifications = listOf(), navController = navController)
         }
         composable(
             "eventDetails/{eventId}",

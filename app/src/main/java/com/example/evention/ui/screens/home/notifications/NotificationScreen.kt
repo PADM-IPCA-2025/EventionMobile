@@ -26,20 +26,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.notifications.NotificationRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun NotificationScreen(notifications: List<NotificationItem>, modifier: Modifier = Modifier) {
+fun NotificationScreen(notifications: List<NotificationItem>, modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Notifications", true)
+        TitleComponent("Notifications", true, navController)
 
         if (notifications.isEmpty()) {
             Box(
@@ -83,7 +85,7 @@ fun NotificationPreview() {
                 NotificationItem("u1", "purchased a ticket for your event.", "1 hr ago"),
                 NotificationItem("u2", "joined your Gala Music Festival.", "9 hr ago"),
                 NotificationItem("u3", "invited you to the International Kids Safe.", "Tue, 5:10 pm")
-            )
+            ), navController = rememberNavController()
         )
     }
 }

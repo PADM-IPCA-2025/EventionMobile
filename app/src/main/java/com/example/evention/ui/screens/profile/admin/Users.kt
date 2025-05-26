@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.mock.MockUserData
 import com.example.evention.model.User
@@ -40,7 +41,7 @@ fun AllUsers(users: List<User>) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Users", true)
+        TitleComponent("Users", true, navController = rememberNavController())
 
         if (users.isEmpty()) {
             Box(

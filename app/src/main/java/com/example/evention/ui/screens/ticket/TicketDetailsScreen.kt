@@ -10,6 +10,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,9 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
+import com.example.evention.mock.MockData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
@@ -27,21 +33,28 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.evention.ui.screens.home.details.EventDetailsViewModel
 
 
 @Composable
-fun TicketDetailsScreen(ticket: Ticket) {
-    val event = ticket.event
+fun TicketDetailsScreen(ticketId: String, navController: NavController, viewModel: TicketDetailsScreenViewModel = viewModel()) {
 
+    LaunchedEffect(ticketId) {
+        viewModel.loadTicketById(ticketId)
+    }
+    //val ticketNullable by viewModel.ticket.collectAsState()
+    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticket.ticketID }
 
+    ticketNullable?.let { ticket ->
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 28.dp)
     ) {
 
-        TitleComponent("Ticket Details", true)
+        TitleComponent("Ticket Details", true, navController)
 
         // Nome do evento
         Box(
@@ -50,7 +63,7 @@ fun TicketDetailsScreen(ticket: Ticket) {
                 .padding(vertical = 16.dp)
         ) {
             Text(
-                text = event.name,
+                text = ticket.event.name,
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.align(Alignment.Center),
                 color = MaterialTheme.colorScheme.onBackground
@@ -75,12 +88,12 @@ fun TicketDetailsScreen(ticket: Ticket) {
 
             Column {
                 Text(
-                    text = event.startAt.toString(),
+                    text = ticket.event.startAt.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = event.endAt.toString(),
+                    text = ticket.event.endAt.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -105,12 +118,12 @@ fun TicketDetailsScreen(ticket: Ticket) {
 
             Column {
                 Text(
-                    text = event.addressEvents[0].road,
+                    text = ticket.event.addressEvents[0].road,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = event.addressEvents[0].localtown,
+                    text = ticket.event.addressEvents[0].localtown,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -150,12 +163,13 @@ fun TicketDetailsScreen(ticket: Ticket) {
             )
         }
     }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun TicketDetailsPreview() {
     EventionTheme {
-        TicketDetailsScreen(TicketMockData.tickets[0])
+        TicketDetailsScreen(TicketMockData.tickets[0].ticketID, navController = rememberNavController())
     }
 }

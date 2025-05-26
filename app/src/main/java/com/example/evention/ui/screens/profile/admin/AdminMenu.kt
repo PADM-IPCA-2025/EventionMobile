@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.MenuItem
 import com.example.evention.ui.theme.EventionTheme
@@ -33,7 +34,7 @@ fun AdminMenu() {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Admin Menu", true)
+        TitleComponent("Admin Menu", true, navController = rememberNavController())
 
         MenuItem()
     }

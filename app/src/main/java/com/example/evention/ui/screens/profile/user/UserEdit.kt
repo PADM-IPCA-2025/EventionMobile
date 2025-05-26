@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockUserData
 import com.example.evention.model.User
 import com.example.evention.ui.components.TitleComponent
@@ -48,7 +49,7 @@ fun UserEdit(user: User) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Edit Profile", true)
+        TitleComponent("Edit Profile", true, navController = rememberNavController())
 
         UserEditInfo(user)
 

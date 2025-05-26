@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
 import com.example.evention.ui.components.TitleComponent
@@ -28,7 +29,7 @@ fun TicketFeedbackScreen(ticket: Ticket) {
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Event Feedback", true)
+        TitleComponent("Event Feedback", true, navController = rememberNavController())
 
         Text(
             text = "The Event Is Finished",

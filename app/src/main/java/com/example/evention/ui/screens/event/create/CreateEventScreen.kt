@@ -59,7 +59,7 @@ fun CreateEventScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-        TitleComponent("Create Event", false)
+        TitleComponent("Create Event", false, navController)
 
         Box(
             modifier = Modifier

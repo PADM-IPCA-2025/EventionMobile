@@ -29,19 +29,21 @@ import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.components.TitleComponent
 
 
 @Composable
-fun AllEvents(events: List<Event>) {
+fun AllEvents(events: List<Event>, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Events", true)
+        TitleComponent("Events", true, navController)
 
         if (events.isEmpty()) {
             Box(
@@ -71,7 +73,8 @@ fun AllEvents(events: List<Event>) {
                         firstSection = "Edit event",
                         secondSection = "Delete event",
                         onEdit = { /* ação para editar */ },
-                        onRemove = { /* ação para remover */ }
+                        onRemove = { /* ação para remover */ },
+                        navController = navController
                     )
                 }
             }
@@ -83,7 +86,8 @@ fun AllEvents(events: List<Event>) {
 @Composable
 fun AllEventsPreview() {
     EventionTheme {
+        val navController = rememberNavController()
         var events = listOf<Event>()
-        AllEvents(events)
+        AllEvents(events, navController = navController)
     }
 }

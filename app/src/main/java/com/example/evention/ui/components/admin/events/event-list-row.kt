@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.evention.model.Event
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
@@ -56,7 +57,8 @@ fun EventListRow(
     firstSection: String,
     secondSection: String,
     onEdit: (Event) -> Unit,
-    onRemove: (Event) -> Unit
+    onRemove: (Event) -> Unit,
+    navController: NavController
 ) {
     val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
 
@@ -66,7 +68,10 @@ fun EventListRow(
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        onClick = {
+            navController.navigate("ticketDetails/${event.eventID}")
+        }
     ) {
         Row(
             modifier = Modifier
