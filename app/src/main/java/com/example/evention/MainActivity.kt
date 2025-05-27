@@ -15,8 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EventionTheme {
-                //AppNavHost()
-                LoginScreen()
+                AppNavHost()
             }
         }
     }
