@@ -79,10 +79,10 @@ fun AppNavHost() {
         composable("approveEvents") {
             //val viewModel: EventsToApproveViewModel = viewModel()
             //val events by viewModel.events.collectAsState()
-            EventsToApprove(events = MockData.events, navController)
+            EventsToApprove(events = MockData.events.filter { event -> event.eventStatus.status == "Pendente" }, navController)
         }
         composable("userEvents") {
-            AllEvents(MockData.events, navController)
+            AllEvents(MockData.events.filter { event -> event.userId == MockUserData.users.first().userID }, navController)
         }
         composable("userEdit/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.StringType})

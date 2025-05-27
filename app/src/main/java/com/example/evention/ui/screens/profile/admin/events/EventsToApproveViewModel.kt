@@ -17,7 +17,33 @@ class EventsToApproveViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _events.value = remoteDataSource.getSuspendedEvents()
+            try {
+                _events.value = remoteDataSource.getSuspendedEvents()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun approveEvent(eventId: String) {
+        viewModelScope.launch {
+            try {
+                val approvedEvent = remoteDataSource.approveEvent(eventId)
+                _events.value = _events.value.filter { it.eventID != approvedEvent.eventID }
+            } catch (e: Exception) {
+                // TODO: Handle error (e.g., log or show message)
+            }
+        }
+    }
+
+    fun deleteEvent(eventId: String) {
+        viewModelScope.launch {
+            try {
+                remoteDataSource.deleteEvent(eventId)
+                _events.value = _events.value.filter { it.eventID != eventId }
+            } catch (e: Exception) {
+                // TODO: handle error (ex: show error message)
+            }
         }
     }
 }
