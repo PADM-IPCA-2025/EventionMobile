@@ -17,7 +17,22 @@ class UsersViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _users.value = remoteDataSource.getUsers()
+            try {
+                _users.value = remoteDataSource.getUsers()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteUser(userId: String) {
+        viewModelScope.launch {
+            try {
+                remoteDataSource.deleteUser(userId)
+                _users.value = _users.value.filter { it.userID != userId }
+            } catch (e: Exception) {
+                // TODO: handle error (ex: show error message)
+            }
         }
     }
 }
