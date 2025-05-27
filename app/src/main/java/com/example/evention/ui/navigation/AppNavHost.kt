@@ -71,7 +71,7 @@ fun AppNavHost() {
             //val events by viewModel.events.collectAsState()
             AllEvents(events = MockData.events, navController)
         }
-        composable("eventsToApprove") {
+        composable("approveEvents") {
             //val viewModel: EventsToApproveViewModel = viewModel()
             //val events by viewModel.events.collectAsState()
             EventsToApprove(events = MockData.events)
