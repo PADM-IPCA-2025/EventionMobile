@@ -34,15 +34,17 @@ class LoginScreenViewModel(
                 if (result.isSuccess) {
                     val response = result.getOrThrow()
                     val token = response.token
-                    val userGuid = response.userGuid
+                    val payload = decodeJWT(token)
+                    val userGuid = payload.getString("userID")
 
                     userPreferences.saveToken(token)
 
                     Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
+                    Log.d("DEBUG", "userGuid: $userGuid")
 
                     val fcmToken = FirebaseMessaging.getInstance().token.await()
 
-                    Firebase.firestore.collection("user_tokens")
+                    Firebase.firestore.collection("evention")
                         .document(userGuid)
                         .set(
                             mapOf(

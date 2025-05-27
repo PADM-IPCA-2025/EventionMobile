@@ -17,6 +17,7 @@ import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
+import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
@@ -38,6 +39,9 @@ fun AppNavHost() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "home") {
+        composable("signIn") {
+            LoginScreen()
+        }
         composable("home") {
             //val viewModel: HomeScreenViewModel = viewModel()
             //val events by viewModel.events.collectAsState()
