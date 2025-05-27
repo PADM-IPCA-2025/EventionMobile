@@ -25,4 +25,21 @@ class UserEditViewModel : ViewModel() {
             }
         }
     }
+
+    fun editUser(userId: String, username: String, email: String, phone: Int) {
+        viewModelScope.launch {
+            try {
+                remoteDataSource.updateUser(
+                    userId = userId,
+                    username = username,
+                    email = email,
+                    phone = phone
+                )
+                _user.value = _user.value?.copy(username = username, email = email, phone = phone)
+            } catch (e: Exception) {
+                // TODO: handle error (ex: mostrar toast/snackbar)
+            }
+        }
+    }
+
 }

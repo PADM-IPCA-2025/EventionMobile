@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
@@ -25,7 +26,7 @@ import com.example.evention.ui.components.admin.users.UsersListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun AllUsers(users: List<User>, navController: NavController) {
+fun AllUsers(users: List<User>, navController: NavController, viewModel: UsersViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +45,7 @@ fun AllUsers(users: List<User>, navController: NavController) {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.noevents),
-                        contentDescription = "No Events"
+                        contentDescription = "No Users"
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -58,8 +59,8 @@ fun AllUsers(users: List<User>, navController: NavController) {
                 items(users.size) { index ->
                     UsersListRow(
                         user = users[index],
-                        onEdit = { /* ação para editar */ },
-                        onRemove = { /* ação para remover */ }
+                        onEdit = { navController.navigate("userEdit/${users[index].userID}") },
+                        onRemove = { viewModel.deleteUser(users[index].userID) }
                     )
                 }
             }
@@ -72,7 +73,7 @@ fun AllUsers(users: List<User>, navController: NavController) {
 fun AllUsersPreview() {
     EventionTheme {
         val navController = rememberNavController()
-        var users = listOf<User>()
+        val users = listOf<User>()
         AllUsers(users, navController)
     }
 }

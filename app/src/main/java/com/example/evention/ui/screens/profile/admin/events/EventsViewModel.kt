@@ -17,7 +17,22 @@ class EventsViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _events.value = remoteDataSource.getEvents()
+            try {
+                _events.value = remoteDataSource.getEvents()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteEvent(eventId: String) {
+        viewModelScope.launch {
+            try {
+                remoteDataSource.deleteEvent(eventId)
+                _events.value = _events.value.filter { it.eventID != eventId }
+            } catch (e: Exception) {
+                // TODO: handle error (ex: show error message)
+            }
         }
     }
 }

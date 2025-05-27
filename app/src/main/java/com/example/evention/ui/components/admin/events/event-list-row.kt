@@ -2,6 +2,7 @@ package com.example.evention.ui.components.admin.events
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.evention.model.Event
@@ -136,26 +139,44 @@ fun EventListRow(
                     }
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .background(Color.White)
+                            .border(1.dp, EventionBlue, RoundedCornerShape(8.dp))
                     ) {
-                        if (firstSection.isNotBlank()) {
-                            DropdownMenuItem(
-                                text = { Text(text = firstSection) },
-                                onClick = {
-                                    expanded = false
-                                    onEdit(event)
-                                }
-                            )
-                        }
-                        if (secondSection.isNotBlank()) {
-                            DropdownMenuItem(
-                                text = { Text(text = secondSection) },
-                                onClick = {
-                                    expanded = false
-                                    onRemove(event)
-                                }
-                            )
-                        }
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    "Edit",
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                onEdit(event)
+                            }
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .align(Alignment.CenterHorizontally)
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    "Remove",
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                onRemove(event)
+                            }
+                        )
                     }
                 }
             }

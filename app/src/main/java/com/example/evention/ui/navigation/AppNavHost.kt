@@ -2,6 +2,9 @@ package com.example.evention.ui.navigation
 
 import SearchScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +18,12 @@ import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.ui.screens.event.create.CreateEventScreen
+import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
 import com.example.evention.ui.screens.ticket.TicketDetailsScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.profile.admin.AdminMenu
+import com.example.evention.ui.screens.profile.admin.editEvent.EditEvent
 import com.example.evention.ui.screens.profile.admin.events.AllEvents
 import com.example.evention.ui.screens.profile.admin.events.EventsToApprove
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
@@ -79,8 +84,17 @@ fun AppNavHost() {
         composable("userEvents") {
             AllEvents(MockData.events, navController)
         }
-        composable("userEdit") {
-            UserEdit(MockUserData.users.first().userID, navController)
+        composable("userEdit/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.StringType})
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            UserEdit(userId = userId ?: "", navController)
+        }
+        composable("eventEdit/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType})
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId")
+            EditEvent(eventId = eventId?: "", navController)
         }
 
         composable("notifications") {

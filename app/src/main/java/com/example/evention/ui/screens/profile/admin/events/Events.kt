@@ -19,14 +19,16 @@ import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.components.TitleComponent
+import com.example.evention.ui.screens.profile.admin.users.UsersViewModel
 
 
 @Composable
-fun AllEvents(events: List<Event>, navController: NavController) {
+fun AllEvents(events: List<Event>, navController: NavController, viewModel: EventsViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,8 +64,8 @@ fun AllEvents(events: List<Event>, navController: NavController) {
                         event = events[index],
                         firstSection = "Edit event",
                         secondSection = "Delete event",
-                        onEdit = { /* ação para editar */ },
-                        onRemove = { /* ação para remover */ },
+                        onEdit = { navController.navigate("eventEdit/${events[index].eventID}") },
+                        onRemove = { viewModel.deleteEvent(events[index].eventID) },
                         navController = navController
                     )
                 }

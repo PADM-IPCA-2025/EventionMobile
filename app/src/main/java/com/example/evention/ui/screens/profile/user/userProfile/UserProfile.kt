@@ -57,7 +57,6 @@ fun UserProfile(userId: String, navController: NavController, viewModel: UserPro
 
                 TitleComponent("Profile", false, navController)
 
-
                 UserInfo(user, navController = navController)
 
                 Spacer(modifier = Modifier.height(32.dp))

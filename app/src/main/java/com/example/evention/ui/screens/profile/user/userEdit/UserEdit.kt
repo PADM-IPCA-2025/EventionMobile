@@ -36,7 +36,7 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun UserEdit(userId: String, navController: NavController, viewModel: UserProfileViewModel = viewModel()) {
+fun UserEdit(userId: String, navController: NavController, viewModel: UserEditViewModel = viewModel()) {
     /*LaunchedEffect(userId) {
         viewModel.loadUserById(userId)
     }
@@ -89,7 +89,15 @@ fun UserEdit(userId: String, navController: NavController, viewModel: UserProfil
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { /* TODO: Save changes */ },
+                onClick = {
+                    viewModel.editUser(
+                        userId = userId,
+                        username = username,
+                        email = email,
+                        phone = phone as Int
+                    )
+                    navController.popBackStack()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),

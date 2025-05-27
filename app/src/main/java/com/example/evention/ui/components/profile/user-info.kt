@@ -63,7 +63,7 @@ fun UserInfo(user: User, navController: NavController){
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    Row(
+    /*Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.padding(bottom = 5.dp)
     ) {
@@ -80,7 +80,7 @@ fun UserInfo(user: User, navController: NavController){
     Text(
         text = "(110)",
         style = MaterialTheme.typography.bodyLarge
-    )
+    )*/
 
     Spacer(modifier = Modifier.height(16.dp))
 

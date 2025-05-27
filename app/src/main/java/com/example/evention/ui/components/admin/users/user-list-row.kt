@@ -2,6 +2,7 @@ package com.example.evention.ui.components.admin.users
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,12 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
+import com.example.evention.ui.theme.EventionBlue
 
 @Composable
 fun UsersListRow(
@@ -91,23 +96,47 @@ fun UsersListRow(
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .background(Color.White)
+                    .border(1.dp, EventionBlue, RoundedCornerShape(8.dp))
             ) {
                 DropdownMenuItem(
-                    text = { Text("Edit") },
+                    text = {
+                        Text(
+                            "Edit",
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
                     onClick = {
                         expanded = false
                         onEdit(user)
                     }
                 )
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .align(Alignment.CenterHorizontally)
+                )
+
                 DropdownMenuItem(
-                    text = { Text("Remove") },
+                    text = {
+                        Text(
+                            "Remove",
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
                     onClick = {
                         expanded = false
                         onRemove(user)
                     }
                 )
             }
+
+
         }
     }
 }
