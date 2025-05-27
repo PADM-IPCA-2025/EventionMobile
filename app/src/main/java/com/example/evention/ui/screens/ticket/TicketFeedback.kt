@@ -8,12 +8,19 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.TicketMockData
@@ -24,6 +31,25 @@ import com.example.evention.ui.theme.EventionTheme
 
 @Composable
 fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
+
+    val viewModel: FeedbackViewModel = viewModel()
+    val feedbackResult by viewModel.createFeedbackResult.collectAsState()
+
+    var rating by remember { mutableStateOf(0) }
+    var commentary by remember { mutableStateOf("") }
+
+    LaunchedEffect(feedbackResult) {
+        feedbackResult?.let {
+            it.onSuccess { feedback ->
+                println("Feedback enviado: ${feedback.feedbackID}")
+                navController.popBackStack()
+            }.onFailure { error ->
+                println("Erro ao enviar feedback: ${error.message}")
+            }
+            viewModel.clearFeedbackResult()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,9 +84,11 @@ fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
                     imageVector = Icons.Filled.Star,
                     contentDescription = "Star $index",
                     tint = if (index < 3) EventionBlue else Color.Gray, // Example: 3 stars filled
-                    modifier = Modifier.size(32.dp).clickable {
-                        // TODO: Handle star rating click
-                    }
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            rating = index + 1
+                        }
                 )
             }
         }
@@ -77,8 +105,8 @@ fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
 
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = commentary,
+            onValueChange = { commentary = it },
             label = { Text("Tell us everything.") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,7 +115,9 @@ fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
         )
 
         Button(
-            onClick = { },
+            onClick = {
+                viewModel.createFeedback(ticketId, rating, commentary)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp, vertical = 20.dp),

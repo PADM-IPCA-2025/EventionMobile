@@ -11,3 +11,8 @@ data class Ticket(
 data class CreateTicketRequest(
     @SerializedName("event_id") val eventId: String
 )
+
+data class CreateFeedbackRequest(
+    val rating: Int,
+    val commentary: String
+)

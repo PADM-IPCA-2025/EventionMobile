@@ -37,5 +37,7 @@ class TicketScreenViewModel : ViewModel() {
     fun clearCreateResult() {
         _createTicketResult.value = null
     }
+
+
 }
 
