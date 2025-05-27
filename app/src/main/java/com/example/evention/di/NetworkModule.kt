@@ -1,5 +1,7 @@
 package com.example.evention.di
 
+import LoginApiService
+import LoginRemoteDataSource
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
@@ -11,7 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkModule {
-    private const val BASE_URL = "https://192.168.124.79:5010"
+    private const val BASE_URL = "https://10.0.2.2:5010/"
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -34,6 +36,10 @@ object NetworkModule {
         retrofit.create(UserApiService::class.java)
     }
 
+    private val loginApi: LoginApiService by lazy {
+        retrofit.create(LoginApiService::class.java)
+    }
+
     // Data Source
     val eventRemoteDataSource: EventRemoteDataSource by lazy {
         EventRemoteDataSource(eventApi)
@@ -46,4 +52,9 @@ object NetworkModule {
     val userRemoteDataSource: UserRemoteDataSource by lazy {
         UserRemoteDataSource(userApi)
     }
+
+    val loginRemoteDataSource: LoginRemoteDataSource by lazy {
+        LoginRemoteDataSource(loginApi)
+    }
+
 }

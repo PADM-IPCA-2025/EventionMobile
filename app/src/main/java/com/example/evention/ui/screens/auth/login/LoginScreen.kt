@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Switch
@@ -33,7 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.evention.R
+import com.example.evention.data.remote.authentication.LoginViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
@@ -41,6 +44,7 @@ import com.example.evention.ui.theme.EventionTheme
 
 @Composable
 fun LoginScreen() {
+    val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory())
 
     Column(
         modifier = Modifier
@@ -71,6 +75,7 @@ fun LoginScreen() {
 
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        val loginState = viewModel.loginState
 
         AuthTextField(
             placeholderText = "abc@email.com",
@@ -137,7 +142,22 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        AuthConfirmButton("SIGN IN", onClick = { /* Lógica do login */ })
+        AuthConfirmButton("SIGN IN", onClick = {
+            viewModel.login(email, password)
+        })
+
+        when (loginState) {
+            is LoginScreenViewModel.LoginState.Loading -> {
+                CircularProgressIndicator()
+            }
+            is LoginScreenViewModel.LoginState.Error -> {
+                Text("Erro: ${(loginState as LoginScreenViewModel.LoginState.Error).message}", color = Color.Red)
+            }
+            is LoginScreenViewModel.LoginState.Success -> {
+                Text("Login bem-sucedido!")
+            }
+            else -> {}
+        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
