@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.model.Event
@@ -24,14 +25,14 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun EventsToApprove(events: List<Event>) {
+fun EventsToApprove(events: List<Event>, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Approve Events", true, navController = rememberNavController())
+        TitleComponent("Approve Events", true, navController)
 
         if (events.isEmpty()) {
             Box(
@@ -76,7 +77,8 @@ fun EventsToApprove(events: List<Event>) {
 @Composable
 fun EventsToApprovePreview() {
     EventionTheme {
+        val navController = rememberNavController()
         var events = listOf<Event>()
-        EventsToApprove(events)
+        EventsToApprove(events, navController)
     }
 }

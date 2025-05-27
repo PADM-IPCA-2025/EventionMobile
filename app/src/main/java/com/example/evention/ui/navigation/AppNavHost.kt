@@ -64,7 +64,7 @@ fun AppNavHost() {
         composable("allUsers") {
             //val viewModel: UsersViewModel = viewModel()
             //val users by viewModel.users.collectAsState()
-            AllUsers(users = MockUserData.users)
+            AllUsers(users = MockUserData.users, navController)
         }
         composable("allEvents") {
             //val viewModel: EventsViewModel = viewModel()
@@ -74,7 +74,7 @@ fun AppNavHost() {
         composable("approveEvents") {
             //val viewModel: EventsToApproveViewModel = viewModel()
             //val events by viewModel.events.collectAsState()
-            EventsToApprove(events = MockData.events)
+            EventsToApprove(events = MockData.events, navController)
         }
         composable("userEvents") {
             AllEvents(MockData.events, navController)
@@ -98,7 +98,7 @@ fun AppNavHost() {
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")
-            PaymentScreen(eventId = eventId ?: "")
+            PaymentScreen(eventId = eventId ?: "", navController)
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.model.User
@@ -24,14 +25,14 @@ import com.example.evention.ui.components.admin.users.UsersListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun AllUsers(users: List<User>) {
+fun AllUsers(users: List<User>, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Users", true, navController = rememberNavController())
+        TitleComponent("Users", true, navController)
 
         if (users.isEmpty()) {
             Box(
@@ -70,7 +71,8 @@ fun AllUsers(users: List<User>) {
 @Composable
 fun AllUsersPreview() {
     EventionTheme {
+        val navController = rememberNavController()
         var users = listOf<User>()
-        AllUsers(users)
+        AllUsers(users, navController)
     }
 }

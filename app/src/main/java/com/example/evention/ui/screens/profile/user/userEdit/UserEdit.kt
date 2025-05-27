@@ -47,55 +47,61 @@ fun UserEdit(userId: String, navController: NavController, viewModel: UserProfil
         var username by remember { mutableStateOf(user.username) }
         var email by remember { mutableStateOf(user.email) }
         var phone by remember { mutableStateOf(user.phone ?: "") }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 25.dp, vertical = 18.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
+            TitleComponent("Edit Profile", arrowBack = true, navController = navController)
 
-            TitleComponent("Edit Profile", true, navController)
+            Spacer(modifier = Modifier.size(16.dp))
 
             UserEditInfo(user)
 
-            Spacer(modifier = Modifier.size(28.dp))
+            Spacer(modifier = Modifier.size(24.dp))
 
-            LabeledTextField(
-                label = "Username",
-                value = username,
-                onValueChange = { username = it }
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                LabeledTextField(
+                    label = "Username",
+                    value = username,
+                    onValueChange = { username = it }
+                )
 
-            Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(8.dp))
 
-            LabeledTextField(
-                label = "Email",
-                value = email,
-                onValueChange = { email = it }
-            )
+                LabeledTextField(
+                    label = "Email",
+                    value = email,
+                    onValueChange = { email = it }
+                )
 
-            Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(8.dp))
 
-            LabeledTextField(
-                label = "Phone",
-                value = phone.toString(),
-                onValueChange = { phone = it }
-            )
+                LabeledTextField(
+                    label = "Phone",
+                    value = phone.toString(),
+                    onValueChange = { phone = it }
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { /* TODO: ação de finalizar pagamento */ },
+                onClick = { /* TODO: Save changes */ },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = "Save Changes",
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
         }
