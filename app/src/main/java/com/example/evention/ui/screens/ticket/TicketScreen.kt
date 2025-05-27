@@ -89,6 +89,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                     items(tickets.size) { index ->
                         EventListRow(
                             event = tickets[index].event,
+                            ticketID = tickets[index].ticketID,
                             firstSection = "",
                             secondSection = "",
                             onEdit = {},

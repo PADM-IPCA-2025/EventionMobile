@@ -15,10 +15,27 @@ class TicketScreenViewModel : ViewModel() {
     private val _tickets = MutableStateFlow<List<Ticket>>(emptyList())
     val tickets: StateFlow<List<Ticket>> = _tickets
 
+    private val _createTicketResult = MutableStateFlow<Result<Ticket>?>(null)
+    val createTicketResult: StateFlow<Result<Ticket>?> = _createTicketResult
+
     init {
         viewModelScope.launch {
             _tickets.value = remoteDataSource.getTickets()
         }
+    }
+
+    fun createTicket(eventId: String, token: String) {
+        viewModelScope.launch {
+            try {
+                val ticket = remoteDataSource.createTicket(eventId, token)
+                _createTicketResult.value = Result.success(ticket)
+            } catch (e: Exception) {
+                _createTicketResult.value = Result.failure(e)
+            }
+        }
+    }
+    fun clearCreateResult() {
+        _createTicketResult.value = null
     }
 }
 

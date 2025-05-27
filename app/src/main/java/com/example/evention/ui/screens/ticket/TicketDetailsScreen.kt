@@ -49,7 +49,7 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
         viewModel.loadTicketById(ticketId)
     }
     //val ticketNullable by viewModel.ticket.collectAsState()
-    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticket.ticketID }
+    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticketId }
 
     ticketNullable?.let { ticket ->
 

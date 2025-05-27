@@ -44,7 +44,9 @@ fun AppNavHost() {
             HomeScreen(events = MockData.events, navController = navController)
         }
         composable("search"){
-            SearchScreen(navController = navController)
+            //val viewModel: HomeScreenViewModel = viewModel()
+            //val events by viewModel.events.collectAsState()
+            SearchScreen(events = MockData.events,navController = navController)
         }
         composable("create"){
             CreateEventScreen(navController = navController)
