@@ -60,7 +60,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                 .padding(innerPadding)
         ) {
 
-        TitleComponent("Tickets", false)
+        TitleComponent("Tickets", false, navController)
 
             if (tickets.isEmpty()) {
                 Box(
@@ -92,7 +92,8 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                             firstSection = "",
                             secondSection = "",
                             onEdit = {},
-                            onRemove = {}
+                            onRemove = {} ,
+                            navController = navController
                         )
                     }
                 }

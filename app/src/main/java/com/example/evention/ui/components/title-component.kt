@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun TitleComponent(title: String, arrowBack:Boolean) {
+fun TitleComponent(title: String, arrowBack:Boolean, navController: NavController) {
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -37,7 +39,7 @@ fun TitleComponent(title: String, arrowBack:Boolean) {
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        // TODO: ação de voltar
+                        navController.popBackStack()
                     }
             )
         } else {
@@ -63,6 +65,6 @@ fun TitleComponent(title: String, arrowBack:Boolean) {
 @Composable
 fun PreviewTitleComponent() {
     EventionTheme {
-        TitleComponent("Payment", true)
+        TitleComponent("Payment", true, navController = rememberNavController())
     }
 }

@@ -12,7 +12,6 @@ import com.example.evention.ui.theme.EventionTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             EventionTheme {
                 AppNavHost()

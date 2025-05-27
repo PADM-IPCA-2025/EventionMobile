@@ -1,48 +1,40 @@
-package com.example.evention.ui.screens.profile.admin
+package com.example.evention.ui.screens.profile.admin.events
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
-import com.example.evention.mock.MockUserData
-import com.example.evention.model.User
+import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
-import com.example.evention.ui.components.admin.users.UsersListRow
+import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun AllUsers(users: List<User>) {
+fun EventsToApprove(events: List<Event>, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
 
-        TitleComponent("Users", true)
+        TitleComponent("Approve Events", true, navController)
 
-        if (users.isEmpty()) {
+        if (events.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -56,18 +48,24 @@ fun AllUsers(users: List<User>) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No users yet",
+                        text = "No suspended events yet",
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
         } else {
+
             LazyColumn {
-                items(users.size) { index ->
-                    UsersListRow(
-                        user = users[index],
-                        onEdit = { /* ação para editar */ },
-                        onRemove = { /* ação para remover */ }
+                items(events.size) { index ->
+                    EventListRow(
+                        event = events[index],
+                        firstSection = "Approve event",
+                        secondSection = "Reject event",
+                        onEdit = { /* ação para aprovar */ },
+                        onRemove = { /* ação para recusar */ },
+                        navController = rememberNavController()
+
+
                     )
                 }
             }
@@ -77,9 +75,10 @@ fun AllUsers(users: List<User>) {
 
 @Preview(showBackground = true)
 @Composable
-fun AllUsersPreview() {
+fun EventsToApprovePreview() {
     EventionTheme {
-        var users = listOf<User>()
-        AllUsers(users)
+        val navController = rememberNavController()
+        var events = listOf<Event>()
+        EventsToApprove(events, navController)
     }
 }

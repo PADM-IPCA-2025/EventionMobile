@@ -26,12 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
 
 @Composable
-fun UserInfo(user: User){
+fun UserInfo(user: User, navController: NavController){
     if (user.profilePicture != null) {
         val drawableId = getDrawableId(user.profilePicture)
         if (drawableId != 0) {
@@ -84,7 +85,9 @@ fun UserInfo(user: User){
     Spacer(modifier = Modifier.height(16.dp))
 
     Button(
-        onClick = { /* TODO: Edit profile action */ },
+        onClick = {
+            navController.navigate("userEdit")
+        },
         modifier = Modifier
             .size(154.dp, 50.dp)
             .border(1.dp, EventionBlue, RoundedCornerShape(8.dp)),

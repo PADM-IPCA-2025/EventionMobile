@@ -10,4 +10,7 @@ interface EventApiService {
 
     @GET("event/api/event/{id}")
     suspend fun getEventById(@Path("id") eventId: String): Event
+
+    @GET("event/api/suspended")
+    suspend fun getSuspendedEvents(): List<Event>
 }

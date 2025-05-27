@@ -100,4 +100,9 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
 
+    // Create QRCode
+    implementation("com.google.zxing:core:3.5.1")
+    implementation("androidx.compose.ui:ui-graphics:1.6.0")
+
+
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,17 +25,22 @@ import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
 
 @Composable
-fun UserEditInfo(user: User){
+fun UserEditInfo(user: User) {
     if (user.profilePicture != null) {
         val drawableId = getDrawableId(user.profilePicture)
         if (drawableId != 0) {
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "User Profile Image",
+            Box(
                 modifier = Modifier
                     .size(170.dp)
                     .clip(CircleShape)
-            )
+                    .border(3.dp, EventionBlue, CircleShape)
+            ) {
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "User Profile Image",
+                    modifier = Modifier.matchParentSize()
+                )
+            }
         }
     } else {
         Box(
@@ -45,21 +51,23 @@ fun UserEditInfo(user: User){
         )
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(12.dp))
 
     Button(
-        onClick = { /* TODO: Edit profile action */ },
+        onClick = { /* TODO: Edit profile image */ },
         modifier = Modifier
-            .size(170.dp, 30.dp)
+            .height(36.dp)
+            .padding(horizontal = 8.dp)
             .border(1.dp, EventionBlue, RoundedCornerShape(20.dp)),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(20.dp),
         elevation = ButtonDefaults.buttonElevation(0.dp)
     ) {
         Text(
-            text = "CHANGE AVATAR",
+            text = "Change Avatar",
             color = EventionBlue,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Medium
         )
     }
+
 }

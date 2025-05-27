@@ -15,10 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.evention.ui.components.profile.ProfileMenuItem
 
 @Composable
-fun MenuItem(){
+fun MenuItem(navController: NavController){
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp),
@@ -29,9 +30,9 @@ fun MenuItem(){
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            ProfileMenuItem(icon = Icons.Outlined.Person, label = "All Users", sublabel = "View and Manage all registered users")
-            ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "All Events", sublabel = "Manage all events")
-            ProfileMenuItem(icon = Icons.Outlined.Info, label = "Events to approve", sublabel = "Review and approve pending events")
+            ProfileMenuItem(icon = Icons.Outlined.Person, label = "All Users", sublabel = "View and Manage all registered users", navController = navController)
+            ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "All Events", sublabel = "Manage all events", navController = navController)
+            ProfileMenuItem(icon = Icons.Outlined.Info, label = "Events to approve", sublabel = "Review and approve pending events", navController = navController)
         }
     }
 }
