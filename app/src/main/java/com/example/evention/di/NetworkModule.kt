@@ -1,5 +1,7 @@
 package com.example.evention.di
 
+import LoginApiService
+import LoginRemoteDataSource
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
@@ -34,6 +36,10 @@ object NetworkModule {
         retrofit.create(UserApiService::class.java)
     }
 
+    private val loginApi: LoginApiService by lazy {
+        retrofit.create(LoginApiService::class.java)
+    }
+
     // Data Source
     val eventRemoteDataSource: EventRemoteDataSource by lazy {
         EventRemoteDataSource(eventApi)
@@ -46,4 +52,9 @@ object NetworkModule {
     val userRemoteDataSource: UserRemoteDataSource by lazy {
         UserRemoteDataSource(userApi)
     }
+
+    val loginRemoteDataSource: LoginRemoteDataSource by lazy {
+        LoginRemoteDataSource(loginApi)
+    }
+
 }

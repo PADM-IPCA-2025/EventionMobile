@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evention.ui.navigation.AppNavHost
+import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.theme.EventionTheme
 
 class MainActivity : ComponentActivity() {

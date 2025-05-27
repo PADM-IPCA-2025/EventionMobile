@@ -1,39 +1,44 @@
 package com.example.evention.ui.screens.auth.login
 
-import LoginApiService
-import LoginRequest
+import LoginRemoteDataSource
+import LoginResponse
 import UserPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
+import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.firestore
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-class AuthViewModel @Inject constructor(
-    private val apiService: LoginApiService,
+
+class LoginScreenViewModel(
+    private val loginRemoteDataSource: LoginRemoteDataSource,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
-    private val _loginState = MutableLiveData<Result<String>>()
-    val loginState: LiveData<Result<String>> = _loginState
+    var loginState by mutableStateOf<LoginState>(LoginState.Idle)
+        private set
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
+            loginState = LoginState.Loading
             try {
-                val response = apiService.login(LoginRequest(email, password))
+                val result = loginRemoteDataSource.login(email, password)
 
-                if (response.isSuccessful) {
-                    val body = response.body() ?: throw Exception("Resposta vazia")
-                    val token = body.token
-                    val userGuid = body.userGuid
+                if (result.isSuccess) {
+                    val response = result.getOrThrow()
+                    val token = response.token
+                    val userGuid = response.userGuid
 
                     userPreferences.saveToken(token)
+
+                    Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
 
                     val fcmToken = FirebaseMessaging.getInstance().token.await()
 
@@ -46,14 +51,22 @@ class AuthViewModel @Inject constructor(
                             )
                         ).await()
 
-                    _loginState.value = Result.success("Login bem-sucedido!")
+                    loginState = LoginState.Success(response)
                 } else {
-                    val error = response.errorBody()?.string() ?: "Erro desconhecido"
-                    _loginState.value = Result.failure(Exception("Login falhou: $error"))
+                    loginState = LoginState.Error(result.exceptionOrNull()?.message ?: "Erro desconhecido")
                 }
+
             } catch (e: Exception) {
-                _loginState.value = Result.failure(e)
+                Log.e("LoginViewModel", "Erro no login/Firebase: ${e.message}")
+                loginState = LoginState.Error(e.message ?: "Erro inesperado")
             }
         }
+    }
+
+    sealed class LoginState {
+        object Idle : LoginState()
+        object Loading : LoginState()
+        data class Success(val response: LoginResponse) : LoginState()
+        data class Error(val message: String) : LoginState()
     }
 }
