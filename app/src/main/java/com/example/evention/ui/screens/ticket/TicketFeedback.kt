@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
@@ -22,14 +23,14 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun TicketFeedbackScreen(ticket: Ticket) {
+fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 25.dp, vertical = 18.dp)
+            .padding(horizontal = 25.dp, vertical = 28.dp)
     ) {
 
-        TitleComponent("Event Feedback", true, navController = rememberNavController())
+        TitleComponent("Event Feedback", true, navController)
 
         Text(
             text = "The Event Is Finished",
@@ -107,6 +108,6 @@ fun TicketFeedbackScreen(ticket: Ticket) {
 @Composable
 fun TicketFeedbackPreview() {
     EventionTheme {
-        TicketFeedbackScreen(TicketMockData.tickets[0])
+        TicketFeedbackScreen(TicketMockData.tickets[0].ticketID, navController = rememberNavController())
     }
 }

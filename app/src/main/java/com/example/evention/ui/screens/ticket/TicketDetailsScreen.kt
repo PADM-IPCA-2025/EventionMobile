@@ -39,10 +39,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
 import generateQrCodeBitmap
-
+import java.time.ZoneId
 
 @Composable
 fun TicketDetailsScreen(ticketId: String, navController: NavController, viewModel: TicketDetailsScreenViewModel = viewModel()) {
+
 
     LaunchedEffect(ticketId) {
         viewModel.loadTicketById(ticketId)
@@ -55,6 +56,10 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
         val qrBitmap = remember(ticket.ticketID) {
             generateQrCodeBitmap(ticket.ticketID)
         }
+
+        val eventEndAtLocalDateTime = ticket.event.endAt.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
 
     Column(
         modifier = Modifier
@@ -154,9 +159,9 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Botão de feedback
+        if (LocalDateTime.now().isAfter(eventEndAtLocalDateTime)) {
         Button(
-            onClick = { },
+            onClick = {  navController.navigate("ticketFeedback/${ticketId}") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp),
@@ -169,6 +174,7 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
+        }
         }
     }
     }

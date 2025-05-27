@@ -29,6 +29,7 @@ import com.example.evention.ui.screens.profile.admin.events.EventsToApprove
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
 import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
+import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
 import com.example.evention.ui.screens.ticket.TicketsScreen
 
 @Composable
@@ -59,6 +60,13 @@ fun AppNavHost() {
         ) { backStackEntry ->
             val ticketId = backStackEntry.arguments?.getString("ticketId")
             TicketDetailsScreen(ticketId = ticketId ?: "", navController)
+        }
+        composable(
+            "ticketFeedback/{ticketId}",
+            arguments = listOf(navArgument("ticketId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ticketId = backStackEntry.arguments?.getString("ticketId")
+            TicketFeedbackScreen(ticketId = ticketId ?: "", navController)
         }
         composable("profile"){
             UserProfile(MockUserData.users.first().userID, navController = navController)
