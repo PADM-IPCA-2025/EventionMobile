@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockUserData
 import com.example.evention.ui.components.TitleComponent
@@ -35,7 +36,7 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun UserEdit(userId: String, viewModel: UserProfileViewModel = viewModel()) {
+fun UserEdit(userId: String, navController: NavController, viewModel: UserProfileViewModel = viewModel()) {
     /*LaunchedEffect(userId) {
         viewModel.loadUserById(userId)
     }
@@ -53,7 +54,7 @@ fun UserEdit(userId: String, viewModel: UserProfileViewModel = viewModel()) {
                 .padding(horizontal = 25.dp, vertical = 18.dp)
         ) {
 
-            TitleComponent("Edit Profile", true)
+            TitleComponent("Edit Profile", true, navController)
 
             UserEditInfo(user)
 
@@ -107,6 +108,6 @@ fun UserEdit(userId: String, viewModel: UserProfileViewModel = viewModel()) {
 fun UserEditPreview() {
     EventionTheme {
         val navController = rememberNavController()
-        UserEdit(MockUserData.users.first().userID)
+        UserEdit(MockUserData.users.first().userID, navController = navController)
     }
 }

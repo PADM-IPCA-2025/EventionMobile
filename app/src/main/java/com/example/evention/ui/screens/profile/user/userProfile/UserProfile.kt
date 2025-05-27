@@ -55,7 +55,7 @@ fun UserProfile(userId: String, navController: NavController, viewModel: UserPro
                     .padding(innerPadding)
             ) {
 
-                TitleComponent("Profile", false)
+                TitleComponent("Profile", false, navController)
 
 
                 UserInfo(user, navController = navController)

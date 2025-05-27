@@ -15,18 +15,13 @@ import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.ui.screens.event.create.CreateEventScreen
-import com.example.evention.ui.screens.profile.user.UserProfile
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
 import com.example.evention.ui.screens.ticket.TicketDetailsScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.profile.admin.AdminMenu
-import com.example.evention.ui.screens.profile.admin.AllEvents
-import com.example.evention.ui.screens.profile.admin.AllUsers
-import com.example.evention.ui.screens.profile.admin.EventsToApprove
 import com.example.evention.ui.screens.profile.admin.events.AllEvents
 import com.example.evention.ui.screens.profile.admin.events.EventsToApprove
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
-import com.example.evention.ui.screens.profile.user.UserEdit
 import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
 import com.example.evention.ui.screens.ticket.TicketsScreen
@@ -85,7 +80,7 @@ fun AppNavHost() {
             AllEvents(MockData.events, navController)
         }
         composable("userEdit") {
-            UserEdit(MockUserData.users.first().userID)
+            UserEdit(MockUserData.users.first().userID, navController)
         }
 
         composable("notifications") {
