@@ -10,6 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.firestore
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
+
 
 class LoginScreenViewModel(
     private val loginRemoteDataSource: LoginRemoteDataSource,
@@ -22,13 +28,37 @@ class LoginScreenViewModel(
     fun login(email: String, password: String) {
         viewModelScope.launch {
             loginState = LoginState.Loading
-            val result = loginRemoteDataSource.login(email, password)
-            loginState = if (result.isSuccess) {
-                val response = result.getOrThrow()
-                userPreferences.saveToken(response.token) // save token
-                LoginState.Success(response)
-            } else {
-                LoginState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+            try {
+                val result = loginRemoteDataSource.login(email, password)
+
+                if (result.isSuccess) {
+                    val response = result.getOrThrow()
+                    val token = response.token
+                    val userGuid = response.userGuid
+
+                    userPreferences.saveToken(token)
+
+                    Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
+
+                    val fcmToken = FirebaseMessaging.getInstance().token.await()
+
+                    Firebase.firestore.collection("user_tokens")
+                        .document(userGuid)
+                        .set(
+                            mapOf(
+                                "fcmToken" to fcmToken,
+                                "updatedAt" to FieldValue.serverTimestamp()
+                            )
+                        ).await()
+
+                    loginState = LoginState.Success(response)
+                } else {
+                    loginState = LoginState.Error(result.exceptionOrNull()?.message ?: "Erro desconhecido")
+                }
+
+            } catch (e: Exception) {
+                Log.e("LoginViewModel", "Erro no login/Firebase: ${e.message}")
+                loginState = LoginState.Error(e.message ?: "Erro inesperado")
             }
         }
     }
