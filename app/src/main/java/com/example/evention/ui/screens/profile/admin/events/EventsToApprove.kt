@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
@@ -25,7 +26,7 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun EventsToApprove(events: List<Event>, navController: NavController) {
+fun EventsToApprove(events: List<Event>, navController: NavController, viewModel: EventsToApproveViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,11 +62,9 @@ fun EventsToApprove(events: List<Event>, navController: NavController) {
                         event = events[index],
                         firstSection = "Approve event",
                         secondSection = "Reject event",
-                        onEdit = { /* ação para aprovar */ },
-                        onRemove = { /* ação para recusar */ },
-                        navController = rememberNavController()
-
-
+                        onEdit = { viewModel.approveEvent(events[index].eventID) },
+                        onRemove = { viewModel.deleteEvent(events[index].eventID) },
+                        navController = navController
                     )
                 }
             }

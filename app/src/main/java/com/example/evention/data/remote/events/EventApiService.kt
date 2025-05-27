@@ -3,6 +3,7 @@ package com.example.evention.data.remote.events
 import com.example.evention.model.Event
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface EventApiService {
@@ -12,9 +13,12 @@ interface EventApiService {
     @GET("event/api/event/{id}")
     suspend fun getEventById(@Path("id") eventId: String): Event
 
-    @GET("event/api/suspended")
+    @GET("event/api/events/suspended")
     suspend fun getSuspendedEvents(): List<Event>
 
-    @DELETE("event/api/delete/{id}")
+    @PUT("event/api/events/{id}/status")
+    suspend fun approveEvent(@Path("id") eventId: String): Event
+
+    @DELETE("event/api/events/{id}")
     suspend fun deleteEvent(@Path("id") eventId: String)
 }

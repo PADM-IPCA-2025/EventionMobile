@@ -3,6 +3,7 @@ package com.example.evention.ui.screens.profile.admin.editEvent
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,26 +50,26 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
     eventNullable?.let { event ->
         var name by remember { mutableStateOf(event.name) }
         var description by remember { mutableStateOf(event.description) }
-        var price by remember { mutableStateOf(event.price ?: "") }
+        var price by remember { mutableStateOf(event.price.toString()) }
 
-        val context = LocalContext.current
-        val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+        val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
-        var startDate by remember { mutableStateOf("") }
-        var endDate by remember { mutableStateOf("") }
+        var showDatePicker by remember { mutableStateOf(false) }
+        var startDateMillis by remember { mutableStateOf(event.startAt.time) }
+        var endDateMillis by remember { mutableStateOf(event.endAt.time) }
 
-        fun showDatePicker(initialDate: Calendar, onDateSelected: (String) -> Unit) {
-            DatePickerDialog(
-                context,
-                { _: DatePicker, year: Int, month: Int, day: Int ->
-                    val calendar = Calendar.getInstance()
-                    calendar.set(year, month, day)
-                    onDateSelected(dateFormat.format(calendar.time))
+        if (showDatePicker) {
+            DateRangePickerModal(
+                initialStartDate = startDateMillis,
+                initialEndDate = endDateMillis,
+                onDateRangeSelected = { start, end ->
+                    if (start != null && end != null) {
+                        startDateMillis = start
+                        endDateMillis = end
+                    }
                 },
-                initialDate.get(Calendar.YEAR),
-                initialDate.get(Calendar.MONTH),
-                initialDate.get(Calendar.DAY_OF_MONTH)
-            ).show()
+                onDismiss = { showDatePicker = false }
+            )
         }
 
         Box(
@@ -85,46 +87,45 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = "$startDate - $endDate",
-                        onValueChange = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                val today = Calendar.getInstance()
-                                showDatePicker(today) { date ->
-                                    startDate = date
-                                    showDatePicker(today) { end ->
-                                        endDate = end
-                                    }
-                                }
-                            },
-                        readOnly = true,
-                        trailingIcon = {
-                            Image(
-                                painter = painterResource(id = R.drawable.calendar_picker),
-                                contentDescription = "Calendar logo",
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    )
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDatePicker = true }
+                    ) {
+                        OutlinedTextField(
+                            value = "${formatter.format(Date(startDateMillis))} - ${formatter.format(Date(endDateMillis))}",
+                            onValueChange = {},
+                            textStyle = TextStyle(color = Color.Black),
+                            readOnly = true,
+                            enabled = false,
+                            modifier = Modifier.fillMaxWidth(),
+                            trailingIcon = {
+                                Image(
+                                    painter = painterResource(id = R.drawable.calendar_picker),
+                                    contentDescription = "Calendar logo",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp),
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Image(
-                                painter = painterResource(id = getDrawableId(event.eventPicture!!)),
-                                contentDescription = "Imagem do Evento",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.clip(RoundedCornerShape(14.dp))
-                            )
-                        }
+                        Image(
+                            painter = painterResource(id = getDrawableId(event.eventPicture!!)),
+                            contentDescription = "Imagem do Evento",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+
                         Button(
                             onClick = { /* TODO: Change image */ },
                             modifier = Modifier
@@ -172,13 +173,15 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                     LabeledTextField(
                         label = "Price",
-                        value = price.toString() + "€",
+                        value = "$price€",
                         onValueChange = { price = it }
                     )
                 }
 
                 Button(
-                    onClick = { /* Lógica para editar evento */ },
+                    onClick = {
+                        // TODO: Salvar alterações usando os valores atualizados
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -198,8 +201,57 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
             }
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateRangePickerModal(
+    initialStartDate: Long,
+    initialEndDate: Long,
+    onDateRangeSelected: (startDate: Long?, endDate: Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val state = rememberDateRangePickerState(
+        initialSelectedStartDateMillis = initialStartDate,
+        initialSelectedEndDateMillis = initialEndDate
+    )
 
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDateRangeSelected(state.selectedStartDateMillis, state.selectedEndDateMillis)
+                    onDismiss()
+                }
+            ) {
+                Text("Confirm", color = EventionBlue)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color.Gray)
+            }
+        },
+        colors = DatePickerDefaults.colors(
+            titleContentColor = EventionBlue,
+            headlineContentColor = EventionBlue,
+            weekdayContentColor = EventionBlue,
+            selectedDayContainerColor = EventionBlue,
+            selectedDayContentColor = Color.White
+        )
+    ) {
+        DateRangePicker(
+            state = state,
+            title = {
+                Text(text = "Select Event Date Range")
+            },
+            showModeToggle = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true)
