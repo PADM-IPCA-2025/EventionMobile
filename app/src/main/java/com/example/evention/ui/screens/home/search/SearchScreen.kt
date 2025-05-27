@@ -70,6 +70,7 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockData.events
+import com.example.evention.model.Event
 import com.example.evention.ui.theme.EventionBlue
 
 private const val REQUEST_LOCATION_PERMISSION = 1
@@ -111,8 +112,8 @@ fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionS
 }
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, navController: NavController) {
-    val events = remember { events }
+fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navController: NavController) {
+//    val events = remember { events }
     val context = LocalContext.current
     val query = remember { mutableStateOf("") }
     val cameraPositionState = rememberCameraPositionState {
@@ -151,12 +152,17 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController) {
                                 Marker(
                                     state = MarkerState(position = LatLng(route.latitude, route.longitude)),
                                     title = event.name,
-                                    snippet = "${address.localtown}, ${address.road} ${address.roadNumber}"
+                                    snippet = "${address.localtown}, ${address.road} ${address.roadNumber}",
+                                    onClick = {
+                                        navController.navigate("eventDetails/${event.eventID}")
+                                        true
+                                    }
                                 )
                             }
                         }
                     }
                 }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -245,7 +251,6 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                selectedEventIndex.value = eventIndex
                                 route?.let {
                                     val latLng = LatLng(it.latitude, it.longitude)
                                     CoroutineScope(Dispatchers.Main).launch {
@@ -253,6 +258,13 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController) {
                                             update = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
                                         )
                                     }
+                                }
+
+                                if (selectedEventIndex.value == eventIndex) {
+                                    // Mesmo evento, mas vamos forçar a navegação
+                                    navController.navigate("eventDetails/${event.eventID}")
+                                } else {
+                                    selectedEventIndex.value = eventIndex
                                 }
                             }
                     ) {
@@ -337,12 +349,12 @@ fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSe
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun Previeww() {
     EventionTheme {
         val navController = rememberNavController()
-        SearchScreen(navController = navController)
+        var events = listOf<Event>()
+        SearchScreen(events, navController = navController)
     }
 }

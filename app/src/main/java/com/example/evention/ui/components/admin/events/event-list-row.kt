@@ -57,6 +57,7 @@ fun formatDate(date: Date): String {
 @Composable
 fun EventListRow(
     event: Event,
+    ticketID: String? = null,
     firstSection: String,
     secondSection: String,
     onEdit: (Event) -> Unit,
@@ -76,7 +77,7 @@ fun EventListRow(
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             when (currentRoute) {
                 "tickets" -> {
-                    navController.navigate("ticketDetails/${event.eventID}")
+                    navController.navigate("ticketDetails/${ticketID}")
                 }
                 "allEvents" -> {
                     navController.navigate("eventDetails/${event.eventID}")
