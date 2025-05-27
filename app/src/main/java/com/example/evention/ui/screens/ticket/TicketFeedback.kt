@@ -83,7 +83,7 @@ fun TicketFeedbackScreen(ticketId: String, navController: NavController) {
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = "Star $index",
-                    tint = if (index < 3) EventionBlue else Color.Gray, // Example: 3 stars filled
+                    tint = if (index < rating) EventionBlue else Color.Gray,
                     modifier = Modifier
                         .size(32.dp)
                         .clickable {

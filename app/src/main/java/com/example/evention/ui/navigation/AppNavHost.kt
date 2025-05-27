@@ -27,6 +27,7 @@ import com.example.evention.ui.screens.profile.admin.editEvent.EditEvent
 import com.example.evention.ui.screens.profile.admin.events.AllEvents
 import com.example.evention.ui.screens.profile.admin.events.EventsToApprove
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
+import com.example.evention.ui.screens.profile.user.ScanQRCodeScreen
 import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
@@ -106,7 +107,9 @@ fun AppNavHost() {
             val eventId = backStackEntry.arguments?.getString("eventId")
             EditEvent(eventId = eventId?: "", navController)
         }
-
+        composable("scanQRCode"){
+            ScanQRCodeScreen(navController = navController)
+        }
         composable("notifications") {
             NotificationScreen(notifications = listOf(), navController = navController)
         }

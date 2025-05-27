@@ -32,9 +32,11 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun ScanQRCodeScreen() {
+fun ScanQRCodeScreen(navController: NavController) {
     var scannedCode by remember { mutableStateOf<String?>(null) }
     var boundingBoxes by remember { mutableStateOf(emptyList<android.graphics.Rect>()) }
     val context = LocalContext.current
@@ -181,6 +183,6 @@ fun ScanQRCodeScreen() {
 @Composable
 fun TicketDetailsPreview() {
     EventionTheme {
-        ScanQRCodeScreen()
+        ScanQRCodeScreen(navController = rememberNavController())
     }
 }
