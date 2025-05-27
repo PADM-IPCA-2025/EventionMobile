@@ -2,15 +2,18 @@ package com.example.evention.ui.screens.auth.login
 
 import LoginRemoteDataSource
 import LoginResponse
+import UserPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import android.util.Log
 
 class LoginScreenViewModel(
-    private val loginRemoteDataSource: LoginRemoteDataSource
+    private val loginRemoteDataSource: LoginRemoteDataSource,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     var loginState by mutableStateOf<LoginState>(LoginState.Idle)
@@ -21,9 +24,11 @@ class LoginScreenViewModel(
             loginState = LoginState.Loading
             val result = loginRemoteDataSource.login(email, password)
             loginState = if (result.isSuccess) {
-                LoginState.Success(result.getOrThrow())
+                val response = result.getOrThrow()
+                userPreferences.saveToken(response.token) // save token
+                LoginState.Success(response)
             } else {
-                LoginState.Error(result.exceptionOrNull()?.message ?: "Erro desconhecido")
+                LoginState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
             }
         }
     }
@@ -35,4 +40,3 @@ class LoginScreenViewModel(
         data class Error(val message: String) : LoginState()
     }
 }
-
