@@ -70,8 +70,20 @@ fun EventListRow(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
-            navController.navigate("ticketDetails/${event.eventID}")
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            when (currentRoute) {
+                "tickets" -> {
+                    navController.navigate("ticketDetails/${event.eventID}")
+                }
+                "allEvents" -> {
+                    navController.navigate("eventDetails/${event.eventID}")
+                }
+                else -> {
+                    navController.navigate("eventDetails/${event.eventID}")
+                }
+            }
         }
+
     ) {
         Row(
             modifier = Modifier

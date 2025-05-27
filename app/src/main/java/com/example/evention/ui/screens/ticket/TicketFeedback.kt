@@ -85,7 +85,6 @@ fun TicketFeedbackScreen(ticket: Ticket) {
             shape = RoundedCornerShape(8.dp)
         )
 
-
         Button(
             onClick = { },
             modifier = Modifier
