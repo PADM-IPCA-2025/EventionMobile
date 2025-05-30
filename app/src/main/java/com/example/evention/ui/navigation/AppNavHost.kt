@@ -166,7 +166,7 @@ fun AppNavHost() {
             val eventJson = backStackEntry.arguments?.getString("eventJson")
             val event = Gson().fromJson(eventJson, Event::class.java)
             EventDetails(eventDetails = event, navController = navController)
-        } //
+        }
         composable(
             "payment/{eventId}",
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
