@@ -39,7 +39,7 @@ class LoginScreenViewModel(
 
                     userPreferences.saveToken(token)
 
-                    Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
+                    //Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
                     Log.d("DEBUG", "userGuid: $userGuid")
 
                     val fcmToken = FirebaseMessaging.getInstance().token.await()

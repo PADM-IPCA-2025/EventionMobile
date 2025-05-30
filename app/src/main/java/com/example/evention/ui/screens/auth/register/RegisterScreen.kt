@@ -2,6 +2,7 @@ package com.example.evention.ui.screens.auth.register
 
 import AuthTextField
 import AuthConfirmButton
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -25,17 +27,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
+import com.example.evention.data.remote.authentication.RegisterViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
+import com.example.evention.ui.screens.auth.login.LoginScreenViewModel
 import com.example.evention.ui.theme.EventionTheme
 
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavController) {
+
+    val context = LocalContext.current
+    val viewModel: RegisterScreenViewModel = viewModel(factory = RegisterViewModelFactory(context))
 
     Column(
         modifier = Modifier
@@ -51,7 +62,8 @@ fun RegisterScreen() {
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(top = 16.dp)
-                .size(24.dp),
+                .size(24.dp)
+                .clickable { navController.navigate("signIn") },
             tint = Color.Black
         )
 
@@ -68,7 +80,7 @@ fun RegisterScreen() {
 
         Spacer(modifier = Modifier.height(22.dp))
 
-        var fullname by remember { mutableStateOf("") }
+        var username by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirmpassword by remember { mutableStateOf("") }
@@ -76,9 +88,9 @@ fun RegisterScreen() {
         AuthTextField(
             placeholderText = "Full Name",
             iconResId = R.drawable.profile,
-            value = fullname,
+            value = username,
             password = false,
-            onValueChange = { fullname = it }
+            onValueChange = { username = it }
         )
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -113,7 +125,10 @@ fun RegisterScreen() {
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        AuthConfirmButton("SIGN UP", onClick = { /* Lógica do registo */ })
+        AuthConfirmButton("SIGN UP", onClick = {
+            Log.d("RegisterScreen", "SIGN UP button clicked")
+            viewModel.register(username, email, password, confirmpassword)
+        })
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -140,7 +155,7 @@ fun RegisterScreen() {
             )
             Text(
                 text = " Sign in",
-                modifier = Modifier.clickable { /* Lógica de enviar para o Sign Up */ },
+                modifier = Modifier.clickable { navController.navigate("signIn") },
                 color = Color(0xFF5669FF),
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 15.sp,
@@ -155,6 +170,7 @@ fun RegisterScreen() {
 @Composable
 fun Preview() {
     EventionTheme {
-        RegisterScreen()
+        val navController = rememberNavController()
+        RegisterScreen(navController = navController)
     }
 }
