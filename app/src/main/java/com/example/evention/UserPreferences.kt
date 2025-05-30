@@ -8,6 +8,7 @@ class UserPreferences(context: Context) {
 
     companion object {
         private const val KEY_JWT_TOKEN = "TOKEN"
+        private const val KEY_USER_ID = "USER_ID"
     }
 
     fun saveToken(token: String) {
@@ -20,5 +21,17 @@ class UserPreferences(context: Context) {
 
     fun clearToken() {
         prefs.edit().remove(KEY_JWT_TOKEN).apply()
+    }
+
+    fun saveUserId(userId: String) {
+        prefs.edit().putString(KEY_USER_ID, userId).apply()
+    }
+
+    fun getUserId(): String? {
+        return prefs.getString(KEY_USER_ID, null)
+    }
+
+    fun clearUserId() {
+        prefs.edit().remove(KEY_USER_ID).apply()
     }
 }
