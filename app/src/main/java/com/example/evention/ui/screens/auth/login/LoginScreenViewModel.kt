@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.example.evention.ui.screens.auth.register.RegisterScreenViewModel.RegisterState
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
@@ -65,6 +66,11 @@ class LoginScreenViewModel(
             }
         }
     }
+
+    fun resetState() {
+        loginState = LoginState.Idle
+    }
+
 
     sealed class LoginState {
         object Idle : LoginState()

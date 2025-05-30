@@ -17,9 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,15 +38,39 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.data.remote.authentication.RegisterViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
-import com.example.evention.ui.screens.auth.login.LoginScreenViewModel
 import com.example.evention.ui.theme.EventionTheme
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.collectAsState
 
 
 @Composable
 fun RegisterScreen(navController: NavController) {
-
     val context = LocalContext.current
     val viewModel: RegisterScreenViewModel = viewModel(factory = RegisterViewModelFactory(context))
+
+    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmpassword by remember { mutableStateOf("") }
+
+    val registerState by viewModel.registerState.collectAsState()
+
+    val buttonState = when (registerState) {
+        is RegisterScreenViewModel.RegisterState.Loading -> ButtonState.LOADING
+        is RegisterScreenViewModel.RegisterState.Success -> ButtonState.SUCCESS
+        is RegisterScreenViewModel.RegisterState.Error -> ButtonState.ERROR
+        else -> ButtonState.IDLE
+    }
+
+    LaunchedEffect(registerState) {
+
+        if (registerState is RegisterScreenViewModel.RegisterState.Success) {
+            delay(500)
+            navController.navigate("signIn") {
+                popUpTo("signUp") { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -55,7 +79,6 @@ fun RegisterScreen(navController: NavController) {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = "Arrow Back",
@@ -74,16 +97,10 @@ fun RegisterScreen(navController: NavController) {
             fontSize = 24.sp,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(22.dp))
-
-        var username by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var confirmpassword by remember { mutableStateOf("") }
 
         AuthTextField(
             placeholderText = "Full Name",
@@ -125,10 +142,14 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        AuthConfirmButton("SIGN UP", onClick = {
-            Log.d("RegisterScreen", "SIGN UP button clicked")
-            viewModel.register(username, email, password, confirmpassword)
-        })
+        AuthConfirmButton(
+            text = "Sign up",
+            state = buttonState,
+            onClick = {
+                viewModel.resetState()
+                viewModel.register(username, email, password, confirmpassword)
+            }
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -137,12 +158,12 @@ fun RegisterScreen(navController: NavController) {
             color = Color(0xFF9D9898),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        AuthGoogle("Sign Up with Google", onClick = { /* Lógica do login c/google */ })
+        AuthGoogle("Sign Up with Google", onClick = { /* Lógica do Google */ })
 
         Spacer(modifier = Modifier.height(120.dp))
 
@@ -151,20 +172,19 @@ fun RegisterScreen(navController: NavController) {
                 text = "Already have an account?",
                 color = Color(0xFF120D26),
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 15.sp,
+                fontSize = 15.sp
             )
             Text(
                 text = " Sign in",
                 modifier = Modifier.clickable { navController.navigate("signIn") },
                 color = Color(0xFF5669FF),
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 15.sp,
+                fontSize = 15.sp
             )
         }
-
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable

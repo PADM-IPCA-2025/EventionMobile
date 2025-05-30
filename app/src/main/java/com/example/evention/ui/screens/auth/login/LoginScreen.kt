@@ -66,13 +66,24 @@ fun LoginScreen(navController: NavController) {
     }
 
     LaunchedEffect(loginState) {
-        if (loginState is LoginScreenViewModel.LoginState.Success) {
-            delay(500)
-            navController.navigate("home") {
-                popUpTo("signIn") { inclusive = true }
+        when (loginState) {
+            is LoginScreenViewModel.LoginState.Success -> {
+                delay(500)
+                viewModel.resetState()
+                navController.navigate("home") {
+                    popUpTo("signIn") { inclusive = true }
+                }
             }
+
+            is LoginScreenViewModel.LoginState.Error -> {
+                delay(2000)
+                viewModel.resetState()
+            }
+
+            else -> {}
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -164,6 +175,7 @@ fun LoginScreen(navController: NavController) {
             text = "Sign in",
             state = buttonState,
             onClick = {
+                viewModel.resetState()
                 viewModel.login(email, password)
             }
         )

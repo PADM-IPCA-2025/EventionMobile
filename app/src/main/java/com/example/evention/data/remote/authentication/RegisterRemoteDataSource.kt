@@ -14,16 +14,22 @@ class RegisterRemoteDataSource(private val api: RegisterApiService) {
             Log.d("RegisterRemote", "Response: $response")
 
             if (response.isSuccessful) {
-                response.body()?.let {
-                    Result.success(it)
-                } ?: Result.failure(Exception("Resposta vazia"))
+                val body = response.body()
+
+                if (response.code() == 201) {
+                    Result.success(RegisterResponse(success = true, message = "User registered successfully"))
+                } else if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(Exception("Resposta vazia"))
+                }
+
             } else {
                 Result.failure(Exception("Erro ${response.code()}: ${response.message()}"))
             }
+
         } catch (e: Exception) {
-
             Log.e("RegisterRemote", "Exception: ${e.message}")
-
             Result.failure(e)
         }
     }
