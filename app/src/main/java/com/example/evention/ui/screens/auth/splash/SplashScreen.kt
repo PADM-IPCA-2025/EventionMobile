@@ -12,6 +12,8 @@ import kotlinx.coroutines.delay
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.screens.home.payment.PaymentMethod
 import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.ui.theme.EventionTheme
@@ -19,37 +21,35 @@ import com.example.evention.R
 
 
 @Composable
-fun SplashScreen() {
-    //val context = LocalContext.current
-    //val lifecycleScope = rememberCoroutineScope()
+fun SplashScreen(navController: NavController) {
+    LaunchedEffect(Unit) {
+        delay(2000L)
 
-    LaunchedEffect(true) {
-        // Simula carregamento
-        delay(2000)
-        //navega para home
-        //navController.navigate("home") {
-        //    popUpTo("splash") { inclusive = true } // remove splash do backstack
-        //}
+        navController.navigate("home") {
+            popUpTo("splash") { inclusive = true }
+        }
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White), // fundo
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logosplash), // logo
+            painter = painterResource(id = R.drawable.logosplash),
             contentDescription = "Logo App Splash",
             modifier = Modifier.size(280.dp)
         )
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
     EventionTheme {
-        SplashScreen()
+        val navController = rememberNavController()
+        SplashScreen(navController = navController)
     }
 }

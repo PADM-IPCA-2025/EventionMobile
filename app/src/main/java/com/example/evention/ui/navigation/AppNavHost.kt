@@ -1,6 +1,7 @@
 package com.example.evention.ui.navigation
 
 import SearchScreen
+import SplashScreen
 import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -53,7 +54,10 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "splash") {
+        composable("splash") {
+            SplashScreen(navController = navController)
+        }
         composable("signIn") {
             LoginScreen(navController = navController)
         }
