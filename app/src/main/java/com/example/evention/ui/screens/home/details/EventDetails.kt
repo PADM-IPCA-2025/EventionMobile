@@ -1,5 +1,7 @@
 package com.example.evention.ui.screens.home.details
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +31,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +57,8 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.google.gson.Gson
 
 
 fun formatDate(date: Date): String {
@@ -79,15 +86,10 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventId: String, modifier: Modifier = Modifier, navController: NavController, viewModel: EventDetailsViewModel = viewModel()) {
-
-    /*LaunchedEffect(eventId) {
-        viewModel.loadEventById(eventId)
-    }
-    val eventNullable by viewModel.event.collectAsState()*/
-    val eventNullable = MockData.events.find { event -> event.eventID == eventId }
-
-    eventNullable?.let { event ->
+fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: EventDetailsViewModel = viewModel()) {
+    var hasError by remember { mutableStateOf(false) }
+    eventDetails.let { event ->
+        val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
@@ -100,12 +102,21 @@ fun EventDetails(eventId: String, modifier: Modifier = Modifier, navController: 
                         .fillMaxWidth()
                         .height(200.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = getDrawableId(event.eventPicture!!)),
-                        contentDescription = "Imagem do Evento",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (hasError) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.LightGray)
+                        )
+                    } else {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Event Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                            onError = { hasError = true }
+                        )
+                    }
 
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -134,11 +145,13 @@ fun EventDetails(eventId: String, modifier: Modifier = Modifier, navController: 
                     subtitle = formatTime(event.endAt)
                 )
 
+                val address = event.addressEvents.firstOrNull()
+
                 EventDetailsRow(
                     icon = Icons.Filled.LocationOn,
                     contentDescription = "Location",
-                    title = event.addressEvents[0].localtown,
-                    subtitle = event.addressEvents[0].road
+                    title = address?.localtown ?: "Unknown location",
+                    subtitle = address?.road ?: "Unknown road"
                 )
 
                 val user = MockUserData.users.find { it.userID == event.userId }
@@ -155,7 +168,9 @@ fun EventDetails(eventId: String, modifier: Modifier = Modifier, navController: 
 
             Button(
                 onClick = {
-                    navController.navigate("payment/${event.eventID}")
+                    val eventJson = Uri.encode(Gson().toJson(event))
+                    navController.navigate("payment/$eventJson")
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,6 +197,6 @@ fun Preview() {
     EventionTheme {
         val navController = rememberNavController()
         val event = MockData.events.first()
-        EventDetails(event.eventID, navController = navController)
+        EventDetails(MockData.events.first(), navController = navController)
     }
 }

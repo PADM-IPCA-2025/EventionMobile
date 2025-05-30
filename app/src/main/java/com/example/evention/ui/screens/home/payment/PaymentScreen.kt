@@ -40,15 +40,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.mock.MockData
+import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun PaymentScreen(eventId: String, navController: NavController) {
-    val event = MockData.events.find { event -> event.eventID == eventId }
-    if (event == null) return
-
+fun PaymentScreen(event: Event, navController: NavController) {
     var selectedMethod by remember { mutableStateOf("Paypal") }
     var paypalEmail by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
@@ -194,6 +192,6 @@ fun PaymentScreen(eventId: String, navController: NavController) {
 fun Preview() {
     EventionTheme {
         val navController = rememberNavController()
-        PaymentScreen(MockData.events.first().eventID, navController)
+        PaymentScreen(MockData.events.first(), navController)
     }
 }
