@@ -57,6 +57,8 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom.v20250101))
     implementation(libs.navigation.compose)
 
+    implementation(libs.coil.compose)
+
     // Retrofit e Gson
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

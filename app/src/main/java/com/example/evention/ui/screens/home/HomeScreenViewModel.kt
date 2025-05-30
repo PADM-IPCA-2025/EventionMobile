@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.model.Event
@@ -17,7 +18,11 @@ class HomeScreenViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _events.value = remoteDataSource.getEvents()
+            try {
+                _events.value = remoteDataSource.getEvents()
+            } catch (e: Exception) {
+                Log.e("HomeScreenViewModel", "Erro ao obter eventos", e)
+            }
         }
     }
 }

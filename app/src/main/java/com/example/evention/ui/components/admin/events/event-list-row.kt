@@ -148,7 +148,7 @@ fun EventListRow(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    "Edit",
+                                    firstSection,
                                     color = Color.Black,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -168,7 +168,7 @@ fun EventListRow(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    "Remove",
+                                    secondSection,
                                     color = Color.Black,
                                     fontWeight = FontWeight.SemiBold
                                 )
