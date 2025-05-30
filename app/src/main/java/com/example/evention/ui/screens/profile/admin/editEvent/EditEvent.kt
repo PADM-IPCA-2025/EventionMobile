@@ -180,7 +180,14 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                 Button(
                     onClick = {
-                        // TODO: Salvar alterações usando os valores atualizados
+                        viewModel.editEvent(
+                            eventId = eventId,
+                            name = name,
+                            description = description,
+                            startAt = startDateMillis,
+                            endAt = endDateMillis,
+                            price = price.replace("€", "").toFloatOrNull() ?: 0f,
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth()

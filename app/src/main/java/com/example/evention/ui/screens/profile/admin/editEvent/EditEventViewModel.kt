@@ -8,6 +8,7 @@ import com.example.evention.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 
 class EditEventViewModel : ViewModel() {
 
@@ -23,6 +24,31 @@ class EditEventViewModel : ViewModel() {
                 _event.value = fetchedEvent
             } catch (e: Exception) {
                 _event.value = null
+            }
+        }
+    }
+
+    fun editEvent(
+        eventId: String,
+        name: String,
+        description: String,
+        startAt: Long,
+        endAt: Long,
+        price: Float,
+    ) {
+        viewModelScope.launch {
+            try {
+                val updated = remoteDataSource.updateEvent(
+                    eventId = eventId,
+                    name = name,
+                    description = description,
+                    startAt = startAt,
+                    endAt = endAt,
+                    price = price,
+                )
+                _event.value = updated
+            } catch (e: Exception) {
+                // TODO: handle error
             }
         }
     }

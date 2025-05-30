@@ -23,7 +23,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,14 +39,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evention.model.Event
 import java.text.SimpleDateFormat
 import java.util.Locale
+import coil.compose.AsyncImage
 
 @Composable
 fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {
-
+    var hasError by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val imageRes = remember(event.eventPicture) {
         context.resources.getIdentifier(event.eventPicture, "drawable", context.packageName)
     }
+    val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -63,12 +68,22 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Image(
-                    painter = painterResource(imageRes),
-                    contentDescription = "Event Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (hasError) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.LightGray)
+                    )
+                } else {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Event Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        onError = { hasError = true }
+                    )
+                }
+
 
                 val day = remember(event.startAt) { SimpleDateFormat("dd", Locale.getDefault()).format(event.startAt) }
                 val month = remember(event.startAt) { SimpleDateFormat("MMM", Locale.getDefault()).format(event.startAt).uppercase() }

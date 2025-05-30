@@ -86,7 +86,7 @@ fun UserInfo(user: User, navController: NavController){
 
     Button(
         onClick = {
-            navController.navigate("userEdit")
+            navController.navigate("userEdit/${user.userID}")
         },
         modifier = Modifier
             .size(154.dp, 50.dp)

@@ -43,10 +43,10 @@ fun AppNavHost() {
             LoginScreen()
         }
         composable("home") {
-            //val viewModel: HomeScreenViewModel = viewModel()
-            //val events by viewModel.events.collectAsState()
+            val viewModel: HomeScreenViewModel = viewModel()
+            val events by viewModel.events.collectAsState()
 
-            HomeScreen(events = MockData.events, navController = navController)
+            HomeScreen(events = events, navController = navController)
         }
         composable("search"){
             //val viewModel: HomeScreenViewModel = viewModel()
