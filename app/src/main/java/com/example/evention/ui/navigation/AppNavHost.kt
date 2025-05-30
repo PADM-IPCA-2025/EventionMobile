@@ -1,15 +1,19 @@
 package com.example.evention.ui.navigation
 
 import SearchScreen
+import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.evention.data.remote.authentication.RequireAuth
 import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.screens.home.details.EventDetails
 import com.example.evention.ui.screens.home.notifications.NotificationScreen
@@ -58,12 +62,28 @@ fun AppNavHost() {
             SearchScreen(events = MockData.events,navController = navController)
         }
         composable("create"){
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                CreateEventScreen(navController = navController)
+            }
+
             CreateEventScreen(navController = navController)
         }
         composable("tickets"){
 //            val viewModel: TicketScreenViewModel = viewModel()
 //            val tickets by viewModel.tickets.collectAsState()
-            TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                TicketsScreen(TicketMockData.tickets, navController = navController)
+            }
+
+            //TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
         }
         composable(
             "ticketDetails/{ticketId}",
@@ -80,7 +100,15 @@ fun AppNavHost() {
             TicketFeedbackScreen(ticketId = ticketId ?: "", navController)
         }
         composable("profile"){
-            UserProfile(MockUserData.users.first().userID, navController = navController)
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                UserProfile(userPrefs.getUserId() ?: "", navController = navController)
+            }
+
+            //UserProfile(MockUserData.users.first().userID, navController = navController)
         }
         composable("adminMenu") {
             AdminMenu(navController)
