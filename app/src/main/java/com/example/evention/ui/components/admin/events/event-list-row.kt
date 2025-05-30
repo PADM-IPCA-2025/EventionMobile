@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.evention.model.Event
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
@@ -95,16 +97,25 @@ fun EventListRow(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (event.eventPicture != null) {
-                val drawableId = getDrawableId(event.eventPicture)
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "User Image",
+            val imageUrl = event.eventPicture?.let { "http://10.0.2.2:5010/event/$it" }
+            var hasError by remember { mutableStateOf(false) }
+
+            if (event.eventPicture == null || hasError) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.Gray)
+                )
+            } else {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Event Image",
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.Gray),
-                    contentScale = ContentScale.Crop
+                    onError = { hasError = true }
                 )
             }
 

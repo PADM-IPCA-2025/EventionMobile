@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockUserData
+import com.example.evention.model.User
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.userEdit.LabeledTextField
 import com.example.evention.ui.components.userEdit.UserEditInfo
@@ -36,14 +37,9 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun UserEdit(userId: String, navController: NavController, viewModel: UserEditViewModel = viewModel()) {
-    /*LaunchedEffect(userId) {
-        viewModel.loadUserById(userId)
-    }
-    val userNullable by viewModel.user.collectAsState()*/
-    val userNullable = MockUserData.users.find { user -> user.userID == userId }
+fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEditViewModel = viewModel()) {
 
-    userNullable?.let { user ->
+    userToEdit.let { user ->
         var username by remember { mutableStateOf(user.username) }
         var email by remember { mutableStateOf(user.email) }
         var phone by remember { mutableStateOf(user.phone ?: "") }
@@ -91,7 +87,7 @@ fun UserEdit(userId: String, navController: NavController, viewModel: UserEditVi
             Button(
                 onClick = {
                     viewModel.editUser(
-                        userId = userId,
+                        userId = user.userID,
                         username = username,
                         email = email,
                         phone = phone as Int
@@ -122,6 +118,6 @@ fun UserEdit(userId: String, navController: NavController, viewModel: UserEditVi
 fun UserEditPreview() {
     EventionTheme {
         val navController = rememberNavController()
-        UserEdit(MockUserData.users.first().userID, navController = navController)
+        UserEdit(MockUserData.users.first(), navController = navController)
     }
 }

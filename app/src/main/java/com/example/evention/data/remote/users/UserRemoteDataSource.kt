@@ -5,7 +5,7 @@ import com.example.evention.model.User
 class UserRemoteDataSource(private val api: UserApiService) {
     suspend fun getUsers(): List<User> = api.getUsers()
 
-    suspend fun getUserById(userId: String): User = api.getUserById(userId)
+    suspend fun getUserProfile(): User = api.getUserProfile()
 
     suspend fun deleteUser(userId: String) = api.deleteUser(userId)
 

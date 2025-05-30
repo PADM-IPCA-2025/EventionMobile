@@ -2,6 +2,7 @@ package com.example.evention.di
 
 import LoginApiService
 import LoginRemoteDataSource
+import UserPreferences
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
@@ -15,10 +16,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkModule {
     private const val BASE_URL = "https://10.0.2.2:5010/"
 
+    private lateinit var userPreferences: UserPreferences
+
+    fun init(userPreferences: UserPreferences) {
+        this.userPreferences = userPreferences
+    }
+
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(getUnsafeOkHttpClient())
+            .client(getUnsafeOkHttpClient(userPreferences))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

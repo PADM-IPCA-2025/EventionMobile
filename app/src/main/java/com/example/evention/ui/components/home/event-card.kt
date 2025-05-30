@@ -45,9 +45,7 @@ import coil.compose.AsyncImage
 fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {
     var hasError by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val imageRes = remember(event.eventPicture) {
-        context.resources.getIdentifier(event.eventPicture, "drawable", context.packageName)
-    }
+
     val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
     Card(
         colors = CardDefaults.cardColors(
