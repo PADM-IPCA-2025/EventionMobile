@@ -1,5 +1,6 @@
 package com.example.evention.ui.components.profile
 
+import UserPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -42,6 +44,8 @@ fun ProfileMenuItem(
     navController: NavController,
 ) {
     var switchState by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val userPrefs = remember { UserPreferences(context) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -55,7 +59,14 @@ fun ProfileMenuItem(
                     "All Users" -> navController.navigate("allUsers")
                     "All Events" -> navController.navigate("allEvents")
                     "Events to approve" -> navController.navigate("approveEvents")
-                    "Logout" -> navController.navigate("login")
+                    "Logout" -> {
+                        userPrefs.clearToken()
+                        userPrefs.clearUserId()
+                        navController.navigate("signIn") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+
                 }
             }
             .padding(horizontal = 16.dp, vertical = 12.dp)
