@@ -10,12 +10,11 @@ class UserRemoteDataSource(private val api: UserApiService) {
     suspend fun deleteUser(userId: String) = api.deleteUser(userId)
 
     suspend fun updateUser(userId: String, username: String, email: String, phone: Int): User {
-        val body = mapOf(
-            "username" to username,
-            "email" to email,
-            "phone" to phone
+        val body = UserApiService.UpdateUserRequest(
+            username = username,
+            email = email,
+            phone = phone,
         )
         return api.updateUser(userId, body)
     }
-
 }

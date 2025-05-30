@@ -29,8 +29,8 @@ interface EventApiService {
     data class UpdateEventRequest(
         val name: String,
         val description: String,
-        val startAt: Long,
-        val endAt: Long,
+        val startAt: String,
+        val endAt: String,
         val price: Float
     )
 

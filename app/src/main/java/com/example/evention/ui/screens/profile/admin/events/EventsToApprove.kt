@@ -77,7 +77,7 @@ fun EventsToApprove(events: List<Event>, navController: NavController, viewModel
 fun EventsToApprovePreview() {
     EventionTheme {
         val navController = rememberNavController()
-        var events = listOf<Event>()
+        val events = listOf<Event>()
         EventsToApprove(events, navController)
     }
 }

@@ -17,9 +17,15 @@ interface UserApiService {
     @DELETE("user/api/delete/{id}")
     suspend fun deleteUser(@Path("id") userId: String)
 
+    data class UpdateUserRequest(
+        val username: String,
+        val email: String,
+        val phone: Int,
+    )
+
     @PUT("user/api/user/{id}")
     suspend fun updateUser(
         @Path("id") userId: String,
-        @Body updatedFields: Map<String, Any?>
+        @Body updatedFields: UpdateUserRequest
     ): User
 }

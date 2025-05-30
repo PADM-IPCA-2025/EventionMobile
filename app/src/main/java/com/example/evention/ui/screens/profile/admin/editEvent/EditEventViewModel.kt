@@ -32,8 +32,8 @@ class EditEventViewModel : ViewModel() {
         eventId: String,
         name: String,
         description: String,
-        startAt: Long,
-        endAt: Long,
+        startAt: String,
+        endAt: String,
         price: Float,
     ) {
         viewModelScope.launch {

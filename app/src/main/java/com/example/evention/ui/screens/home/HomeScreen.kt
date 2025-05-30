@@ -28,12 +28,34 @@ import com.example.evention.ui.components.home.HomeSearch
 import com.example.evention.ui.theme.EventionTheme
 import com.example.evention.ui.components.MenuComponent
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.home.FilterButtonWithDateRange
 
 @Composable
 fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modifier = Modifier) {
+    val searchQuery = remember { mutableStateOf("") }
+
+    val selectedStartDate = remember { mutableStateOf<Long?>(null) }
+    val selectedEndDate = remember { mutableStateOf<Long?>(null) }
+
+    val filteredEvents = events.filter { event ->
+        val matchesSearch = event.name.contains(searchQuery.value, ignoreCase = true)
+
+        if (selectedStartDate.value == null || selectedEndDate.value == null) {
+            matchesSearch
+        } else {
+            val eventStart = event.startAt.time
+            val eventEnd = event.endAt.time
+
+            val inDateRange = eventStart >= selectedStartDate.value!! && eventEnd <= selectedEndDate.value!!
+
+            matchesSearch && inDateRange
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -50,9 +72,12 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                 .padding(innerPadding),
             contentPadding = PaddingValues(bottom = 30.dp),
         ) {
-
-        item {
-                HomeSearch(navController = navController)
+            item {
+                HomeSearch(
+                    searchQuery = searchQuery.value,
+                    onSearchChange = { searchQuery.value = it },
+                    navController = navController
+                )
             }
 
             item {
@@ -72,7 +97,13 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    FilterButtonWithDateRange()
+
+                    FilterButtonWithDateRange(
+                        onDateRangeSelected = { start, end ->
+                            selectedStartDate.value = start
+                            selectedEndDate.value = end
+                        }
+                    )
                 }
             }
 
@@ -80,7 +111,7 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                 Spacer(modifier = Modifier.height(15.dp))
             }
 
-            items(events) { event ->
+            items(filteredEvents) { event ->
                 EventCard(
                     event = event,
                     modifier = Modifier
@@ -93,17 +124,11 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
     EventionTheme {
-
-        /*
-        // Eventos da API
-        val viewModel: HomeScreenViewModel = viewModel()
-        val eventsApi by viewModel.events.collectAsState()
-        */
-
         val navController = rememberNavController()
         HomeScreen(events = MockData.events, navController = navController)
     }

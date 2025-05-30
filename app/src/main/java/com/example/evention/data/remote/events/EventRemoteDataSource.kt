@@ -22,8 +22,8 @@ class EventRemoteDataSource(private val api: EventApiService) {
         eventId: String,
         name: String,
         description: String,
-        startAt: Long,
-        endAt: Long,
+        startAt: String,
+        endAt: String,
         price: Float,
     ): Event {
         val updateRequest = EventApiService.UpdateEventRequest(

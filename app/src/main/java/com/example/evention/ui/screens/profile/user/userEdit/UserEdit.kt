@@ -42,7 +42,7 @@ fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEdit
     userToEdit.let { user ->
         var username by remember { mutableStateOf(user.username) }
         var email by remember { mutableStateOf(user.email) }
-        var phone by remember { mutableStateOf(user.phone ?: "") }
+        var phone by remember { mutableStateOf(user.phone?.toString() ?: "") }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,7 +77,7 @@ fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEdit
 
                 LabeledTextField(
                     label = "Phone",
-                    value = phone.toString(),
+                    value = phone,
                     onValueChange = { phone = it }
                 )
             }
@@ -86,11 +86,12 @@ fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEdit
 
             Button(
                 onClick = {
+                    val phoneInt = phone.toIntOrNull() ?: 0
                     viewModel.editUser(
                         userId = user.userID,
                         username = username,
                         email = email,
-                        phone = phone as Int
+                        phone = phoneInt
                     )
                     navController.popBackStack()
                 },
@@ -110,7 +111,6 @@ fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEdit
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)

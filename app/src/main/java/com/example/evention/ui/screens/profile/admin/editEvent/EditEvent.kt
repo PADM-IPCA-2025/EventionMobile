@@ -40,19 +40,23 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun EditEvent(eventId: String, navController: NavController, viewModel: EditEventViewModel = viewModel()) {
-    /*LaunchedEffect(eventId) {
-        viewModel.loadEventById(eventId)
-    }
-    val eventNullable by viewModel.event.collectAsState()*/
-    val eventNullable = MockData.events.find { event -> event.eventID == eventId }
-
-    eventNullable?.let { event ->
+fun EditEvent(
+    eventToEdit: Event,
+    navController: NavController,
+    viewModel: EditEventViewModel = viewModel()
+) {
+    eventToEdit.let { event ->
         var name by remember { mutableStateOf(event.name) }
         var description by remember { mutableStateOf(event.description) }
         var price by remember { mutableStateOf(event.price.toString()) }
 
         val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+
+        val isoFormatter = remember {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+        }
 
         var showDatePicker by remember { mutableStateOf(false) }
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
@@ -87,9 +91,10 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { showDatePicker = true }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showDatePicker = true }
                     ) {
                         OutlinedTextField(
                             value = "${formatter.format(Date(startDateMillis))} - ${formatter.format(Date(endDateMillis))}",
@@ -122,8 +127,7 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
                             painter = painterResource(id = getDrawableId(event.eventPicture!!)),
                             contentDescription = "Imagem do Evento",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxSize()
                         )
 
                         Button(
@@ -180,13 +184,17 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                 Button(
                     onClick = {
+                        val isoStart = isoFormatter.format(Date(startDateMillis))
+                        val isoEnd = isoFormatter.format(Date(endDateMillis))
+                        val cleanedPrice = price.replace("[^\\d.]".toRegex(), "").toFloatOrNull() ?: 0f
+
                         viewModel.editEvent(
-                            eventId = eventId,
+                            eventId = event.eventID,
                             name = name,
                             description = description,
-                            startAt = startDateMillis,
-                            endAt = endDateMillis,
-                            price = price.replace("€", "").toFloatOrNull() ?: 0f,
+                            startAt = isoStart,
+                            endAt = isoEnd,
+                            price = cleanedPrice
                         )
                     },
                     modifier = Modifier
@@ -266,6 +274,6 @@ fun DateRangePickerModal(
 fun UserEditPreview() {
     EventionTheme {
         val navController = rememberNavController()
-        EditEvent(MockData.events.first().eventID, navController)
+        EditEvent(MockData.events.first(), navController)
     }
 }

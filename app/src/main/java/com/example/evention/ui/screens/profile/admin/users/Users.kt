@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.admin.users
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import com.example.evention.model.User
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.users.UsersListRow
 import com.example.evention.ui.theme.EventionTheme
+import com.google.gson.Gson
 
 @Composable
 fun AllUsers(users: List<User>, navController: NavController, viewModel: UsersViewModel = viewModel()) {
@@ -59,7 +61,10 @@ fun AllUsers(users: List<User>, navController: NavController, viewModel: UsersVi
                 items(users.size) { index ->
                     UsersListRow(
                         user = users[index],
-                        onEdit = { navController.navigate("userEdit/${users[index].userID}") },
+                        onEdit = {
+                            val userJson = Uri.encode(Gson().toJson(users[index]))
+                            navController.navigate("userEdit/$userJson")
+                        },
                         onRemove = { viewModel.deleteUser(users[index].userID) }
                     )
                 }
