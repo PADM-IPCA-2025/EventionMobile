@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.user.userProfile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,12 +30,15 @@ import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
 
 @Composable
-fun UserProfile(userId: String, navController: NavController, viewModel: UserProfileViewModel = viewModel()) {
-    /*LaunchedEffect(userId) {
-    viewModel.loadUserById(userId)
+fun UserProfile(navController: NavController, viewModel: UserProfileViewModel = viewModel()) {
+
+    LaunchedEffect(Unit) {
+        viewModel.loadUserProfile()
     }
-    val userNullable by viewModel.user.collectAsState()*/
-    val userNullable = MockUserData.users.find { user -> user.userID == userId }
+    val userNullable by viewModel.user.collectAsState()
+    //val userNullable = MockUserData.users.find { user -> user.userID == userId }
+
+    userNullable?.let { Log.d("user", it.userID) }
 
     userNullable?.let { user ->
         Scaffold(
@@ -74,6 +78,6 @@ fun UserProfile(userId: String, navController: NavController, viewModel: UserPro
 fun HomePreview() {
     EventionTheme {
         val navController = rememberNavController()
-        UserProfile(MockUserData.users.first().userID, navController = navController)
+        UserProfile(navController = navController)
     }
 }

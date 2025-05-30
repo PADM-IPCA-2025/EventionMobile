@@ -15,10 +15,10 @@ class UserProfileViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
-    fun loadUserById(userId: String) {
+    fun loadUserProfile() {
         viewModelScope.launch {
             try {
-                val fetchedUser = remoteDataSource.getUserById(userId)
+                val fetchedUser = remoteDataSource.getUserProfile()
                 _user.value = fetchedUser
             } catch (e: Exception) {
                 _user.value = null

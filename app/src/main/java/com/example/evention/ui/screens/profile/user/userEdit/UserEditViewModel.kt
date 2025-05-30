@@ -15,17 +15,6 @@ class UserEditViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
-    fun loadUserById(userId: String) {
-        viewModelScope.launch {
-            try {
-                val fetchedUser = remoteDataSource.getUserById(userId)
-                _user.value = fetchedUser
-            } catch (e: Exception) {
-                _user.value = null
-            }
-        }
-    }
-
     fun editUser(userId: String, username: String, email: String, phone: Int) {
         viewModelScope.launch {
             try {

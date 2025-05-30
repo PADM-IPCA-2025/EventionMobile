@@ -1,9 +1,12 @@
 package com.example.evention.ui.navigation
 
 import SearchScreen
+import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +20,7 @@ import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
+import com.example.evention.model.User
 import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
@@ -28,12 +32,18 @@ import com.example.evention.ui.screens.profile.admin.AdminMenu
 import com.example.evention.ui.screens.profile.admin.editEvent.EditEvent
 import com.example.evention.ui.screens.profile.admin.events.AllEvents
 import com.example.evention.ui.screens.profile.admin.events.EventsToApprove
+import com.example.evention.ui.screens.profile.admin.events.EventsToApproveViewModel
+import com.example.evention.ui.screens.profile.admin.events.EventsViewModel
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
+import com.example.evention.ui.screens.profile.admin.users.UsersViewModel
 import com.example.evention.ui.screens.profile.user.ScanQRCodeScreen
 import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
+import com.example.evention.ui.screens.profile.userEvents.UserEvents
+import com.example.evention.ui.screens.profile.userEvents.UserEventsViewModel
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
 import com.example.evention.ui.screens.ticket.TicketsScreen
+import com.google.gson.Gson
 
 @Composable
 fun AppNavHost() {
@@ -52,18 +62,21 @@ fun AppNavHost() {
 
             HomeScreen(events = events, navController = navController)
         }
-        composable("search"){
+        composable("search") {
             //val viewModel: HomeScreenViewModel = viewModel()
             //val events by viewModel.events.collectAsState()
-            SearchScreen(events = MockData.events,navController = navController)
+            SearchScreen(events = MockData.events, navController = navController)
         }
-        composable("create"){
+        composable("create") {
             CreateEventScreen(navController = navController)
         }
-        composable("tickets"){
+        composable("tickets") {
 //            val viewModel: TicketScreenViewModel = viewModel()
 //            val tickets by viewModel.tickets.collectAsState()
-            TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
+            TicketsScreen(
+                TicketMockData.tickets,
+                navController = navController
+            ) // TicketMockData.tickets
         }
         composable(
             "ticketDetails/{ticketId}",
@@ -79,35 +92,39 @@ fun AppNavHost() {
             val ticketId = backStackEntry.arguments?.getString("ticketId")
             TicketFeedbackScreen(ticketId = ticketId ?: "", navController)
         }
-        composable("profile"){
-            UserProfile(MockUserData.users.first().userID, navController = navController)
+        composable("profile") {
+            UserProfile(navController = navController)
         }
         composable("adminMenu") {
             AdminMenu(navController)
         }
         composable("allUsers") {
-            //val viewModel: UsersViewModel = viewModel()
-            //val users by viewModel.users.collectAsState()
-            AllUsers(users = MockUserData.users, navController)
+            val viewModel: UsersViewModel = viewModel()
+            val users by viewModel.users.collectAsState()
+            AllUsers(users = users, navController)
         }
         composable("allEvents") {
-            //val viewModel: EventsViewModel = viewModel()
-            //val events by viewModel.events.collectAsState()
-            AllEvents(events = MockData.events, navController)
+            val viewModel: EventsViewModel = viewModel()
+            val events by viewModel.events.collectAsState()
+            AllEvents(events = events, navController)
         }
         composable("approveEvents") {
-            //val viewModel: EventsToApproveViewModel = viewModel()
-            //val events by viewModel.events.collectAsState()
-            EventsToApprove(events = MockData.events.filter { event -> event.eventStatus.status == "Pendente" }, navController)
+            val viewModel: EventsToApproveViewModel = viewModel()
+            val events by viewModel.events.collectAsState()
+            EventsToApprove(events = events, navController)
         }
         composable("userEvents") {
-            AllEvents(MockData.events.filter { event -> event.userId == MockUserData.users.first().userID }, navController)
+            val viewModel: UserEventsViewModel = viewModel()
+            val events by viewModel.events.collectAsState()
+            UserEvents(events = events, navController)
         }
-        composable("userEdit/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.StringType})
+        composable(
+            "userEdit/{userJson}",
+            arguments = listOf(navArgument("userJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId")
-            UserEdit(userId = userId ?: "", navController)
+            val userJson = backStackEntry.arguments?.getString("userJson")
+            val user = Gson().fromJson(userJson, User::class.java)
+            UserEdit(userToEdit = user, navController = navController)
         }
         composable("eventEdit/{eventId}",
             arguments = listOf(navArgument("eventId") { type = NavType.StringType})

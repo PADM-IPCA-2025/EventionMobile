@@ -37,6 +37,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
@@ -55,16 +56,25 @@ fun UsersListRow(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (user.profilePicture != null) {
-            val drawableId = getDrawableId(user.profilePicture)
-            Image(
-                painter = painterResource(id = drawableId),
+        val imageUrl = user.profilePicture?.let { "http://10.0.2.2:5010/event/$it" }
+        var hasError by remember { mutableStateOf(false) }
+
+        if (user.profilePicture == null || hasError) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray)
+            )
+        } else {
+            AsyncImage(
+                model = imageUrl,
                 contentDescription = "User Image",
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray),
-                contentScale = ContentScale.Crop
+                onError = { hasError = true }
             )
         }
 
