@@ -50,6 +50,7 @@ fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory(context))
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -159,6 +160,7 @@ fun LoginScreen(navController: NavController) {
             }
             is LoginScreenViewModel.LoginState.Success -> {
                 Text("Login bem-sucedido!")
+                navController.navigate("home")
             }
             else -> {}
         }

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.evention.data.remote.authentication.RequireAuth
 import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.screens.home.details.EventDetails
 import com.example.evention.ui.screens.home.notifications.NotificationScreen
@@ -111,7 +112,7 @@ fun AppNavHost() {
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                UserProfile(userPrefs.getUserId() ?: "", navController = navController)
+                UserProfile(navController = navController)
             }
 
             //UserProfile(MockUserData.users.first().userID, navController = navController)
