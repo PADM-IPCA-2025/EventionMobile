@@ -1,0 +1,30 @@
+package com.example.evention.data.remote.authentication
+
+import android.util.Log
+
+class RegisterRemoteDataSource(private val api: RegisterApiService) {
+
+    suspend fun register(username: String, email: String, password: String): Result<RegisterResponse> {
+
+        Log.d("RegisterRemote", "Attempting register API call")
+
+        return try {
+            val response = api.register(RegisterRequest(username, email, password))
+
+            Log.d("RegisterRemote", "Response: $response")
+
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("Resposta vazia"))
+            } else {
+                Result.failure(Exception("Erro ${response.code()}: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+
+            Log.e("RegisterRemote", "Exception: ${e.message}")
+
+            Result.failure(e)
+        }
+    }
+}

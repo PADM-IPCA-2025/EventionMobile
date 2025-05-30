@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.data.remote.authentication.LoginViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
@@ -44,7 +46,7 @@ import com.example.evention.ui.theme.EventionTheme
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory(context))
 
@@ -186,7 +188,7 @@ fun LoginScreen() {
             )
             Text(
                 text = " Sign up",
-                modifier = Modifier.clickable { /* Lógica de enviar para o Sign Up */ },
+                modifier = Modifier.clickable { navController.navigate("signUp") },
                 color = Color(0xFF5669FF),
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 15.sp,
@@ -202,6 +204,7 @@ fun LoginScreen() {
 @Composable
 fun Preview() {
     EventionTheme {
-        LoginScreen()
+        val navController = rememberNavController()
+        LoginScreen(navController = navController)
     }
 }
