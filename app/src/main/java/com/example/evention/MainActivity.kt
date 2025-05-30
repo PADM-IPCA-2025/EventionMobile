@@ -17,10 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EventionTheme {
-                val navController = rememberNavController()
-                //LoginScreen(navController = navController)
-                RegisterScreen(navController = navController)
-//                AppNavHost()
+                AppNavHost()
             }
         }
     }
