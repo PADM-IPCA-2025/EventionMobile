@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.core.app.ActivityCompat
@@ -72,6 +73,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockData.events
 import com.example.evention.model.Event
 import com.example.evention.ui.theme.EventionBlue
+import com.google.gson.Gson
 
 private const val REQUEST_LOCATION_PERMISSION = 1
 
@@ -154,7 +156,8 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                                     title = event.name,
                                     snippet = "${address.localtown}, ${address.road} ${address.roadNumber}",
                                     onClick = {
-                                        navController.navigate("eventDetails/${event.eventID}")
+                                        val eventJson = Uri.encode(Gson().toJson(event))
+                                        navController.navigate("eventDetails/$eventJson")
                                         true
                                     }
                                 )
@@ -261,8 +264,8 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                                 }
 
                                 if (selectedEventIndex.value == eventIndex) {
-                                    // Mesmo evento, mas vamos forçar a navegação
-                                    navController.navigate("eventDetails/${event.eventID}")
+                                    val eventJson = Uri.encode(Gson().toJson(event))
+                                    navController.navigate("eventDetails/$eventJson")
                                 } else {
                                     selectedEventIndex.value = eventIndex
                                 }

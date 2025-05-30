@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +37,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.mock.MockData
-import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 @Composable
-fun PaymentScreen(event: Event, navController: NavController) {
+fun PaymentScreen(eventId: String, navController: NavController, viewModel: PaymentViewModel) {
+
+    val paymentResult by viewModel.paymentResult.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    val event = MockData.events.find { event -> event.eventID == eventId }
+    if (event == null) return
+
     var selectedMethod by remember { mutableStateOf("Paypal") }
     var paypalEmail by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
@@ -169,7 +186,12 @@ fun PaymentScreen(event: Event, navController: NavController) {
 
         Button(
             onClick = {
-                // TODO: Adicionar lógica de validação e envio
+                viewModel.createPayment(
+                    eventId,
+                    event.userId,
+                    event.price,
+                    paymentType = selectedMethod,
+                )
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
@@ -192,6 +214,7 @@ fun PaymentScreen(event: Event, navController: NavController) {
 fun Preview() {
     EventionTheme {
         val navController = rememberNavController()
-        PaymentScreen(MockData.events.first(), navController)
+        val viewModel: PaymentViewModel = viewModel()
+        PaymentScreen(MockData.events.first().eventID, navController, viewModel)
     }
 }

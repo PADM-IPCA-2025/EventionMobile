@@ -27,6 +27,7 @@ import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
+import com.example.evention.ui.screens.home.payment.PaymentViewModel
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
 import com.example.evention.ui.screens.ticket.TicketDetailsScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
@@ -50,6 +51,7 @@ import com.google.gson.Gson
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = "home") {
         composable("signIn") {
@@ -65,13 +67,11 @@ fun AppNavHost() {
             HomeScreen(events = events, navController = navController)
         }
         composable("search") {
-            //val viewModel: HomeScreenViewModel = viewModel()
-            //val events by viewModel.events.collectAsState()
-            SearchScreen(events = MockData.events, navController = navController)
+            val viewModel: HomeScreenViewModel = viewModel()
+            val events by viewModel.events.collectAsState()
+            SearchScreen(events, navController = navController)
         }
         composable("create"){
-
-            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
@@ -84,7 +84,6 @@ fun AppNavHost() {
 //            val viewModel: TicketScreenViewModel = viewModel()
 //            val tickets by viewModel.tickets.collectAsState()
 
-            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
@@ -109,7 +108,6 @@ fun AppNavHost() {
         }
         composable("profile"){
 
-            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
@@ -170,13 +168,12 @@ fun AppNavHost() {
             EventDetails(eventDetails = event, navController = navController)
         }
         composable(
-            "payment/{eventJson}",
-            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
+            "payment/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val eventJson = backStackEntry.arguments?.getString("eventJson")
-            val event = Gson().fromJson(eventJson, Event::class.java)
-            PaymentScreen(event = event, navController = navController)
+            val eventId = backStackEntry.arguments?.getString("eventId")
+            val viewModel: PaymentViewModel = viewModel()
+            PaymentScreen(eventId = eventId ?: "", navController, viewModel )
         }
-
     }
 }

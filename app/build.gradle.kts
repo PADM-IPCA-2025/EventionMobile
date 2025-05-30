@@ -106,5 +106,9 @@ dependencies {
     implementation("com.google.zxing:core:3.5.1")
     implementation("androidx.compose.ui:ui-graphics:1.6.0")
 
+    //OkHttp3
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
 
 }

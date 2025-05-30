@@ -7,6 +7,8 @@ import com.example.evention.data.remote.authentication.RegisterRemoteDataSource
 import UserPreferences
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
+import com.example.evention.data.remote.payments.PaymentApiService
+import com.example.evention.data.remote.payments.PaymentRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
 import com.example.evention.data.remote.tickets.TicketRemoteDataSource
 import getUnsafeOkHttpClient
@@ -41,6 +43,10 @@ object NetworkModule {
         retrofit.create(TicketApiService::class.java)
     }
 
+    private val paymentApi: PaymentApiService by lazy {
+        retrofit.create(PaymentApiService::class.java)
+    }
+
     private val userApi: UserApiService by lazy {
         retrofit.create(UserApiService::class.java)
     }
@@ -56,6 +62,10 @@ object NetworkModule {
     // Data Source
     val eventRemoteDataSource: EventRemoteDataSource by lazy {
         EventRemoteDataSource(eventApi)
+    }
+
+    val paymentRemoteDataSource: PaymentRemoteDataSource by lazy {
+        PaymentRemoteDataSource(paymentApi)
     }
 
     val ticketRemoteDataSource: TicketRemoteDataSource by lazy {

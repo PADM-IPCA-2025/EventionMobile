@@ -168,8 +168,8 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
 
             Button(
                 onClick = {
-                    val eventJson = Uri.encode(Gson().toJson(event))
-                    navController.navigate("payment/$eventJson")
+//                    val eventJson = Uri.encode(Gson().toJson(event))
+                    navController.navigate("payment/${event.eventID}")
 
                 },
                 modifier = Modifier
