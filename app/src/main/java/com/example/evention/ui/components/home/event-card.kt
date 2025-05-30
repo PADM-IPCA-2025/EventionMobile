@@ -1,5 +1,6 @@
 package com.example.evention.ui.components.home
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,12 +41,11 @@ import com.example.evention.model.Event
 import java.text.SimpleDateFormat
 import java.util.Locale
 import coil.compose.AsyncImage
+import com.google.gson.Gson
 
 @Composable
 fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {
     var hasError by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
     val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
     Card(
         colors = CardDefaults.cardColors(
@@ -57,7 +57,8 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
             .height(220.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = {
-            navController.navigate("eventDetails/${event.eventID}")
+            val eventJson = Uri.encode(Gson().toJson(event))
+            navController.navigate("eventDetails/$eventJson")
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

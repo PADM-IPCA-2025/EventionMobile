@@ -20,6 +20,7 @@ import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
+import com.example.evention.model.Event
 import com.example.evention.model.User
 import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
@@ -139,18 +140,21 @@ fun AppNavHost() {
             NotificationScreen(notifications = listOf(), navController = navController)
         }
         composable(
-            "eventDetails/{eventId}",
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+            "eventDetails/{eventJson}",
+            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")
-            EventDetails(eventId = eventId ?: "", navController = navController)
+            val eventJson = backStackEntry.arguments?.getString("eventJson")
+            val event = Gson().fromJson(eventJson, Event::class.java)
+            EventDetails(eventDetails = event, navController = navController)
         }
         composable(
-            "payment/{eventId}",
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+            "payment/{eventJson}",
+            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")
-            PaymentScreen(eventId = eventId ?: "", navController)
+            val eventJson = backStackEntry.arguments?.getString("eventJson")
+            val event = Gson().fromJson(eventJson, Event::class.java)
+            PaymentScreen(event = event, navController = navController)
         }
+
     }
 }

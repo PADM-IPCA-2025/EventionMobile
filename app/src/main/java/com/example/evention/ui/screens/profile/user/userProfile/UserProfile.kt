@@ -36,9 +36,6 @@ fun UserProfile(navController: NavController, viewModel: UserProfileViewModel = 
         viewModel.loadUserProfile()
     }
     val userNullable by viewModel.user.collectAsState()
-    //val userNullable = MockUserData.users.find { user -> user.userID == userId }
-
-    userNullable?.let { Log.d("user", it.userID) }
 
     userNullable?.let { user ->
         Scaffold(

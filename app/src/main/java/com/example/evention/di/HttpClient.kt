@@ -36,13 +36,12 @@ class AuthInterceptor(private val userPreferences: UserPreferences) : Intercepto
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        //val token = userPreferences.getToken()
-        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiJhMGJkZWM1NC05NmM3LTQwNjQtOGEzOS0xMWNmYmMyZmI3ZTIiLCJ1c2VybmFtZSI6ImNyaXN0aWFub3JvbmFsZG8iLCJlbWFpbCI6ImNyaXN0aWFub3JvbmFsZG9AZ21haWwuY29tIiwidXNlclR5cGUiOiIxMjNlNDU2Ny1lODliLTEyZDMtYTQ1Ni00MjY2MTQxNzQwMDIiLCJpYXQiOjE3NDg2MDkzNTQsImV4cCI6MTc0ODY5NTc1NH0.GXW9Nn13dKfsK2MZfqZ0QFg8ts-pWFQ0OQOD0qvBHy8"
+        val token = userPreferences.getToken()
         val requestBuilder = originalRequest.newBuilder()
 
-        //if (!token.isNullOrEmpty()) {
+        if (!token.isNullOrEmpty()) {
             requestBuilder.addHeader("Authorization", token)
-        //}
+        }
 
         val requestWithAuth = requestBuilder.build()
         return chain.proceed(requestWithAuth)
