@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import com.example.evention.data.remote.authentication.LoginViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -50,6 +52,27 @@ fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory(context))
 
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var rememberMeChecked by remember { mutableStateOf(true) }
+
+    val loginState = viewModel.loginState
+
+    val buttonState = when (loginState) {
+        is LoginScreenViewModel.LoginState.Loading -> ButtonState.LOADING
+        is LoginScreenViewModel.LoginState.Success -> ButtonState.SUCCESS
+        is LoginScreenViewModel.LoginState.Error -> ButtonState.ERROR
+        else -> ButtonState.IDLE
+    }
+
+    LaunchedEffect(loginState) {
+        if (loginState is LoginScreenViewModel.LoginState.Success) {
+            delay(500)
+            navController.navigate("home") {
+                popUpTo("signIn") { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -57,7 +80,7 @@ fun LoginScreen(navController: NavController) {
             .padding(horizontal = 24.dp)
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Image(
             painter = painterResource(id = R.drawable.logosimple),
             contentDescription = "Logo App Login",
@@ -77,10 +100,6 @@ fun LoginScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(4.dp))
-
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        val loginState = viewModel.loginState
 
         AuthTextField(
             placeholderText = "abc@email.com",
@@ -102,15 +121,11 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        var rememberMeChecked by remember { mutableStateOf(true) }
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Switch(
                 checked = rememberMeChecked,
                 onCheckedChange = { rememberMeChecked = it },
@@ -118,11 +133,9 @@ fun LoginScreen(navController: NavController) {
                     checkedThumbColor = Color.White,
                     uncheckedThumbColor = Color.White,
                     checkedTrackColor = EventionBlue,
-                    uncheckedTrackColor = Color.LightGray,
-                    checkedBorderColor = Color.Transparent,
-                    uncheckedBorderColor = Color.Transparent
+                    uncheckedTrackColor = Color.LightGray
                 ),
-                modifier = Modifier.scale(0.75f) // scale do botao
+                modifier = Modifier.scale(0.75f)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -131,7 +144,7 @@ fun LoginScreen(navController: NavController) {
                 text = "Remember Me",
                 fontSize = 14.sp,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF120D26),
+                color = Color(0xFF120D26)
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -147,23 +160,13 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        AuthConfirmButton("SIGN IN", onClick = {
-            viewModel.login(email, password)
-        })
-
-        when (loginState) {
-            is LoginScreenViewModel.LoginState.Loading -> {
-                CircularProgressIndicator()
+        AuthConfirmButton(
+            text = "Sign in",
+            state = buttonState,
+            onClick = {
+                viewModel.login(email, password)
             }
-            is LoginScreenViewModel.LoginState.Error -> {
-                Text("Erro: ${(loginState as LoginScreenViewModel.LoginState.Error).message}", color = Color.Red)
-            }
-            is LoginScreenViewModel.LoginState.Success -> {
-                Text("Login bem-sucedido!")
-                navController.navigate("home")
-            }
-            else -> {}
-        }
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -172,12 +175,12 @@ fun LoginScreen(navController: NavController) {
             color = Color(0xFF9D9898),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        AuthGoogle("Login with Google", onClick = { /* Lógica do login c/google */ })
+        AuthGoogle("Login with Google", onClick = { /* Lógica do login Google */ })
 
         Spacer(modifier = Modifier.height(80.dp))
 
@@ -186,20 +189,19 @@ fun LoginScreen(navController: NavController) {
                 text = "Don’t have an account?",
                 color = Color(0xFF120D26),
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 15.sp,
+                fontSize = 15.sp
             )
             Text(
                 text = " Sign up",
                 modifier = Modifier.clickable { navController.navigate("signUp") },
-                color = Color(0xFF5669FF),
+                color = EventionBlue,
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 15.sp,
+                fontSize = 15.sp
             )
         }
-
     }
-
 }
+
 
 
 @Preview(showBackground = true)

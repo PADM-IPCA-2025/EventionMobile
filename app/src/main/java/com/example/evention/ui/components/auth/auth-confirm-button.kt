@@ -10,8 +10,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,21 +29,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evention.ui.theme.EventionBlue
 
+enum class ButtonState {
+    IDLE, LOADING, SUCCESS, ERROR
+}
+
 @Composable
 fun AuthConfirmButton(
     text: String,
+    state: ButtonState = ButtonState.IDLE,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Button(
-        onClick = onClick,
-        modifier = Modifier
+        onClick = { if (state == ButtonState.IDLE) onClick() },
+        modifier = modifier
             .width(270.dp)
             .height(58.dp),
         shape = RoundedCornerShape(15.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = EventionBlue
-        )
+        colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
+        enabled = state != ButtonState.LOADING
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -51,7 +58,7 @@ fun AuthConfirmButton(
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFFFFFFF)
+                color = Color.White
             )
 
             Box(
@@ -61,16 +68,47 @@ fun AuthConfirmButton(
                     .background(Color(0xFF0057DF), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Arrow Forward",
-                    modifier = Modifier.size(20.dp),
-                    tint = Color.White
-                )
+                when (state) {
+                    ButtonState.LOADING -> {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    ButtonState.SUCCESS -> {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Success",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    ButtonState.ERROR -> {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Error",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    else -> {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowForward,
+                            contentDescription = "Arrow Forward",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
