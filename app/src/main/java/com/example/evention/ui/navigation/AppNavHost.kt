@@ -67,16 +67,29 @@ fun AppNavHost() {
             //val events by viewModel.events.collectAsState()
             SearchScreen(events = MockData.events, navController = navController)
         }
-        composable("create") {
+        composable("create"){
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                CreateEventScreen(navController = navController)
+            }
+
             CreateEventScreen(navController = navController)
         }
-        composable("tickets") {
+        composable("tickets"){
 //            val viewModel: TicketScreenViewModel = viewModel()
 //            val tickets by viewModel.tickets.collectAsState()
-            TicketsScreen(
-                TicketMockData.tickets,
-                navController = navController
-            ) // TicketMockData.tickets
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                TicketsScreen(TicketMockData.tickets, navController = navController)
+            }
+
+            //TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
         }
         composable(
             "ticketDetails/{ticketId}",
@@ -92,8 +105,16 @@ fun AppNavHost() {
             val ticketId = backStackEntry.arguments?.getString("ticketId")
             TicketFeedbackScreen(ticketId = ticketId ?: "", navController)
         }
-        composable("profile") {
-            UserProfile(navController = navController)
+        composable("profile"){
+
+            val context = LocalContext.current
+            val userPrefs = remember { UserPreferences(context) }
+
+            RequireAuth(navController, userPrefs) {
+                UserProfile(userPrefs.getUserId() ?: "", navController = navController)
+            }
+
+            //UserProfile(MockUserData.users.first().userID, navController = navController)
         }
         composable("adminMenu") {
             AdminMenu(navController)

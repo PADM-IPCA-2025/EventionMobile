@@ -23,6 +23,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             EventionTheme {
+                //val navController = rememberNavController()
+                //RegisterScreen(navController = navController)
                 AppNavHost()
             }
         }
