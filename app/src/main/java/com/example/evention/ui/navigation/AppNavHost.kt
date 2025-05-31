@@ -26,6 +26,7 @@ import com.example.evention.model.Event
 import com.example.evention.model.User
 import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
+import com.example.evention.ui.screens.auth.resetpassword.ResetPasswordScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
@@ -63,6 +64,9 @@ fun AppNavHost() {
         }
         composable("signUp") {
             RegisterScreen(navController = navController)
+        }
+        composable("resetPassword") {
+            ResetPasswordScreen(navController = navController)
         }
         composable("home") {
             val viewModel: HomeScreenViewModel = viewModel()

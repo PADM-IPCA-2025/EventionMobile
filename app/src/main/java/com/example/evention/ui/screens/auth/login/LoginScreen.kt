@@ -194,7 +194,10 @@ fun LoginScreen(navController: NavController) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF120D26),
                 fontSize = 14.sp,
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("resetPassword") }
             )
         }
 

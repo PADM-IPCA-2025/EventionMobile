@@ -3,6 +3,7 @@ package com.example.evention.ui.screens.auth.resetpassword
 import AuthConfirmButton
 import AuthTextField
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,11 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun ResetPasswordScreen() {
+fun ResetPasswordScreen(navController: NavController) {
 
     Column(
         modifier = Modifier
@@ -47,7 +50,8 @@ fun ResetPasswordScreen() {
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(top = 16.dp)
-                .size(24.dp),
+                .size(24.dp)
+                .clickable { navController.navigate("signIn") },
             tint = Color.Black
         )
 
@@ -97,6 +101,7 @@ fun ResetPasswordScreen() {
 @Composable
 fun Preview() {
     EventionTheme {
-        ResetPasswordScreen()
+        val navController = rememberNavController()
+        ResetPasswordScreen(navController = navController)
     }
 }
