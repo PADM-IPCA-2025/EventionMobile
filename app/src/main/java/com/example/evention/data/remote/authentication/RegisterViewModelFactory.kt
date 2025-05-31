@@ -1,5 +1,6 @@
 package com.example.evention.data.remote.authentication
 
+import UserPreferences
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ class RegisterViewModelFactory(private val context: Context) : ViewModelProvider
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val registerRemoteDataSource = NetworkModule.registerRemoteDataSource
-        return RegisterScreenViewModel(registerRemoteDataSource) as T
+        val userPreferences = UserPreferences(context)
+        return RegisterScreenViewModel(registerRemoteDataSource, userPreferences) as T
     }
 }

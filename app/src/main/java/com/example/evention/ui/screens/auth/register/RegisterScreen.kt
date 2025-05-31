@@ -3,6 +3,8 @@ package com.example.evention.ui.screens.auth.register
 import AuthTextField
 import AuthConfirmButton
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -41,12 +43,33 @@ import com.example.evention.ui.components.auth.AuthGoogle
 import com.example.evention.ui.theme.EventionTheme
 import kotlinx.coroutines.delay
 import androidx.compose.runtime.collectAsState
+import com.example.evention.ui.screens.auth.login.signInWithGoogle
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 
 
 @Composable
 fun RegisterScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: RegisterScreenViewModel = viewModel(factory = RegisterViewModelFactory(context))
+
+    //GOOGLE AUTH
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            if (idToken != null) {
+                viewModel.registerWithGoogle(idToken)
+            } else {
+                Log.e("GOOGLE", "Token inválido")
+            }
+        } catch (e: ApiException) {
+            Log.e("GOOGLE", "Erro Google Sign-In", e)
+        }
+    }
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -63,12 +86,20 @@ fun RegisterScreen(navController: NavController) {
     }
 
     LaunchedEffect(registerState) {
-
-        if (registerState is RegisterScreenViewModel.RegisterState.Success) {
-            delay(500)
-            navController.navigate("signIn") {
-                popUpTo("signUp") { inclusive = true }
+        when (registerState) {
+            is RegisterScreenViewModel.RegisterState.Success -> {
+                delay(2000)
+                navController.navigate("signIn") {
+                    popUpTo("signUp") { inclusive = true }
+                }
             }
+
+            is RegisterScreenViewModel.RegisterState.Error -> {
+                delay(2000)
+                viewModel.resetState()
+            }
+
+            else -> {}
         }
     }
 
@@ -163,7 +194,13 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        AuthGoogle("Sign Up with Google", onClick = { /* Lógica do Google */ })
+        AuthGoogle(
+            text = "Registar com Google",
+            onClick = {
+                //signInWithGoogle(context, launcher)
+            }
+        )
+
 
         Spacer(modifier = Modifier.height(120.dp))
 

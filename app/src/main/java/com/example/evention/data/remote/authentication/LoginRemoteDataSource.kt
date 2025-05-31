@@ -13,4 +13,17 @@ class LoginRemoteDataSource(private val api: LoginApiService) {
             Result.failure(e)
         }
     }
+
+    suspend fun loginWithGoogle(idToken: String): Result<LoginResponse> {
+        return try {
+            val response = api.loginWithGoogle(GoogleLoginRequest(idToken))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Erro: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

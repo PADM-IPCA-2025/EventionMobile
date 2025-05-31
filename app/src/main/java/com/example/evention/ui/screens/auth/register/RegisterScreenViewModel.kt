@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.auth.register
 
+import UserPreferences
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,10 +12,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.evention.data.remote.authentication.RegisterRemoteDataSource
 import com.example.evention.data.remote.authentication.RegisterRequest
 import com.example.evention.ui.screens.auth.login.LoginScreenViewModel.LoginState
+import com.example.evention.ui.screens.auth.login.decodeJWT
 import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(
-    private val registerRemoteDataSource: RegisterRemoteDataSource
+    private val registerRemoteDataSource: RegisterRemoteDataSource,
+    private val userPreferences: UserPreferences
+
 ) : ViewModel() {
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
@@ -57,6 +61,30 @@ class RegisterScreenViewModel(
 
     fun resetState() {
         _registerState.value = RegisterState.Idle
+    }
+
+    fun registerWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _registerState.value = RegisterState.Loading
+            try {
+                val result = registerRemoteDataSource.registerWithGoogle(idToken)
+                if (result.isSuccess) {
+                    val response = result.getOrThrow()
+                    val token = response.token
+                    val payload = decodeJWT(token)
+                    val userGuid = payload.getString("userID")
+
+                    userPreferences.saveToken(token)
+                    userPreferences.saveUserId(userGuid)
+
+                    _registerState.value = RegisterState.Success
+                } else {
+                    _registerState.value = RegisterState.Error("Erro ao registar com Google")
+                }
+            } catch (e: Exception) {
+                _registerState.value = RegisterState.Error("Erro: ${e.message}")
+            }
+        }
     }
 
     sealed class RegisterState {

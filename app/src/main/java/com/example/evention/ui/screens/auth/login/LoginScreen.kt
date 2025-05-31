@@ -1,6 +1,13 @@
 package com.example.evention.ui.screens.auth.login
 import AuthConfirmButton
 import AuthTextField
+import android.app.Instrumentation
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +51,9 @@ import com.example.evention.data.remote.authentication.LoginViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
 
@@ -51,6 +61,25 @@ import kotlinx.coroutines.delay
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory(context))
+
+    //GOOGLE AUTH
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            if (idToken != null) {
+                // ViewModel login com Google
+                viewModel.loginWithGoogle(idToken)
+            } else {
+                Log.e("GOOGLE", "Token inválido")
+            }
+        } catch (e: ApiException) {
+            Log.e("GOOGLE", "Erro Google Sign-In", e)
+        }
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -192,7 +221,12 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        AuthGoogle("Login with Google", onClick = { /* Lógica do login Google */ })
+        AuthGoogle(
+            text = "Login com Google",
+            onClick = {
+                //signInWithGoogle(context, launcher)
+            }
+        )
 
         Spacer(modifier = Modifier.height(80.dp))
 
@@ -214,6 +248,20 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
+@Composable
+fun signInWithGoogle(
+    context: Context,
+    launcher: ManagedActivityResultLauncher<Intent, Instrumentation.ActivityResult>
+) {
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        //.requestIdToken(context.getString(R.string.default_web_client_id)) // Usar o CLIENT_ID (ainda nao foi implementado)
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val signInIntent = googleSignInClient.signInIntent
+    launcher.launch(signInIntent)
+}
 
 
 @Preview(showBackground = true)

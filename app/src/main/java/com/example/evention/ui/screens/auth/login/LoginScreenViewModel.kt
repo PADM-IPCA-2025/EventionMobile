@@ -67,8 +67,33 @@ class LoginScreenViewModel(
         }
     }
 
+
     fun resetState() {
         loginState = LoginState.Idle
+    }
+
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            loginState = LoginState.Loading
+            try {
+                val result = loginRemoteDataSource.loginWithGoogle(idToken)
+                if (result.isSuccess) {
+                    val response = result.getOrThrow()
+                    val token = response.token
+                    val payload = decodeJWT(token)
+                    val userGuid = payload.getString("userID")
+
+                    userPreferences.saveToken(token)
+                    userPreferences.saveUserId(userGuid)
+
+                    loginState = LoginState.Success(response)
+                } else {
+                    loginState = LoginState.Error("Erro no login com Google")
+                }
+            } catch (e: Exception) {
+                loginState = LoginState.Error("Erro: ${e.message}")
+            }
+        }
     }
 
 
