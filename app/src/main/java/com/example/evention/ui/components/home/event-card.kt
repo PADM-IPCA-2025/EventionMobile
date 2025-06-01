@@ -1,6 +1,7 @@
 package com.example.evention.ui.components.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import UserPreferences
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,23 +38,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
 import com.example.evention.model.Event
 import java.text.SimpleDateFormat
 import java.util.Locale
 import coil.compose.AsyncImage
+import com.example.evention.R
 import com.google.gson.Gson
+import getUnsafeOkHttpClient
+
 
 @Composable
 fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
+
     var hasError by remember { mutableStateOf(false) }
-    val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
+    val imageUrl = "https://10.0.2.2:5010/event${event.eventPicture}"
+
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(16.dp),
         modifier = modifier
             .fillMaxWidth()
@@ -76,16 +95,27 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
                 } else {
                     AsyncImage(
                         model = imageUrl,
+                        imageLoader = imageLoader,
                         contentDescription = "Event Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize(),
-                        onError = { hasError = true }
+                        onError = {
+                            hasError = true
+                            Log.e("AsyncImage", "Image load failed: ${it.result.throwable}")
+                        },
+                        onSuccess = {
+                            Log.d("AsyncImage", "Image loaded successfully")
+                        }
                     )
+
                 }
 
-
-                val day = remember(event.startAt) { SimpleDateFormat("dd", Locale.getDefault()).format(event.startAt) }
-                val month = remember(event.startAt) { SimpleDateFormat("MMM", Locale.getDefault()).format(event.startAt).uppercase() }
+                val day = remember(event.startAt) {
+                    SimpleDateFormat("dd", Locale.getDefault()).format(event.startAt)
+                }
+                val month = remember(event.startAt) {
+                    SimpleDateFormat("MMM", Locale.getDefault()).format(event.startAt).uppercase()
+                }
 
                 Box(
                     modifier = Modifier
@@ -94,9 +124,7 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                         .align(Alignment.TopStart)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = day,
                             style = MaterialTheme.typography.bodyMedium,
@@ -116,29 +144,57 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
             ) {
                 Text(
                     text = event.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFF1E1E1E)
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "Location",
-                        tint = Color.Gray,
+                        tint = Color(0xFF757575),
                         modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = event.addressEvents.firstOrNull()?.road ?: "Unknown Location",
-                        color = Color.Gray,
-                        style = MaterialTheme.typography.bodySmall
+                        color = Color(0xFF757575),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
                     )
+                }
 
+                Spacer(modifier = Modifier.height(6.dp))
+
+                val timeFormatted = remember(event.startAt) {
+                    SimpleDateFormat("HH:mm", Locale.getDefault()).format(event.startAt)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.vector),
+                        contentDescription = "Event time",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = timeFormatted,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF757575)
+                    )
                 }
             }
         }

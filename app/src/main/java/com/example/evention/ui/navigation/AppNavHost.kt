@@ -151,12 +151,15 @@ fun AppNavHost() {
             val user = Gson().fromJson(userJson, User::class.java)
             UserEdit(userToEdit = user, navController = navController)
         }
-        composable("eventEdit/{eventId}",
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType})
+        composable(
+            "eventEdit/{eventJson}",
+            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")
-            EditEvent(eventId = eventId?: "", navController)
+            val eventJson = backStackEntry.arguments?.getString("eventJson")
+            val event = Gson().fromJson(eventJson, Event::class.java)
+            EditEvent(eventToEdit = event, navController = navController)
         }
+
         composable("scanQRCode"){
             ScanQRCodeScreen(navController = navController)
         }

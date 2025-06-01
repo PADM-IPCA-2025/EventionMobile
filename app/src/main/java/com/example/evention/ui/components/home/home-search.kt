@@ -29,7 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeSearch(navController: NavController) {
+fun HomeSearch(searchQuery: String, onSearchChange: (String) -> Unit, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,9 +47,7 @@ fun HomeSearch(navController: NavController) {
                 imageVector = Icons.Filled.Search,
                 contentDescription = "Search",
                 tint = Color.White,
-                modifier = Modifier
-                    .size(28.dp)
-                    .clickable { /* TODO: ação de voltar */ }
+                modifier = Modifier.size(28.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
             VerticalDivider(modifier = Modifier.height(28.dp))
@@ -57,8 +55,8 @@ fun HomeSearch(navController: NavController) {
                 modifier = Modifier.weight(1f),
             ) {
                 TextField(
-                    value = "",
-                    onValueChange = { },
+                    value = searchQuery,
+                    onValueChange = onSearchChange,
                     placeholder = {
                         Text(
                             "Search...",

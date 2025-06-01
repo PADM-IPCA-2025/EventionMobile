@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.admin.events
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.screens.profile.admin.users.UsersViewModel
+import com.google.gson.Gson
 
 
 @Composable
@@ -64,7 +66,10 @@ fun AllEvents(events: List<Event>, navController: NavController, viewModel: Even
                         event = events[index],
                         firstSection = "Edit event",
                         secondSection = "Delete event",
-                        onEdit = { navController.navigate("eventEdit/${events[index].eventID}") },
+                        onEdit = {
+                            val eventJson = Uri.encode(Gson().toJson(events[index]))
+                            navController.navigate("eventEdit/$eventJson")
+                        },
                         onRemove = { viewModel.deleteEvent(events[index].eventID) },
                         navController = navController
                     )

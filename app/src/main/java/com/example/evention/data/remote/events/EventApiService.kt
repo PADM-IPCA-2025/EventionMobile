@@ -11,6 +11,9 @@ interface EventApiService {
     @GET("event/api/events")
     suspend fun getEvents(): List<Event>
 
+    @GET("event/api/events/approved")
+    suspend fun getApprovedEvents(): List<Event>
+
     @GET("event/api/events/my")
     suspend fun getMyEvents(): List<Event>
 
@@ -29,8 +32,8 @@ interface EventApiService {
     data class UpdateEventRequest(
         val name: String,
         val description: String,
-        val startAt: Long,
-        val endAt: Long,
+        val startAt: String,
+        val endAt: String,
         val price: Float
     )
 

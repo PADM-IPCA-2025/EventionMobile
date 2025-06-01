@@ -26,9 +26,8 @@ class UserEditViewModel : ViewModel() {
                 )
                 _user.value = _user.value?.copy(username = username, email = email, phone = phone)
             } catch (e: Exception) {
-                // TODO: handle error (ex: mostrar toast/snackbar)
+                // TODO: handle error
             }
         }
     }
-
 }

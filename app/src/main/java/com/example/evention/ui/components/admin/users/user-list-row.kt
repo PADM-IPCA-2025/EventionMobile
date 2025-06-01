@@ -33,14 +33,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import UserPreferences
+import android.util.Log
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
+import getUnsafeOkHttpClient
 
 @Composable
 fun UsersListRow(
@@ -49,6 +55,16 @@ fun UsersListRow(
     onRemove: (User) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     Row(
         modifier = Modifier
@@ -56,7 +72,7 @@ fun UsersListRow(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val imageUrl = user.profilePicture?.let { "http://10.0.2.2:5010/event/$it" }
+        val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/event$it" }
         var hasError by remember { mutableStateOf(false) }
 
         if (user.profilePicture == null || hasError) {
@@ -69,6 +85,7 @@ fun UsersListRow(
         } else {
             AsyncImage(
                 model = imageUrl,
+                imageLoader = imageLoader,
                 contentDescription = "User Image",
                 modifier = Modifier
                     .size(48.dp)

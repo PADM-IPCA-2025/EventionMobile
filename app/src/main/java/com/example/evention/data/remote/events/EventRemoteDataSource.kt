@@ -1,5 +1,6 @@
 package com.example.evention.data.remote.events
 
+import android.util.Log
 import com.example.evention.model.Event
 import com.example.evention.model.User
 import okhttp3.MultipartBody
@@ -7,6 +8,8 @@ import java.io.File
 
 class EventRemoteDataSource(private val api: EventApiService) {
     suspend fun getEvents(): List<Event> = api.getEvents()
+
+    suspend fun getApprovedEvents(): List<Event> = api.getApprovedEvents()
 
     suspend fun getMyEvents(): List<Event> = api.getMyEvents()
 
@@ -22,8 +25,8 @@ class EventRemoteDataSource(private val api: EventApiService) {
         eventId: String,
         name: String,
         description: String,
-        startAt: Long,
-        endAt: Long,
+        startAt: String,
+        endAt: String,
         price: Float,
     ): Event {
         val updateRequest = EventApiService.UpdateEventRequest(
@@ -33,6 +36,12 @@ class EventRemoteDataSource(private val api: EventApiService) {
             endAt = endAt,
             price = price
         )
+        Log.d("body eventId", eventId)
+        Log.d("body name", updateRequest.name)
+        Log.d("body description", updateRequest.description)
+        Log.d("body startAt", updateRequest.startAt)
+        Log.d("body endAt", updateRequest.endAt)
+        Log.d("body price", updateRequest.price.toString())
         return api.updateEvent(eventId, updateRequest)
     }
 

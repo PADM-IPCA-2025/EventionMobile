@@ -14,12 +14,18 @@ interface UserApiService {
     @GET("user/api/users/my-profile")
     suspend fun getUserProfile(): User
 
-    @DELETE("user/api/delete/{id}")
+    @DELETE("user/api/users/{id}")
     suspend fun deleteUser(@Path("id") userId: String)
 
-    @PUT("user/api/user/{id}")
+    data class UpdateUserRequest(
+        val username: String,
+        val email: String,
+        val phone: Int,
+    )
+
+    @PUT("user/api/users/{id}")
     suspend fun updateUser(
         @Path("id") userId: String,
-        @Body updatedFields: Map<String, Any?>
+        @Body updatedFields: UpdateUserRequest
     ): User
 }

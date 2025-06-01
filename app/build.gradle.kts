@@ -59,6 +59,9 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    implementation(libs.okhttp.tls)
+
+
     // Retrofit e Gson
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

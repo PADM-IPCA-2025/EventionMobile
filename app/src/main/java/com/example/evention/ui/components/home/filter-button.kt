@@ -3,6 +3,7 @@ package com.example.evention.ui.components.home
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,7 +15,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun FilterButtonWithDateRange() {
+fun FilterButtonWithDateRange(
+    onDateRangeSelected: (startDate: Long?, endDate: Long?) -> Unit
+) {
     var showDatePicker by remember { mutableStateOf(false) }
     val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
@@ -25,12 +28,15 @@ fun FilterButtonWithDateRange() {
             onDateRangeSelected = { start, end ->
                 if (start != null && end != null) {
                     Log.d("DateRange", "Selected: ${formatter.format(Date(start))} to ${formatter.format(Date(end))}")
+                    onDateRangeSelected(start, end)
                 }
+                showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
         )
     }
 }
+
 
 @Composable
 fun FilterButton(onClick: () -> Unit) {
@@ -42,12 +48,12 @@ fun FilterButton(onClick: () -> Unit) {
         ),
         shape = MaterialTheme.shapes.medium,
         elevation = ButtonDefaults.buttonElevation(4.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
     ) {
         Icon(
-            imageVector = Icons.Outlined.Menu,
+            imageVector = Icons.Filled.DateRange,
             contentDescription = "Filter",
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(25.dp)
         )
     }
 }

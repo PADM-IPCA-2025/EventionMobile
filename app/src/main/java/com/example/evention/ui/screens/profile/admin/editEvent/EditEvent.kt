@@ -1,6 +1,7 @@
 package com.example.evention.ui.screens.profile.admin.editEvent
 
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.evention.R
 import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
@@ -40,23 +42,30 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun EditEvent(eventId: String, navController: NavController, viewModel: EditEventViewModel = viewModel()) {
-    /*LaunchedEffect(eventId) {
-        viewModel.loadEventById(eventId)
-    }
-    val eventNullable by viewModel.event.collectAsState()*/
-    val eventNullable = MockData.events.find { event -> event.eventID == eventId }
-
-    eventNullable?.let { event ->
+fun EditEvent(
+    eventToEdit: Event,
+    navController: NavController,
+    viewModel: EditEventViewModel = viewModel()
+) {
+    eventToEdit.let { event ->
         var name by remember { mutableStateOf(event.name) }
         var description by remember { mutableStateOf(event.description) }
         var price by remember { mutableStateOf(event.price.toString()) }
 
         val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
+        val isoFormatter = remember {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+        }
+
         var showDatePicker by remember { mutableStateOf(false) }
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
         var endDateMillis by remember { mutableStateOf(event.endAt.time) }
+
+        val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
+        var hasError by remember { mutableStateOf(false) }
 
         if (showDatePicker) {
             DateRangePickerModal(
@@ -87,9 +96,10 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { showDatePicker = true }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showDatePicker = true }
                     ) {
                         OutlinedTextField(
                             value = "${formatter.format(Date(startDateMillis))} - ${formatter.format(Date(endDateMillis))}",
@@ -118,13 +128,23 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
                             .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        Image(
-                            painter = painterResource(id = getDrawableId(event.eventPicture!!)),
-                            contentDescription = "Imagem do Evento",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
+                        if (hasError) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Gray)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = imageUrl,
+                                contentDescription = "Event Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Gray),
+                                onError = { hasError = true }
+                            )
+                        }
 
                         Button(
                             onClick = { /* TODO: Change image */ },
@@ -172,22 +192,36 @@ fun EditEvent(eventId: String, navController: NavController, viewModel: EditEven
                     Spacer(modifier = Modifier.size(10.dp))
 
                     LabeledTextField(
-                        label = "Price",
-                        value = "$price€",
-                        onValueChange = { price = it }
+                        label = "Price (€)",
+                        value = price,
+                        onValueChange = {
+                            price = it.filter { ch -> ch.isDigit() || ch == '.' }
+                        }
                     )
+
                 }
 
                 Button(
                     onClick = {
+                        val isoStart = isoFormatter.format(Date(startDateMillis))
+                        val isoEnd = isoFormatter.format(Date(endDateMillis))
+                        val cleanedPrice = price.replace("[^\\d.]".toRegex(), "").toFloatOrNull() ?: 0f
+
+                        Log.d("eventId", event.eventID)
+                        Log.d("name", name)
+                        Log.d("description", description)
+                        Log.d("startAt", isoStart)
+                        Log.d("endAt", isoEnd)
+                        Log.d("price", cleanedPrice.toString())
                         viewModel.editEvent(
-                            eventId = eventId,
+                            eventId = event.eventID,
                             name = name,
                             description = description,
-                            startAt = startDateMillis,
-                            endAt = endDateMillis,
-                            price = price.replace("€", "").toFloatOrNull() ?: 0f,
+                            startAt = isoStart,
+                            endAt = isoEnd,
+                            price = cleanedPrice
                         )
+                        navController.popBackStack()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -266,6 +300,6 @@ fun DateRangePickerModal(
 fun UserEditPreview() {
     EventionTheme {
         val navController = rememberNavController()
-        EditEvent(MockData.events.first().eventID, navController)
+        EditEvent(MockData.events.first(), navController)
     }
 }
