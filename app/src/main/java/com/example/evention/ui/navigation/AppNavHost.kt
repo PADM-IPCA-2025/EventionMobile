@@ -110,16 +110,35 @@ fun AppNavHost() {
             val ticketId = backStackEntry.arguments?.getString("ticketId")
             TicketFeedbackScreen(ticketId = ticketId ?: "", navController)
         }
-        composable("profile"){
-
+        composable(
+            route = "profile?userJson={userJson}",
+            arguments = listOf(
+                navArgument("userJson") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
-            RequireAuth(navController, userPrefs) {
-                UserProfile(navController = navController)
+            val userJson = backStackEntry.arguments?.getString("userJson")
+            val user: User? = if (!userJson.isNullOrEmpty()) {
+                try {
+                    Gson().fromJson(userJson, User::class.java)
+                } catch (e: Exception) {
+                    null
+                }
+            } else {
+                null
             }
 
-            //UserProfile(MockUserData.users.first().userID, navController = navController)
+            RequireAuth(navController = navController, userPreferences = userPrefs) {
+                UserProfile(navController = navController, userProfile = user)
+            }
         }
+
         composable("adminMenu") {
             AdminMenu(navController)
         }
