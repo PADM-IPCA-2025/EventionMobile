@@ -7,3 +7,7 @@ data class GoogleLoginRequest(
     val token: String
 )
 
+data class ResetPasswordRequest(
+    val email: String
+)
+

@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,17 +26,53 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
+import com.example.evention.data.remote.authentication.ResetPasswordViewModelFactory
+import com.example.evention.ui.screens.auth.register.RegisterScreenViewModel
 import com.example.evention.ui.theme.EventionTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun ResetPasswordScreen(navController: NavController) {
+    val context = LocalContext.current
+    val viewModel: ResetPasswordViewModel = viewModel(factory = ResetPasswordViewModelFactory(context))
+
+    var email by remember { mutableStateOf("") }
+
+    val state by viewModel.state.collectAsState()
+
+    val buttonState = when (state) {
+        is ResetPasswordViewModel.ResetPasswordState.Loading -> ButtonState.LOADING
+        is ResetPasswordViewModel.ResetPasswordState.Success -> ButtonState.SUCCESS
+        is ResetPasswordViewModel.ResetPasswordState.Error -> ButtonState.ERROR
+        else -> ButtonState.IDLE
+    }
+
+    LaunchedEffect(state) {
+        when (state) {
+            is ResetPasswordViewModel.ResetPasswordState.Success -> {
+                delay(2000)
+                navController.navigate("signIn") {
+                    popUpTo("resetPassword") { inclusive = true }
+                }
+            }
+
+            is ResetPasswordViewModel.ResetPasswordState.Error -> {
+                delay(2000)
+                viewModel.resetState()
+            }
+
+            else -> {}
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -43,7 +81,6 @@ fun ResetPasswordScreen(navController: NavController) {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = "Arrow Back",
@@ -62,8 +99,7 @@ fun ResetPasswordScreen(navController: NavController) {
             fontSize = 24.sp,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -79,23 +115,30 @@ fun ResetPasswordScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        var email by remember { mutableStateOf("") }
-
         AuthTextField(
             placeholderText = "abc@email.com",
             iconResId = R.drawable.mail,
             value = email,
             password = false,
-            onValueChange = { email = it }
+            onValueChange = {
+                viewModel.resetState()
+                email = it
+            }
         )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        AuthConfirmButton("SEND", onClick = { /* Lógica do reset password */ })
-
+        AuthConfirmButton(
+            text = "SEND",
+            state = buttonState,
+            onClick = {
+                viewModel.resetState()
+                viewModel.resetPassword(email)
+            }
+        )
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable
