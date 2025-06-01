@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.mock.MockData
+import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
@@ -56,12 +57,12 @@ import org.json.JSONObject
 import java.io.IOException
 
 @Composable
-fun PaymentScreen(eventId: String, navController: NavController, viewModel: PaymentViewModel) {
+fun PaymentScreen(event: Event,ticketId: String, navController: NavController, viewModel: PaymentViewModel) {
 
-    val paymentResult by viewModel.paymentResult.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
+//    val paymentResult by viewModel.paymentResult.collectAsState()
+//    val errorMessage by viewModel.errorMessage.collectAsState()
 
-    val event = MockData.events.find { event -> event.eventID == eventId }
+    //val event = MockData.events.find { event -> event.eventID == event.eventID }
     if (event == null) return
 
     var selectedMethod by remember { mutableStateOf("Paypal") }
@@ -187,7 +188,7 @@ fun PaymentScreen(eventId: String, navController: NavController, viewModel: Paym
         Button(
             onClick = {
                 viewModel.createPayment(
-                    eventId,
+                    ticketId,
                     event.userId,
                     event.price,
                     paymentType = selectedMethod,
@@ -215,6 +216,6 @@ fun Preview() {
     EventionTheme {
         val navController = rememberNavController()
         val viewModel: PaymentViewModel = viewModel()
-        PaymentScreen(MockData.events.first().eventID, navController, viewModel)
+        PaymentScreen(MockData.events.first(),"as", navController, viewModel)
     }
 }

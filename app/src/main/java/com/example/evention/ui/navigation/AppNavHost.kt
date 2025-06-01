@@ -175,12 +175,18 @@ fun AppNavHost() {
             EventDetails(eventDetails = event, navController = navController)
         }
         composable(
-            "payment/{eventId}",
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+            "payment/{eventJson}/{ticketId}",
+            arguments = listOf(
+                navArgument("eventJson") { type = NavType.StringType },
+                navArgument("ticketId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")
             val viewModel: PaymentViewModel = viewModel()
-            PaymentScreen(eventId = eventId ?: "", navController, viewModel )
+            val eventJson = backStackEntry.arguments?.getString("eventJson")
+            val ticketId = backStackEntry.arguments?.getString("ticketId") ?: ""
+
+            val event = Gson().fromJson(eventJson, Event::class.java)
+            PaymentScreen(event = event, ticketId = ticketId, navController = navController, viewModel)
         }
     }
 }

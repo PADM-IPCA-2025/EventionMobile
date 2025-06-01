@@ -1,6 +1,7 @@
 package com.example.evention.ui.screens.auth.login
 import AuthConfirmButton
 import AuthTextField
+import UserPreferences
 import android.app.Instrumentation
 import android.content.Context
 import android.content.Intent
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Switch
@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
+import com.example.evention.notifications.RequestNotificationPermission
 import com.example.evention.data.remote.authentication.LoginViewModelFactory
 import com.example.evention.ui.components.auth.AuthGoogle
 import com.example.evention.ui.theme.EventionBlue
@@ -61,7 +62,7 @@ import kotlinx.coroutines.delay
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: LoginScreenViewModel = viewModel(factory = LoginViewModelFactory(context))
-
+    val userPreferences = remember(context) { UserPreferences(context) }
     //GOOGLE AUTH
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -84,6 +85,7 @@ fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
+    var showNotificationPermission by remember { mutableStateOf(false) }
 
     val loginState = viewModel.loginState
 
@@ -97,6 +99,9 @@ fun LoginScreen(navController: NavController) {
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginScreenViewModel.LoginState.Success -> {
+                if (!userPreferences.isNotificationPermissionShown()) {
+                    showNotificationPermission = true
+                }
                 delay(500)
                 viewModel.resetState()
                 navController.navigate("home") {
@@ -113,6 +118,11 @@ fun LoginScreen(navController: NavController) {
         }
     }
 
+    if (showNotificationPermission) {
+        RequestNotificationPermission()
+        userPreferences.setNotificationPermissionShown()
+        showNotificationPermission = false
+    }
 
     Column(
         modifier = Modifier

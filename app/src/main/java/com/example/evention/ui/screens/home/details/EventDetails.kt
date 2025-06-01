@@ -58,6 +58,8 @@ import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.evention.ui.screens.home.payment.PaymentViewModel
+import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.google.gson.Gson
 
 
@@ -86,7 +88,20 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: EventDetailsViewModel = viewModel()) {
+fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: TicketScreenViewModel = viewModel()) {
+    val viewModelT: TicketScreenViewModel = viewModel()
+    val ticketId by viewModelT.ticketId.collectAsState()
+    var navigateToPayment by remember { mutableStateOf(false) }
+
+    LaunchedEffect(ticketId) {
+        if (!ticketId.isNullOrBlank() && navigateToPayment) {
+            val eventJson = Uri.encode(Gson().toJson(eventDetails))
+            navController.navigate("payment/${eventJson}/$ticketId")
+            navigateToPayment = false
+            viewModel.clearCreateResult()
+        }
+    }
+
     var hasError by remember { mutableStateOf(false) }
     eventDetails.let { event ->
         val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
@@ -168,9 +183,9 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
 
             Button(
                 onClick = {
-//                    val eventJson = Uri.encode(Gson().toJson(event))
-                    navController.navigate("payment/${event.eventID}")
 
+                    viewModel.createTicket(eventDetails.eventID)
+                    navigateToPayment = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()

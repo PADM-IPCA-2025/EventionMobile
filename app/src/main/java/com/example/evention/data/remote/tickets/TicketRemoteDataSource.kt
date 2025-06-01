@@ -11,11 +11,11 @@ class TicketRemoteDataSource(private val api: TicketApiService) {
 
     suspend fun getTicketById(ticketId: String): Ticket = api.getTicketById(ticketId)
 
-    suspend fun createTicket(eventId: String, token: String): Ticket {
+    suspend fun createTicket(eventId: String): Ticket {
         val request = CreateTicketRequest(eventId)
-        return api.createTicket(request, "Bearer $token")
+        return api.createTicket(request)
     }
-    suspend fun createFeedback(eventId: String, request: CreateFeedbackRequest, token: String): Feedback {
-        return api.createFeedback(eventId, request, token)
+    suspend fun createFeedback(eventId: String, request: CreateFeedbackRequest): Feedback {
+        return api.createFeedback(eventId, request)
     }
 }

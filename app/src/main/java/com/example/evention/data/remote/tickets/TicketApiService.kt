@@ -21,13 +21,11 @@ interface TicketApiService {
     @POST("userinevent/api/tickets")
     suspend fun createTicket(
         @Body request: CreateTicketRequest,
-        @Header("Authorization") token: String
     ): Ticket
 
     @POST("userinevent/api/feedbacks/{eventId}")
     suspend fun createFeedback(
         @Path("eventId") eventId: String,
         @Body request: CreateFeedbackRequest,
-        @Header("Authorization") token: String
     ): Feedback
 }

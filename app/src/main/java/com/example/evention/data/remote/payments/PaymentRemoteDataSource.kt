@@ -13,10 +13,10 @@ class PaymentRemoteDataSource(private val api: PaymentApiService) {
         paymentType: String,
     ): Payment {
         val request = CreatePaymentRequest(
-            ticketID = ticketID,
-            userId = userId,
             totalValue = totalValue,
-            paymentType = paymentType
+            paymentType = paymentType,
+            ticketID = ticketID,
+            userId = userId
         )
         return api.createPayment(request)
     }

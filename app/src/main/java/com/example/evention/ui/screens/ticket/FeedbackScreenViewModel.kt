@@ -31,7 +31,7 @@ class FeedbackViewModel(application: Application) : AndroidViewModel(application
                 }
 
                 val request = CreateFeedbackRequest(rating, commentary)
-                val feedback = remoteDataSource.createFeedback(eventId, request, "Bearer $token")
+                val feedback = remoteDataSource.createFeedback(eventId, request)
                 _createFeedbackResult.value = Result.success(feedback)
             } catch (e: Exception) {
                 _createFeedbackResult.value = Result.failure(e)

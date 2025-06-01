@@ -6,9 +6,12 @@ class UserPreferences(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
+
     companion object {
         private const val KEY_JWT_TOKEN = "TOKEN"
         private const val KEY_USER_ID = "USER_ID"
+        private const val KEY_NOTIFICATION_PERMISSION_SHOWN = "notification_permission_shown"
+
     }
 
     fun saveToken(token: String) {
@@ -34,4 +37,13 @@ class UserPreferences(context: Context) {
     fun clearUserId() {
         prefs.edit().remove(KEY_USER_ID).apply()
     }
+
+    fun setNotificationPermissionShown() {
+        prefs.edit().putBoolean(KEY_NOTIFICATION_PERMISSION_SHOWN, true).apply()
+    }
+
+    fun isNotificationPermissionShown(): Boolean {
+        return prefs.getBoolean(KEY_NOTIFICATION_PERMISSION_SHOWN, false)
+    }
+
 }
