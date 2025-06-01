@@ -4,24 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
 import com.example.evention.model.Event
+import com.example.evention.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class EventDetailsViewModel : ViewModel() {
 
-    private val remoteDataSource = NetworkModule.eventRemoteDataSource
+    private val remoteDataSource = NetworkModule.userRemoteDataSource
 
-    private val _event = MutableStateFlow<Event?>(null)
-    val event: StateFlow<Event?> = _event
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user
 
-    fun loadEventById(eventId: String) {
+    fun loadUserById(userId: String) {
         viewModelScope.launch {
             try {
-                val fetchedEvent = remoteDataSource.getEventById(eventId)
-                _event.value = fetchedEvent
+                val fetchedUser = remoteDataSource.getUserById(userId)
+                _user.value = fetchedUser
             } catch (e: Exception) {
-                _event.value = null
+                _user.value = null
             }
         }
     }

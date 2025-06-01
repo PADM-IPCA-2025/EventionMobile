@@ -2,14 +2,19 @@ package com.example.evention.ui.screens.profile.user.userProfile
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,6 +50,7 @@ fun UserProfile(
 ) {
     val userNullable by viewModel.user.collectAsState()
     val reputation by viewModel.reputation.collectAsState()
+    val eventsMap by viewModel.events.collectAsState()
 
     val user = userProfile ?: userNullable
 
@@ -61,10 +67,12 @@ fun UserProfile(
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.White,
             bottomBar = {
-                MenuComponent(
-                    currentPage = "Profile",
-                    navController = navController
-                )
+                if (userProfile == null) {
+                    MenuComponent(
+                        currentPage = "Profile",
+                        navController = navController
+                    )
+                }
             }
         ) { innerPadding ->
             Column(
@@ -74,9 +82,28 @@ fun UserProfile(
                     .padding(horizontal = 25.dp, vertical = 18.dp)
                     .padding(innerPadding)
             ) {
-                TitleComponent("Profile", false, navController)
+                TitleComponent("Profile", userProfile != null, navController)
 
-                UserInfo(it, navController = navController)
+                UserInfo(it, navController = navController, userProfile != null)
+
+                reputation?.let { rep ->
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    RatingStars(rating = rep.reputation)
+
+                    val feedbackEventCount = rep.tickets
+                        .filter { it.feedback != null }
+                        .map { it.event_id }
+                        .distinct()
+                        .count()
+
+                    Text(
+                        text = "($feedbackEventCount)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -91,14 +118,26 @@ fun UserProfile(
                             .padding(bottom = 8.dp)
                     )
 
-                    reputation?.tickets?.forEach { ticket ->
-                        ticket.feedback?.let { feedback ->
-                            FeedbackRow(feedback)
-                        }
+                    LaunchedEffect(reputation) {
+                        reputation?.tickets
+                            ?.map { it.event_id }
+                            ?.distinct()
+                            ?.forEach { viewModel.loadEventById(it) }
                     }
 
-                    if (reputation?.tickets.isNullOrEmpty()) {
+                    val ticketsWithFeedback = reputation?.tickets?.filter { it.feedback != null }.orEmpty()
+
+                    if (ticketsWithFeedback.isEmpty()) {
                         Text("No feedbacks received.", style = MaterialTheme.typography.bodyMedium)
+                    } else {
+                        ticketsWithFeedback.forEach { ticket ->
+                            val eventName = eventsMap[ticket.event_id]?.name ?: "A carregar..."
+
+                            FeedbackRow(
+                                feedback = ticket.feedback!!,
+                                eventName = eventName
+                            )
+                        }
                     }
                 }
             }
@@ -106,9 +145,25 @@ fun UserProfile(
     }
 }
 
+@Composable
+fun RatingStars(rating: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        repeat(5) { index ->
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = if (index < rating) Color(0xFFFFD700) else Color.LightGray,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
 
 @Composable
-fun FeedbackRow(feedback: FeedbackReputation) {
+fun FeedbackRow(
+    feedback: FeedbackReputation,
+    eventName: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,14 +172,14 @@ fun FeedbackRow(feedback: FeedbackReputation) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            Text("Event: $eventName", style = MaterialTheme.typography.labelLarge)
+            Spacer(modifier = Modifier.height(4.dp))
             Text("Rating: ${feedback.rating} ⭐", style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(4.dp))
             Text(feedback.commentary, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

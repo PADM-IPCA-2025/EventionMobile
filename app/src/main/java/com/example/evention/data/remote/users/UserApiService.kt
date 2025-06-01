@@ -14,6 +14,9 @@ interface UserApiService {
     @GET("user/api/users/my-profile")
     suspend fun getUserProfile(): User
 
+    @GET("user/api/users/{id}")
+    suspend fun getUserById(@Path("id") userId: String): User
+
     @DELETE("user/api/users/{id}")
     suspend fun deleteUser(@Path("id") userId: String)
 

@@ -45,7 +45,7 @@ import UserPreferences
 import getUnsafeOkHttpClient
 
 @Composable
-fun UserInfo(user: User, navController: NavController){
+fun UserInfo(user: User, navController: NavController, receive: Boolean? = false){
     val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
     var hasError by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -86,24 +86,26 @@ fun UserInfo(user: User, navController: NavController){
         fontWeight = FontWeight.Bold
     )
 
-    Spacer(modifier = Modifier.height(16.dp))
+    if(receive == false){
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Button(
-        onClick = {
-            val userJson = Uri.encode(Gson().toJson(user))
-            navController.navigate("userEdit/$userJson")
-        },
-        modifier = Modifier
-            .size(154.dp, 50.dp)
-            .border(1.dp, EventionBlue, RoundedCornerShape(8.dp)),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(8.dp),
-        elevation = ButtonDefaults.buttonElevation(0.dp)
-    ) {
-        Text(
-            text = "Edit Profile",
-            color = EventionBlue,
-            fontWeight = FontWeight.Bold
-        )
+        Button(
+            onClick = {
+                val userJson = Uri.encode(Gson().toJson(user))
+                navController.navigate("userEdit/$userJson")
+            },
+            modifier = Modifier
+                .size(154.dp, 50.dp)
+                .border(1.dp, EventionBlue, RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            shape = RoundedCornerShape(8.dp),
+            elevation = ButtonDefaults.buttonElevation(0.dp)
+        ) {
+            Text(
+                text = "Edit Profile",
+                color = EventionBlue,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
