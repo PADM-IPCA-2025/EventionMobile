@@ -35,10 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.model.Event
 import com.example.evention.ui.screens.home.details.getDrawableId
@@ -47,6 +49,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import UserPreferences
+import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
     val zonedDateTime = date.toInstant()
@@ -67,6 +71,16 @@ fun EventListRow(
     navController: NavController
 ) {
     val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -97,7 +111,7 @@ fun EventListRow(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val imageUrl = event.eventPicture?.let { "http://10.0.2.2:5010/event/$it" }
+            val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
             var hasError by remember { mutableStateOf(false) }
 
             if (event.eventPicture == null || hasError) {
@@ -110,6 +124,7 @@ fun EventListRow(
             } else {
                 AsyncImage(
                     model = imageUrl,
+                    imageLoader = imageLoader,
                     contentDescription = "Event Image",
                     modifier = Modifier
                         .size(64.dp)

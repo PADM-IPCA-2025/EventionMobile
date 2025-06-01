@@ -30,20 +30,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
 import com.google.gson.Gson
+import UserPreferences
+import getUnsafeOkHttpClient
 
 @Composable
 fun UserInfo(user: User, navController: NavController){
-    val imageUrl = user.profilePicture?.let { "http://10.0.2.2:5010/user/$it" }
+    val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
     var hasError by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     if (user.profilePicture == null || hasError) {
         Box(
@@ -56,6 +70,7 @@ fun UserInfo(user: User, navController: NavController){
     } else {
         AsyncImage(
             model = imageUrl,
+            imageLoader = imageLoader,
             contentDescription = "User Profile Image",
             modifier = Modifier
                 .size(110.dp)

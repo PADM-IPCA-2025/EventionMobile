@@ -14,7 +14,7 @@ interface UserApiService {
     @GET("user/api/users/my-profile")
     suspend fun getUserProfile(): User
 
-    @DELETE("user/api/delete/{id}")
+    @DELETE("user/api/users/{id}")
     suspend fun deleteUser(@Path("id") userId: String)
 
     data class UpdateUserRequest(
@@ -23,7 +23,7 @@ interface UserApiService {
         val phone: Int,
     )
 
-    @PUT("user/api/user/{id}")
+    @PUT("user/api/users/{id}")
     suspend fun updateUser(
         @Path("id") userId: String,
         @Body updatedFields: UpdateUserRequest

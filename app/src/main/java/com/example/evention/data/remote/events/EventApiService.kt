@@ -11,6 +11,9 @@ interface EventApiService {
     @GET("event/api/events")
     suspend fun getEvents(): List<Event>
 
+    @GET("event/api/events/approved")
+    suspend fun getApprovedEvents(): List<Event>
+
     @GET("event/api/events/my")
     suspend fun getMyEvents(): List<Event>
 

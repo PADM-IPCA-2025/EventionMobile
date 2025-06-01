@@ -1,14 +1,17 @@
 package com.example.evention.ui.screens.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -23,15 +26,17 @@ import androidx.compose.ui.unit.dp
 import com.example.evention.mock.MockData
 import com.example.evention.model.Event
 import com.example.evention.ui.components.home.EventCard
-import com.example.evention.ui.components.home.FilterButton
 import com.example.evention.ui.components.home.HomeSearch
 import com.example.evention.ui.theme.EventionTheme
 import com.example.evention.ui.components.MenuComponent
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.evention.R
 import com.example.evention.ui.components.home.FilterButtonWithDateRange
 
 @Composable
@@ -41,16 +46,19 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
     val selectedStartDate = remember { mutableStateOf<Long?>(null) }
     val selectedEndDate = remember { mutableStateOf<Long?>(null) }
 
+    val isFilterActive = selectedStartDate.value != null && selectedEndDate.value != null
+
     val filteredEvents = events.filter { event ->
         val matchesSearch = event.name.contains(searchQuery.value, ignoreCase = true)
 
-        if (selectedStartDate.value == null || selectedEndDate.value == null) {
+        if (!isFilterActive) {
             matchesSearch
         } else {
             val eventStart = event.startAt.time
             val eventEnd = event.endAt.time
 
-            val inDateRange = eventStart >= selectedStartDate.value!! && eventEnd <= selectedEndDate.value!!
+            val inDateRange =
+                eventStart >= selectedStartDate.value!! && eventEnd <= selectedEndDate.value!!
 
             matchesSearch && inDateRange
         }
@@ -98,12 +106,28 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                         fontWeight = FontWeight.Bold
                     )
 
-                    FilterButtonWithDateRange(
-                        onDateRangeSelected = { start, end ->
-                            selectedStartDate.value = start
-                            selectedEndDate.value = end
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isFilterActive) {
+                            TextButton(
+                                onClick = {
+                                    selectedStartDate.value = null
+                                    selectedEndDate.value = null
+                                    if(searchQuery.value != "") searchQuery.value = ""
+                                }
+                            ) {
+                                Text("Clear", color = Color.Gray)
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
-                    )
+
+                        FilterButtonWithDateRange(
+                            onDateRangeSelected = { start, end ->
+                                selectedStartDate.value = start
+                                selectedEndDate.value = end
+                            }
+                        )
+                    }
                 }
             }
 
@@ -111,19 +135,43 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                 Spacer(modifier = Modifier.height(15.dp))
             }
 
-            items(filteredEvents) { event ->
-                EventCard(
-                    event = event,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 25.dp, vertical = 8.dp),
-                    navController = navController
-                )
+            if (filteredEvents.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 50.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.noevents),
+                                contentDescription = "No Events"
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "No events found",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
+                    }
+                }
+            } else {
+                items(filteredEvents) { event ->
+                    EventCard(
+                        event = event,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp, vertical = 8.dp),
+                        navController = navController
+                    )
+                }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

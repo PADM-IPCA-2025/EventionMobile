@@ -37,7 +37,7 @@ import com.example.evention.ui.theme.EventionBlue
 
 @Composable
 fun UserEditInfo(user: User) {
-    val imageUrl = user.profilePicture?.let { "http://10.0.2.2:5010/user/$it" }
+    val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
     var hasError by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(

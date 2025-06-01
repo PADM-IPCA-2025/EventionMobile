@@ -19,7 +19,7 @@ class HomeScreenViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                _events.value = remoteDataSource.getEvents()
+                _events.value = remoteDataSource.getApprovedEvents()
             } catch (e: Exception) {
                 Log.e("HomeScreenViewModel", "Erro ao obter eventos", e)
             }

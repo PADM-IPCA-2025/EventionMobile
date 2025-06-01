@@ -1,5 +1,6 @@
 package com.example.evention.data.remote.users
 
+import android.util.Log
 import com.example.evention.model.User
 
 class UserRemoteDataSource(private val api: UserApiService) {

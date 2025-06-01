@@ -1,6 +1,7 @@
 package com.example.evention.ui.screens.profile.admin.editEvent
 
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.evention.R
 import com.example.evention.mock.MockData
 import com.example.evention.mock.MockUserData
@@ -61,6 +63,9 @@ fun EditEvent(
         var showDatePicker by remember { mutableStateOf(false) }
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
         var endDateMillis by remember { mutableStateOf(event.endAt.time) }
+
+        val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
+        var hasError by remember { mutableStateOf(false) }
 
         if (showDatePicker) {
             DateRangePickerModal(
@@ -123,12 +128,23 @@ fun EditEvent(
                             .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        Image(
-                            painter = painterResource(id = getDrawableId(event.eventPicture!!)),
-                            contentDescription = "Imagem do Evento",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        if (hasError) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Gray)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = imageUrl,
+                                contentDescription = "Event Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Gray),
+                                onError = { hasError = true }
+                            )
+                        }
 
                         Button(
                             onClick = { /* TODO: Change image */ },
@@ -176,10 +192,13 @@ fun EditEvent(
                     Spacer(modifier = Modifier.size(10.dp))
 
                     LabeledTextField(
-                        label = "Price",
-                        value = "$price€",
-                        onValueChange = { price = it }
+                        label = "Price (€)",
+                        value = price,
+                        onValueChange = {
+                            price = it.filter { ch -> ch.isDigit() || ch == '.' }
+                        }
                     )
+
                 }
 
                 Button(
@@ -188,6 +207,12 @@ fun EditEvent(
                         val isoEnd = isoFormatter.format(Date(endDateMillis))
                         val cleanedPrice = price.replace("[^\\d.]".toRegex(), "").toFloatOrNull() ?: 0f
 
+                        Log.d("eventId", event.eventID)
+                        Log.d("name", name)
+                        Log.d("description", description)
+                        Log.d("startAt", isoStart)
+                        Log.d("endAt", isoEnd)
+                        Log.d("price", cleanedPrice.toString())
                         viewModel.editEvent(
                             eventId = event.eventID,
                             name = name,
@@ -196,6 +221,7 @@ fun EditEvent(
                             endAt = isoEnd,
                             price = cleanedPrice
                         )
+                        navController.popBackStack()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
