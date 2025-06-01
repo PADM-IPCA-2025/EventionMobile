@@ -30,6 +30,7 @@ import com.example.evention.ui.screens.auth.register.RegisterScreen
 import com.example.evention.ui.screens.auth.resetpassword.ResetPasswordScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
+import com.example.evention.ui.screens.home.notifications.NotificationViewModel
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
 import com.example.evention.ui.screens.ticket.TicketDetailsScreen
@@ -128,7 +129,6 @@ fun AppNavHost() {
                 }
             )
         ) { backStackEntry ->
-            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
             val userJson = backStackEntry.arguments?.getString("userJson")
@@ -191,7 +191,8 @@ fun AppNavHost() {
             ScanQRCodeScreen(navController = navController)
         }
         composable("notifications") {
-            NotificationScreen(notifications = listOf(), navController = navController)
+
+            NotificationScreen( navController = navController)
         }
         composable(
             "eventDetails/{eventJson}",
