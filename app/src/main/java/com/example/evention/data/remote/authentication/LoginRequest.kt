@@ -11,3 +11,8 @@ data class ResetPasswordRequest(
     val email: String
 )
 
+data class ConfirmPasswordRequest(
+    val token: String,
+    val newPassword: String
+)
+

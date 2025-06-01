@@ -8,3 +8,8 @@ data class ResetPasswordResponse(
     val message: String?
 )
 
+data class ConfirmPasswordResponse(
+    val success: Boolean,
+    val message: String?
+)
+

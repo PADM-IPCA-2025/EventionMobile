@@ -60,7 +60,7 @@ fun ResetPasswordScreen(navController: NavController) {
         when (state) {
             is ResetPasswordViewModel.ResetPasswordState.Success -> {
                 delay(2000)
-                navController.navigate("signIn") {
+                navController.navigate("confirmPassword") {
                     popUpTo("resetPassword") { inclusive = true }
                 }
             }
