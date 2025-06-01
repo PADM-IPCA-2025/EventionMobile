@@ -1,6 +1,7 @@
 package com.example.evention.data.remote.events
 
 import com.example.evention.model.Event
+import com.example.evention.model.Reputation
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -13,6 +14,9 @@ interface EventApiService {
 
     @GET("event/api/events/approved")
     suspend fun getApprovedEvents(): List<Event>
+
+    @GET("event/api/events/reputation/{id}")
+    suspend fun getUserReputation(@Path("id") userId: String): Reputation
 
     @GET("event/api/events/my")
     suspend fun getMyEvents(): List<Event>

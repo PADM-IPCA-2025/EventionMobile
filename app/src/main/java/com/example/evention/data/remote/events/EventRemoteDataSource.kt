@@ -11,6 +11,8 @@ class EventRemoteDataSource(private val api: EventApiService) {
 
     suspend fun getApprovedEvents(): List<Event> = api.getApprovedEvents()
 
+    suspend fun getUserReputation(userId: String) = api.getUserReputation(userId)
+
     suspend fun getMyEvents(): List<Event> = api.getMyEvents()
 
     suspend fun getEventById(eventId: String): Event = api.getEventById(eventId)
