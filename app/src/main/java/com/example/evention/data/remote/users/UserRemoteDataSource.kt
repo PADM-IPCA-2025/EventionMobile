@@ -8,6 +8,8 @@ class UserRemoteDataSource(private val api: UserApiService) {
 
     suspend fun getUserProfile(): User = api.getUserProfile()
 
+    suspend fun getUserById(userId: String) = api.getUserById(userId)
+
     suspend fun deleteUser(userId: String) = api.deleteUser(userId)
 
     suspend fun updateUser(userId: String, username: String, email: String, phone: Int): User {

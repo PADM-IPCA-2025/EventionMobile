@@ -1,6 +1,7 @@
 package com.example.evention.ui.components.eventDetails
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,14 +32,24 @@ fun EventDetailsRow(
     contentDescription: String,
     title: String,
     subtitle: String,
-    rating: Double? = null
+    rating: Double? = null,
+    onClick: (() -> Unit)? = null
 ) {
+    val clickableModifier = if (onClick != null) {
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 25.dp, vertical = 10.dp)
+    } else {
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 10.dp)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 25.dp, vertical = 10.dp)
+        modifier = clickableModifier
     ) {
         Box(
             modifier = Modifier
@@ -63,10 +74,12 @@ fun EventDetailsRow(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            if (subtitle.isNotEmpty()) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
 
         if (rating != null) {
@@ -83,3 +96,4 @@ fun EventDetailsRow(
         }
     }
 }
+
