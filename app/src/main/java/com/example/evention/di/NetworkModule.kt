@@ -5,6 +5,7 @@ import LoginRemoteDataSource
 import com.example.evention.data.remote.authentication.RegisterApiService
 import com.example.evention.data.remote.authentication.RegisterRemoteDataSource
 import UserPreferences
+import com.example.evention.data.remote.authentication.ResetPasswordRemoteDataSource
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.payments.PaymentApiService
@@ -82,6 +83,10 @@ object NetworkModule {
 
     val registerRemoteDataSource: RegisterRemoteDataSource by lazy {
         RegisterRemoteDataSource(registerApi)
+    }
+
+    val resetPasswordRemoteDataSource: ResetPasswordRemoteDataSource by lazy {
+        ResetPasswordRemoteDataSource(loginApi)
     }
 
 }

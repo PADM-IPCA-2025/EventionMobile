@@ -24,8 +24,10 @@ import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Event
 import com.example.evention.model.User
+import com.example.evention.ui.screens.auth.confirmpassword.ConfirmPasswordScreen
 import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
+import com.example.evention.ui.screens.auth.resetpassword.ResetPasswordScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
@@ -54,7 +56,7 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = "splash") {
+    NavHost(navController = navController, startDestination = "home") {
         composable("splash") {
             SplashScreen(navController = navController)
         }
@@ -63,6 +65,12 @@ fun AppNavHost() {
         }
         composable("signUp") {
             RegisterScreen(navController = navController)
+        }
+        composable("resetPassword") {
+            ResetPasswordScreen(navController = navController)
+        }
+        composable("confirmPassword") {
+            ConfirmPasswordScreen(navController = navController)
         }
         composable("home") {
             val viewModel: HomeScreenViewModel = viewModel()

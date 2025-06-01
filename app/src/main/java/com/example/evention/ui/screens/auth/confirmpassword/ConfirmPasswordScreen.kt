@@ -1,4 +1,4 @@
-package com.example.evention.ui.screens.auth.resetpassword
+package com.example.evention.ui.screens.auth.confirmpassword
 
 import AuthConfirmButton
 import AuthTextField
@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,37 +34,41 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
-import com.example.evention.data.remote.authentication.ResetPasswordViewModelFactory
-import com.example.evention.ui.screens.auth.register.RegisterScreenViewModel
+import com.example.evention.ui.screens.profile.admin.editEvent.EditEventViewModel
+import com.example.evention.ui.screens.profile.admin.events.EventsViewModel
 import com.example.evention.ui.theme.EventionTheme
 import kotlinx.coroutines.delay
 
+
 @Composable
-fun ResetPasswordScreen(navController: NavController) {
-    val context = LocalContext.current
-    val viewModel: ResetPasswordViewModel = viewModel(factory = ResetPasswordViewModelFactory(context))
+fun ConfirmPasswordScreen(
+    navController: NavController,
+    viewModel: ConfirmPasswordViewModel = viewModel()
+) {
+    var token by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmNewPassword by remember { mutableStateOf("") }
 
-    var email by remember { mutableStateOf("") }
+    val confirmState by viewModel.state.collectAsState()
 
-    val state by viewModel.state.collectAsState()
-
-    val buttonState = when (state) {
-        is ResetPasswordViewModel.ResetPasswordState.Loading -> ButtonState.LOADING
-        is ResetPasswordViewModel.ResetPasswordState.Success -> ButtonState.SUCCESS
-        is ResetPasswordViewModel.ResetPasswordState.Error -> ButtonState.ERROR
+    val buttonState = when (confirmState) {
+        is ConfirmPasswordViewModel.ConfirmPasswordState.Loading -> ButtonState.LOADING
+        is ConfirmPasswordViewModel.ConfirmPasswordState.Success -> ButtonState.SUCCESS
+        is ConfirmPasswordViewModel.ConfirmPasswordState.Error -> ButtonState.ERROR
         else -> ButtonState.IDLE
     }
 
-    LaunchedEffect(state) {
-        when (state) {
-            is ResetPasswordViewModel.ResetPasswordState.Success -> {
-                delay(2000)
-                navController.navigate("confirmPassword") {
-                    popUpTo("resetPassword") { inclusive = true }
+    LaunchedEffect(confirmState) {
+        when (confirmState) {
+            is ConfirmPasswordViewModel.ConfirmPasswordState.Success -> {
+                delay(500)
+                viewModel.resetState()
+                navController.navigate("signIn") {
+                    popUpTo("confirmPassword") { inclusive = true }
                 }
             }
 
-            is ResetPasswordViewModel.ResetPasswordState.Error -> {
+            is ConfirmPasswordViewModel.ConfirmPasswordState.Error -> {
                 delay(2000)
                 viewModel.resetState()
             }
@@ -88,14 +91,14 @@ fun ResetPasswordScreen(navController: NavController) {
                 .align(Alignment.Start)
                 .padding(top = 16.dp)
                 .size(24.dp)
-                .clickable { navController.navigate("signIn") },
+                .clickable { navController.navigate("resetPassword") },
             tint = Color.Black
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Reset Password",
+            text = "Confirm Password",
             fontSize = 24.sp,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
@@ -105,7 +108,7 @@ fun ResetPasswordScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Please enter your email address to\nrequest a password reset",
+            text = "Please enter the token sent by email and\nthe new password for your account",
             fontSize = 15.sp,
             color = Color(0xFF120D26),
             modifier = Modifier
@@ -116,28 +119,46 @@ fun ResetPasswordScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(30.dp))
 
         AuthTextField(
-            placeholderText = "abc@email.com",
-            iconResId = R.drawable.mail,
-            value = email,
+            placeholderText = "Your Token",
+            iconResId = R.drawable.profile,
+            value = token,
             password = false,
-            onValueChange = {
-                viewModel.resetState()
-                email = it
-            }
+            onValueChange = { token = it }
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(22.dp))
+
+        AuthTextField(
+            placeholderText = "Your Password",
+            iconResId = R.drawable.lock,
+            value = newPassword,
+            password = true,
+            onValueChange = { newPassword = it }
+        )
+
+        Spacer(modifier = Modifier.height(22.dp))
+
+        AuthTextField(
+            placeholderText = "Confirm Password",
+            iconResId = R.drawable.lock,
+            value = confirmNewPassword,
+            password = true,
+            onValueChange = { confirmNewPassword = it }
+        )
+
+        Spacer(modifier = Modifier.height(50.dp))
 
         AuthConfirmButton(
-            text = "SEND",
+            text = "Confirm",
             state = buttonState,
             onClick = {
                 viewModel.resetState()
-                viewModel.resetPassword(email)
+                viewModel.confirmPassword(token, newPassword, confirmNewPassword)
             }
         )
     }
 }
+
 
 
 @Preview(showBackground = true)
@@ -145,6 +166,6 @@ fun ResetPasswordScreen(navController: NavController) {
 fun Preview() {
     EventionTheme {
         val navController = rememberNavController()
-        ResetPasswordScreen(navController = navController)
+        ConfirmPasswordScreen(navController = navController)
     }
 }
