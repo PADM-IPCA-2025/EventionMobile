@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.R
 import com.example.evention.mock.MockData
@@ -40,6 +41,8 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import java.text.SimpleDateFormat
 import java.util.*
+import UserPreferences
+import getUnsafeOkHttpClient
 
 @Composable
 fun EditEvent(
@@ -63,7 +66,15 @@ fun EditEvent(
         var showDatePicker by remember { mutableStateOf(false) }
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
         var endDateMillis by remember { mutableStateOf(event.endAt.time) }
-
+        val context = LocalContext.current
+        val userPreferences = remember { UserPreferences(context) }
+        val imageLoader = remember {
+            ImageLoader.Builder(context)
+                .okHttpClient {
+                    getUnsafeOkHttpClient(userPreferences)
+                }
+                .build()
+        }
         val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
         var hasError by remember { mutableStateOf(false) }
 
@@ -137,6 +148,7 @@ fun EditEvent(
                         } else {
                             AsyncImage(
                                 model = imageUrl,
+                                imageLoader = imageLoader,
                                 contentDescription = "Event Image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

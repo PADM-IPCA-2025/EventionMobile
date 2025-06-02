@@ -113,7 +113,7 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
             }
         }
 
-        val imageUrl = "https://10.0.2.2:5010/event/${event.eventPicture}"
+        val imageUrl = "https://10.0.2.2:5010/event${event.eventPicture}"
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
