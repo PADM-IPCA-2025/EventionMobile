@@ -1,6 +1,7 @@
 package com.example.evention.ui.screens.profile.user.userEdit
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,83 +43,119 @@ import com.example.evention.ui.components.userEdit.UserEditInfo
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfileViewModel
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
+import kotlinx.coroutines.delay
 
 @Composable
-fun UserEdit(userToEdit: User, navController: NavController, viewModel: UserEditViewModel = viewModel()) {
+fun UserEdit(
+    userToEdit: User,
+    navController: NavController,
+    viewModel: UserEditViewModel = viewModel()
+) {
+    val editSuccess by viewModel.editSuccess.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     userToEdit.let { user ->
         var username by remember { mutableStateOf(user.username) }
         var email by remember { mutableStateOf(user.email) }
         var phone by remember { mutableStateOf(user.phone?.toString() ?: "") }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-        ) {
-            TitleComponent("Edit Profile", arrowBack = true, navController = navController)
+        LaunchedEffect(editSuccess) {
+            if (editSuccess) {
+                snackbarHostState.showSnackbar("User updated successfully")
+                delay(1500)
+                viewModel.clearEditSuccess()
+                navController.popBackStack()
+            }
+        }
 
-            Spacer(modifier = Modifier.size(16.dp))
+        Box(modifier = Modifier.fillMaxSize()) {
 
-            UserEditInfo(user)
-
-            Spacer(modifier = Modifier.size(24.dp))
-
-            Column(modifier = Modifier.fillMaxWidth()) {
-                LabeledTextField(
-                    label = "Username",
-                    value = username,
-                    onValueChange = { username = it }
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
-                LabeledTextField(
-                    label = "Email",
-                    value = email,
-                    onValueChange = { email = it }
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
-                LabeledTextField(
-                    label = "Phone",
-                    value = phone,
-                    onValueChange = { phone = it }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 35.dp)
+            ) { snackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    containerColor = Color(0xFF4CAF50).copy(alpha = 1f),
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    val phoneInt = phone.toIntOrNull() ?: 0
-                    viewModel.editUser(
-                        userId = user.userID,
-                        username = username,
-                        email = email,
-                        phone = phoneInt
-                    )
-                    navController.popBackStack()
-                },
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
-                shape = RoundedCornerShape(12.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Text(
-                    text = "Save Changes",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                TitleComponent("Edit Profile", arrowBack = true, navController = navController)
+
+                Spacer(modifier = Modifier.size(16.dp))
+
+                UserEditInfo(user)
+
+                Spacer(modifier = Modifier.size(24.dp))
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    LabeledTextField(
+                        label = "Username",
+                        value = username,
+                        onValueChange = { username = it }
+                    )
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    LabeledTextField(
+                        label = "Email",
+                        value = email,
+                        onValueChange = { email = it }
+                    )
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    LabeledTextField(
+                        label = "Phone",
+                        value = phone,
+                        onValueChange = { phone = it }
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    onClick = {
+                        val phoneInt = phone.toIntOrNull() ?: 0
+                        viewModel.editUser(
+                            userId = user.userID,
+                            username = username,
+                            email = email,
+                            phone = phoneInt
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "Save Changes",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
             }
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

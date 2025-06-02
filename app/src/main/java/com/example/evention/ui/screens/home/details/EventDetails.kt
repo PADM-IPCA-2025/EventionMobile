@@ -57,11 +57,13 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.google.gson.Gson
-
+import UserPreferences
+import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
     val localDate = date.toInstant()
@@ -92,6 +94,16 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
     val viewModelT: TicketScreenViewModel = viewModel()
     val ticketId by viewModelT.ticketId.collectAsState()
     var navigateToPayment by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     LaunchedEffect(ticketId) {
         if (!ticketId.isNullOrBlank() && navigateToPayment) {
@@ -135,6 +147,7 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                     } else {
                         AsyncImage(
                             model = imageUrl,
+                            imageLoader = imageLoader,
                             contentDescription = "Event Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize(),

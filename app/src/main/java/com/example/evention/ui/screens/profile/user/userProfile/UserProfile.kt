@@ -115,7 +115,7 @@ fun UserProfile(
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 16.dp)
                     )
 
                     LaunchedEffect(reputation) {

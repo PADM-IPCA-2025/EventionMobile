@@ -72,7 +72,7 @@ fun UsersListRow(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/event$it" }
+        val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
         var hasError by remember { mutableStateOf(false) }
 
         if (user.profilePicture == null || hasError) {

@@ -15,6 +15,9 @@ class UserEditViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
+    private val _editSuccess = MutableStateFlow(false)
+    val editSuccess: StateFlow<Boolean> = _editSuccess
+
     fun editUser(userId: String, username: String, email: String, phone: Int) {
         viewModelScope.launch {
             try {
@@ -25,9 +28,15 @@ class UserEditViewModel : ViewModel() {
                     phone = phone
                 )
                 _user.value = _user.value?.copy(username = username, email = email, phone = phone)
+                _editSuccess.value = true
             } catch (e: Exception) {
                 // TODO: handle error
+                _editSuccess.value = false
             }
         }
+    }
+
+    fun clearEditSuccess() {
+        _editSuccess.value = false
     }
 }

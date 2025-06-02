@@ -34,6 +34,11 @@ import coil.compose.AsyncImage
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
+import UserPreferences
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.layout.ContentScale
+import coil.ImageLoader
+import getUnsafeOkHttpClient
 
 @Composable
 fun UserEditInfo(user: User) {
@@ -48,7 +53,27 @@ fun UserEditInfo(user: User) {
         }
     }
 
-    if (user.profilePicture != null && !hasError) {
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
+
+    if (user.profilePicture == null || hasError) {
+        Box(
+            modifier = Modifier
+                .size(170.dp)
+                .clip(CircleShape)
+                .background(Color.Gray)
+                .clickable {
+                    launcher.launch("image/*")
+                }
+        )
+    } else {
         Box(
             modifier = Modifier
                 .size(170.dp)
@@ -60,20 +85,16 @@ fun UserEditInfo(user: User) {
         ) {
             AsyncImage(
                 model = imageUrl,
+                imageLoader = imageLoader,
                 contentDescription = "User Profile Image",
-                onError = { hasError = true }
+                onError = {
+                    hasError = true
+                    Log.e("UserEditInfo", "Erro ao carregar imagem de perfil: $it")
+                },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
-    } else {
-        Box(
-            modifier = Modifier
-                .size(170.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-                .clickable {
-                    launcher.launch("image/*")
-                }
-        )
     }
 
     Spacer(modifier = Modifier.height(12.dp))
