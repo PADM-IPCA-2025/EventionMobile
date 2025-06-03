@@ -42,6 +42,7 @@ import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
 import com.google.gson.Gson
 import UserPreferences
+import android.util.Log
 import getUnsafeOkHttpClient
 
 @Composable
@@ -59,7 +60,10 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
             .build()
     }
 
-    if (user.profilePicture == null || hasError) {
+    Log.d("nome do user", user.username)
+    user.profilePicture?.let { Log.d("foto do user", it) }
+
+    if (user.profilePicture == null) {
         Box(
             modifier = Modifier
                 .size(110.dp)

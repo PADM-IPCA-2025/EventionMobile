@@ -38,10 +38,11 @@ import UserPreferences
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.layout.ContentScale
 import coil.ImageLoader
+import com.example.evention.ui.screens.profile.user.userEdit.UserEditViewModel
 import getUnsafeOkHttpClient
 
 @Composable
-fun UserEditInfo(user: User) {
+fun UserEditInfo(user: User, viewModel: UserEditViewModel) {
     val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
     var hasError by remember { mutableStateOf(false) }
 
@@ -50,6 +51,7 @@ fun UserEditInfo(user: User) {
     ) { uri: Uri? ->
         uri?.let {
             Log.d("UserEditInfo", "Imagem escolhida: $uri")
+            viewModel.setSelectedImageUri(it)
         }
     }
 

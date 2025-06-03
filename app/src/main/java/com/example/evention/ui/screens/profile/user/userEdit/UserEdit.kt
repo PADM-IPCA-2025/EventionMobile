@@ -71,6 +71,7 @@ fun UserEdit(
         var username by remember { mutableStateOf(user.username) }
         var email by remember { mutableStateOf(user.email) }
         var phone by remember { mutableStateOf(user.phone?.toString() ?: "") }
+        val context = LocalContext.current
 
         LaunchedEffect(editSuccess) {
             if (editSuccess) {
@@ -129,7 +130,7 @@ fun UserEdit(
 
                 Spacer(modifier = Modifier.size(16.dp))
 
-                UserEditInfo(user)
+                UserEditInfo(user, viewModel)
 
                 Spacer(modifier = Modifier.size(24.dp))
 
@@ -163,6 +164,7 @@ fun UserEdit(
                     onClick = {
                         val phoneInt = phone.toIntOrNull() ?: 0
                         viewModel.editUser(
+                            context = context,
                             userId = user.userID,
                             username = username,
                             email = email,

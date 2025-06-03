@@ -52,6 +52,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+lifecycle-runtime-compose = "androidx.lifecycle:lifecycle-runtime-compose:2.9.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

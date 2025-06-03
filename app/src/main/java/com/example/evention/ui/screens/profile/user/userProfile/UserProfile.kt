@@ -32,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -41,6 +43,7 @@ import com.example.evention.model.Feedback
 import com.example.evention.model.FeedbackReputation
 import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun UserProfile(
@@ -54,11 +57,16 @@ fun UserProfile(
 
     val user = userProfile ?: userNullable
 
-    LaunchedEffect(userProfile) {
-        if (userProfile == null) {
-            viewModel.loadUserProfile()
-        } else {
-            viewModel.loadUserReputation(userProfile.userID)
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { backStackEntry ->
+            val destination = backStackEntry.destination.route
+            if (destination == "profile?userJson={userJson}") {
+                if (userProfile == null) {
+                    viewModel.loadUserProfile()
+                } else {
+                    viewModel.loadUserReputation(userProfile.userID)
+                }
+            }
         }
     }
 

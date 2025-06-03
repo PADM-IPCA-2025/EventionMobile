@@ -61,6 +61,7 @@ dependencies {
 
     implementation(libs.okhttp.tls)
 
+    implementation(libs.lifecycle.runtime.compose)
 
     // Retrofit e Gson
     implementation(libs.retrofit)

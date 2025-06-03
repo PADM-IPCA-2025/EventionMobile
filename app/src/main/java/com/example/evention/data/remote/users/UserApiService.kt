@@ -1,10 +1,14 @@
 package com.example.evention.data.remote.users
 
 import com.example.evention.model.User
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface UserApiService {
@@ -20,15 +24,14 @@ interface UserApiService {
     @DELETE("user/api/users/{id}")
     suspend fun deleteUser(@Path("id") userId: String)
 
-    data class UpdateUserRequest(
-        val username: String,
-        val email: String,
-        val phone: Int,
-    )
-
+    @Multipart
     @PUT("user/api/users/{id}")
     suspend fun updateUser(
         @Path("id") userId: String,
-        @Body updatedFields: UpdateUserRequest
+        @Part("username") username: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("phone") phone: RequestBody,
+        @Part profilePicture: MultipartBody.Part? = null
     ): User
+
 }
