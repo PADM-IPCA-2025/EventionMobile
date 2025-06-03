@@ -17,16 +17,8 @@ class EditEventViewModel : ViewModel() {
     private val _event = MutableStateFlow<Event?>(null)
     val event: StateFlow<Event?> = _event
 
-    fun loadEventById(eventId: String) {
-        viewModelScope.launch {
-            try {
-                val fetchedEvent = remoteDataSource.getEventById(eventId)
-                _event.value = fetchedEvent
-            } catch (e: Exception) {
-                _event.value = null
-            }
-        }
-    }
+    private val _editSuccess = MutableStateFlow(false)
+    val editSuccess: StateFlow<Boolean> = _editSuccess
 
     fun editEvent(
         eventId: String,
@@ -47,10 +39,15 @@ class EditEventViewModel : ViewModel() {
                     price = price,
                 )
                 _event.value = updated
+                _editSuccess.value = true
             } catch (e: Exception) {
                 // TODO: handle error
+                _editSuccess.value = false
             }
         }
     }
 
+    fun clearEditSuccess() {
+        _editSuccess.value = false
+    }
 }
