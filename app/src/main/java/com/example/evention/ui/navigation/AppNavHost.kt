@@ -6,6 +6,7 @@ import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +30,7 @@ import com.example.evention.ui.screens.auth.login.LoginScreen
 import com.example.evention.ui.screens.auth.register.RegisterScreen
 import com.example.evention.ui.screens.auth.resetpassword.ResetPasswordScreen
 import com.example.evention.ui.screens.event.create.CreateEventScreen
+import com.example.evention.ui.screens.event.create.SelectLocationScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
 import com.example.evention.ui.screens.ticket.TicketDetailsPreview
@@ -49,12 +51,15 @@ import com.example.evention.ui.screens.profile.userEvents.UserEvents
 import com.example.evention.ui.screens.profile.userEvents.UserEventsViewModel
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
 import com.example.evention.ui.screens.ticket.TicketsScreen
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
+
+    val selectedLocation = remember { mutableStateOf<LatLng?>(null) }
 
     NavHost(navController = navController, startDestination = "home") {
         composable("splash") {
@@ -83,14 +88,24 @@ fun AppNavHost() {
             val events by viewModel.events.collectAsState()
             SearchScreen(events, navController = navController)
         }
-        composable("create"){
+        composable("create") {
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                CreateEventScreen(navController = navController)
+                CreateEventScreen(
+                    navController = navController,
+                    selectedLocation = selectedLocation.value // passa localização
+                )
             }
-
-            CreateEventScreen(navController = navController)
+        }
+        composable("selectLocation") {
+            SelectLocationScreen(
+                navController = navController,
+                onLocationSelected = { location ->
+                    selectedLocation.value = location // guarda localização
+                    navController.popBackStack()      // volta para create
+                }
+            )
         }
         composable("tickets"){
 //            val viewModel: TicketScreenViewModel = viewModel()

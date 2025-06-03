@@ -41,7 +41,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.components.createEvent.CustomDateRangeTextField
+import com.example.evention.ui.components.createEvent.LocationSelectorField
 import com.example.evention.ui.components.home.FilterButtonWithDateRange
+import com.google.android.gms.maps.model.LatLng
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
@@ -50,7 +52,7 @@ import java.util.Locale
 //fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewModel = viewModel()) {
 
 @Composable
-fun CreateEventScreen(navController: NavController) {
+fun CreateEventScreen(navController: NavController, selectedLocation: LatLng? = null) {
     val selectedStartDate = remember { mutableStateOf<Date?>(null) }
     val selectedEndDate = remember { mutableStateOf<Date?>(null) }
     val showDatePicker = remember { mutableStateOf(false) }
@@ -138,7 +140,13 @@ fun CreateEventScreen(navController: NavController) {
             // Campos de texto
             CustomCreateEventTextField("Event Name")
             CustomCreateEventTextField("Description")
-            CustomCreateEventTextField("Address")
+
+            LocationSelectorField(
+                labelText = "Event Location",
+                selectedLocation = selectedLocation,
+                onClick = { navController.navigate("selectLocation") }
+            )
+
             CustomCreateEventTextField("Price")
 
             Spacer(modifier = Modifier.height(20.dp))
