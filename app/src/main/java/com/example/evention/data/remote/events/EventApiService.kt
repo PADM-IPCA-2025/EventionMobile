@@ -2,10 +2,14 @@ package com.example.evention.data.remote.events
 
 import com.example.evention.model.Event
 import com.example.evention.model.Reputation
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface EventApiService {
@@ -33,19 +37,15 @@ interface EventApiService {
     @DELETE("event/api/events/{id}")
     suspend fun deleteEvent(@Path("id") eventId: String)
 
-    data class UpdateEventRequest(
-        val name: String,
-        val description: String,
-        val startAt: String,
-        val endAt: String,
-        val price: Float
-    )
-
+    @Multipart
     @PUT("event/api/events/{id}")
     suspend fun updateEvent(
         @Path("id") eventId: String,
-        @Body eventData: UpdateEventRequest
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("startAt") startAt: RequestBody,
+        @Part("endAt") endAt: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part eventPicture: MultipartBody.Part? = null
     ): Event
-
-
 }

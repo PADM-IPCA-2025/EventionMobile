@@ -67,6 +67,16 @@ fun AllEvents(events: List<Event>, navController: NavController, viewModel: Even
         }
     }
 
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { backStackEntry ->
+            val destination = backStackEntry.destination.route
+            if (destination == "allEvents") {
+                viewModel.loadEvents()
+            }
+        }
+    }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         AnimatedVisibility(

@@ -105,12 +105,6 @@ fun UsersListRow(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "3.9 rating",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
         }
 
         Box {

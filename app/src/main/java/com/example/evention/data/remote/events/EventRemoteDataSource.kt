@@ -3,7 +3,9 @@ package com.example.evention.data.remote.events
 import android.util.Log
 import com.example.evention.model.Event
 import com.example.evention.model.User
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 class EventRemoteDataSource(private val api: EventApiService) {
@@ -30,21 +32,22 @@ class EventRemoteDataSource(private val api: EventApiService) {
         startAt: String,
         endAt: String,
         price: Float,
+        eventPicture: MultipartBody.Part? = null
     ): Event {
-        val updateRequest = EventApiService.UpdateEventRequest(
-            name = name,
-            description = description,
-            startAt = startAt,
-            endAt = endAt,
-            price = price
-        )
-        Log.d("body eventId", eventId)
-        Log.d("body name", updateRequest.name)
-        Log.d("body description", updateRequest.description)
-        Log.d("body startAt", updateRequest.startAt)
-        Log.d("body endAt", updateRequest.endAt)
-        Log.d("body price", updateRequest.price.toString())
-        return api.updateEvent(eventId, updateRequest)
-    }
+        val namePart = name.toRequestBody("text/plain".toMediaType())
+        val descriptionPart = description.toRequestBody("text/plain".toMediaType())
+        val startAtPart = startAt.toRequestBody("text/plain".toMediaType())
+        val endAtPart = endAt.toRequestBody("text/plain".toMediaType())
+        val pricePart = price.toString().toRequestBody("text/plain".toMediaType())
 
+        return api.updateEvent(
+            eventId = eventId,
+            name = namePart,
+            description = descriptionPart,
+            startAt = startAtPart,
+            endAt = endAtPart,
+            price = pricePart,
+            eventPicture = eventPicture
+        )
+    }
 }

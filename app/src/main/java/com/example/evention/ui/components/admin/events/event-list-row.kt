@@ -50,6 +50,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import UserPreferences
+import androidx.compose.foundation.layout.fillMaxSize
 import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
@@ -112,9 +113,8 @@ fun EventListRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
-            var hasError by remember { mutableStateOf(false) }
 
-            if (event.eventPicture == null || hasError) {
+            if (event.eventPicture == null) {
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -130,7 +130,7 @@ fun EventListRow(
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.Gray),
-                    onError = { hasError = true }
+                    contentScale = ContentScale.Crop
                 )
             }
 

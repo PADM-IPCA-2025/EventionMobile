@@ -28,6 +28,16 @@ class EventsViewModel : ViewModel() {
         }
     }
 
+    fun loadEvents() {
+        viewModelScope.launch {
+            try {
+                _events.value = remoteDataSource.getEvents()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {

@@ -45,15 +45,6 @@ class UserEditViewModel : ViewModel() {
                     MultipartBody.Part.createFormData("profilePicture", fileName, requestFile)
                 }
 
-                Log.d("UserEditViewModel", """
-                Enviando dados para a API:
-                - userId: $userId
-                - username: $username
-                - email: $email
-                - phone: $phone
-                - imagem: ${imagePart?.headers}
-            """.trimIndent())
-
                 remoteDataSource.updateUser(
                     userId = userId,
                     username = username,

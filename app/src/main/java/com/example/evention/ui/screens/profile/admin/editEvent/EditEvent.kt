@@ -42,6 +42,9 @@ import com.example.evention.ui.theme.EventionTheme
 import java.text.SimpleDateFormat
 import java.util.*
 import UserPreferences
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import getUnsafeOkHttpClient
 import kotlinx.coroutines.delay
 import androidx.compose.animation.AnimatedVisibility
@@ -67,6 +70,21 @@ fun EditEvent(
         var price by remember { mutableStateOf(event.price.toString()) }
 
         val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+        val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+        val context = LocalContext.current
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let { viewModel.setSelectedImageUri(it) }
+        }
+
+        val hasNewImage = selectedImageUri != null
+        val imageModel: Any? = when {
+            hasNewImage -> selectedImageUri
+            event.eventPicture != null -> "https://10.0.2.2:5010/event${event.eventPicture}"
+            else -> null
+        }
 
         val isoFormatter = remember {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
@@ -77,7 +95,6 @@ fun EditEvent(
         var showDatePicker by remember { mutableStateOf(false) }
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
         var endDateMillis by remember { mutableStateOf(event.endAt.time) }
-        val context = LocalContext.current
 
         val editSuccess by viewModel.editSuccess.collectAsState()
         var showBanner by remember { mutableStateOf(false) }
@@ -100,8 +117,6 @@ fun EditEvent(
                 }
                 .build()
         }
-        val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
-        var hasError by remember { mutableStateOf(false) }
 
         if (showDatePicker) {
             DateRangePickerModal(
@@ -198,34 +213,26 @@ fun EditEvent(
                             .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        if (hasError) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Gray)
-                            )
-                        } else {
+                        if (imageModel != null) {
                             AsyncImage(
-                                model = imageUrl,
+                                model = imageModel,
                                 imageLoader = imageLoader,
                                 contentDescription = "Event Image",
+                                onError = {
+                                    Log.e("EventEditInfo", "Erro ao carregar imagem: $it")
+                                },
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Gray),
-                                onError = { hasError = true }
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
 
                         Button(
-                            onClick = { /* TODO: Change image */ },
+                            onClick = { launcher.launch("image/*") },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .size(width = 100.dp, height = 34.dp),
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.4f)
-                            ),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.4f)),
                             contentPadding = PaddingValues(horizontal = 12.dp)
                         ) {
                             Image(
@@ -279,6 +286,7 @@ fun EditEvent(
                         val cleanedPrice = price.replace("[^\\d.]".toRegex(), "").toFloatOrNull() ?: 0f
 
                         viewModel.editEvent(
+                            context = context,
                             eventId = event.eventID,
                             name = name,
                             description = description,
