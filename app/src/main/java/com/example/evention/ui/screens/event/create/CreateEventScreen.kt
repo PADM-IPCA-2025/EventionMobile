@@ -34,12 +34,29 @@ import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
+import com.example.evention.ui.components.createEvent.CustomDateRangeTextField
+import com.example.evention.ui.components.home.FilterButtonWithDateRange
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Date
+import java.util.Locale
+
+//fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewModel = viewModel()) {
 
 @Composable
 fun CreateEventScreen(navController: NavController) {
+    val selectedStartDate = remember { mutableStateOf<Date?>(null) }
+    val selectedEndDate = remember { mutableStateOf<Date?>(null) }
+    val showDatePicker = remember { mutableStateOf(false) }
+
+    val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -58,39 +75,28 @@ fun CreateEventScreen(navController: NavController) {
                 .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TitleComponent("Create Event", false, navController)
 
-        TitleComponent("Create Event", false, navController)
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .border(
-                    width = 1.dp,
-                    color = EventionBlue,
-                    shape = RoundedCornerShape(15.dp)
-                )
-                .background(
-                    color = Color(0xFF8296AA).copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(15.dp)
-                )
-                .height(180.dp)
-                .clickable {
-                    // TODO: Ação para fazer upload da imagem
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            // Caixa de upload de imagem
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .border(1.dp, EventionBlue, RoundedCornerShape(15.dp))
+                    .background(Color(0xFF8296AA).copy(alpha = 0.1f), RoundedCornerShape(15.dp))
+                    .height(180.dp)
+                    .clickable { /* TODO: Upload image */ },
+                contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.blue_camera),
-                    contentDescription = "Blue camera icon",
-                )
-
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.blue_camera),
+                        contentDescription = "Blue camera icon",
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
-
                     Text(
                         text = "CHANGE",
                         fontSize = 12.sp,
@@ -100,7 +106,36 @@ fun CreateEventScreen(navController: NavController) {
                 }
             }
 
-            CustomCreateEventTextField("Event Duration")
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Campo de duração (com calendário)
+            CustomDateRangeTextField(
+                labelText = "Event Duration",
+                startDate = selectedStartDate.value,
+                endDate = selectedEndDate.value,
+                formatter = formatter,
+                onDateRangeSelected = { start, end ->
+                    selectedStartDate.value = start
+                    selectedEndDate.value = end
+                }
+            )
+
+
+            if (showDatePicker.value) {
+                FilterButtonWithDateRange(
+                    onDateRangeSelected = { startMillis: Long?, endMillis: Long? ->
+                        if (startMillis != null && endMillis != null) {
+                            selectedStartDate.value = Date(startMillis)
+                            selectedEndDate.value = Date(endMillis)
+                        }
+                        showDatePicker.value = false
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Campos de texto
             CustomCreateEventTextField("Event Name")
             CustomCreateEventTextField("Description")
             CustomCreateEventTextField("Address")
@@ -108,15 +143,24 @@ fun CreateEventScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Botão de criação
             Button(
-                onClick = { /* Lógica para criar evento */ },
+                onClick = {
+                    val start = selectedStartDate.value
+                    val end = selectedEndDate.value
+                    if (start != null && end != null) {
+//                        viewModel.createEvent(
+//                            startDate = start,
+//                            endDate = end
+//                            // adicione os outros campos aqui
+//                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0081FF)
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0081FF))
             ) {
                 Text(
                     text = "Create Event",
@@ -129,6 +173,7 @@ fun CreateEventScreen(navController: NavController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

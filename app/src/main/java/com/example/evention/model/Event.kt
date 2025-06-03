@@ -37,3 +37,33 @@ data class RoutesEvent(
     val longitude: Double,
     val order: Int
 )
+
+data class EventRequest(
+    val userId: String,
+    val name: String,
+    val description: String,
+    val startAt: Date,
+    val endAt: Date,
+    val price: Double,
+    val eventStatusID: String,
+    val addressEvents: List<AddressEventRequest>,
+    val eventPicture: String? = null
+)
+
+data class AddressEventRequest(
+    val road: String,
+    val roadNumber: Int,
+    val postCode: String,
+    val localtown: String,
+    val routes: List<RoutesEventRequest>
+)
+
+data class RoutesEventRequest(
+    val latitude: Double,
+    val longitude: Double,
+    val order: Int
+)
+
+data class EventResponse(
+    val event: Event
+)

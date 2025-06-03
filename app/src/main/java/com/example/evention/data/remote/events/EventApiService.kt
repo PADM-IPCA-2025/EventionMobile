@@ -1,10 +1,14 @@
 package com.example.evention.data.remote.events
 
 import com.example.evention.model.Event
+import com.example.evention.model.EventRequest
+import com.example.evention.model.EventResponse
 import com.example.evention.model.Reputation
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -33,6 +37,9 @@ interface EventApiService {
     @DELETE("event/api/events/{id}")
     suspend fun deleteEvent(@Path("id") eventId: String)
 
+    @POST("event/api/events")
+    suspend fun createEvent(@Body request: EventRequest): Response<EventResponse>
+
     data class UpdateEventRequest(
         val name: String,
         val description: String,
@@ -46,6 +53,5 @@ interface EventApiService {
         @Path("id") eventId: String,
         @Body eventData: UpdateEventRequest
     ): Event
-
 
 }
