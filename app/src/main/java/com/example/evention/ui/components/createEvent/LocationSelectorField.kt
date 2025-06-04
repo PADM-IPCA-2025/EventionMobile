@@ -23,24 +23,30 @@ fun LocationSelectorField(
     val displayText = if (selectedLocation != null) {
         "Lat: %.5f, Lng: %.5f".format(selectedLocation.latitude, selectedLocation.longitude)
     } else {
-        "Tap to select location"
+        ""
     }
 
     OutlinedTextField(
         value = displayText,
         onValueChange = {},
-        label = { Text(labelText) },
         readOnly = true,
-        enabled = false,
-        textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Medium),
+        enabled = false, // mesmo comportamento do campo de data
+        label = { Text(labelText, color = Color.Black) },
+        textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
             .clickable { onClick() },
         colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.Black,
+            cursorColor = Color.Black,
+            focusedLabelColor = Color.Black,
+            unfocusedLabelColor = Color.Black,
             disabledTextColor = Color.Black,
             disabledLabelColor = Color.Black,
-            disabledBorderColor = Color.Black
+            disabledBorderColor = Color.Black,
         )
     )
 }
+

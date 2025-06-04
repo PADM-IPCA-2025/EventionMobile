@@ -1,6 +1,7 @@
 package com.example.evention.ui.screens.event.create
 
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
 import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -43,3 +44,15 @@ fun fetchSelectCoordinates(
         }
     }
 }
+
+fun getAddressFromLatLng(context: Context, latLng: LatLng): Address? {
+    return try {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+        if (!addresses.isNullOrEmpty()) addresses[0] else null
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+

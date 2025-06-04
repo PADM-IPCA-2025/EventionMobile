@@ -115,12 +115,20 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                     .align(Alignment.TopCenter),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Gray,
+                IconButton(
+                    onClick = {
+                        navController.navigate("create") {
+                            popUpTo("selectLocation") { inclusive = true }
+                        }
+                    },
                     modifier = Modifier.padding(end = 8.dp)
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Gray
+                    )
+                }
 
                 TextField(
                     value = query.value,
