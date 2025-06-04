@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,9 +31,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.evention.model.Event
+import com.example.evention.ui.theme.EventionTheme
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -59,7 +66,8 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                 onClick = {
                     markerPosition.value?.let { selectedLatLng ->
                         onLocationSelected(selectedLatLng)
-                        navController.popBackStack() // Voltar à tela anterior
+                        //navController.popBackStack() // Voltar à tela anterior
+                        navController.navigate("create")
                     }
                 },
                 modifier = Modifier
@@ -107,6 +115,13 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                     .align(Alignment.TopCenter),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Gray,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+
                 TextField(
                     value = query.value,
                     onValueChange = { query.value = it },
@@ -149,13 +164,22 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                 IconButton(onClick = {
                     moveToCurrentLocation(context, cameraPositionState)
                 }) {
-//                    Icon(
-//                        imageVector = Icons.Default.MyLocation,
-//                        contentDescription = "My Location",
-//                        tint = Color.Gray
-//                    )
+                    Icon(
+                        imageVector = Icons.Outlined.LocationOn,
+                        contentDescription = "My Location",
+                        tint = Color.Gray
+                    )
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Previeww() {
+    EventionTheme {
+        //val navController = rememberNavController()
+        //SelectLocationScreen(navController = navController)
     }
 }
