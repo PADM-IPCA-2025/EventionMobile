@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.user.userProfile
 
+import UserPreferences
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -54,6 +56,13 @@ fun UserProfile(
     val userNullable by viewModel.user.collectAsState()
     val reputation by viewModel.reputation.collectAsState()
     val eventsMap by viewModel.events.collectAsState()
+    val context = LocalContext.current
+
+    val userPrefs = remember { UserPreferences(context) }
+    val usertype = userPrefs.getUserType()
+
+    val isAdmin = usertype == "123e4567-e89b-12d3-a456-426614174002"
+    val isAdvertiser = usertype == "123e4567-e89b-12d3-a456-426614174001"
 
     val user = userProfile ?: userNullable
 
@@ -116,7 +125,7 @@ fun UserProfile(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 if (userProfile == null) {
-                    MenuCard(navController)
+                    MenuCard(navController, isAdmin, isAdvertiser)
                 } else {
                     Text(
                         text = "Feedbacks Received",

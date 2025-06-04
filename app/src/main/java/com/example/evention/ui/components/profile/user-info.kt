@@ -60,9 +60,6 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
             .build()
     }
 
-    Log.d("nome do user", user.username)
-    user.profilePicture?.let { Log.d("foto do user", it) }
-
     if (user.profilePicture == null) {
         Box(
             modifier = Modifier
