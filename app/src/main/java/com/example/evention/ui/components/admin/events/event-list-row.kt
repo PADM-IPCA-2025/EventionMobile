@@ -50,7 +50,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import UserPreferences
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
+import com.google.gson.Gson
 import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
@@ -99,6 +101,10 @@ fun EventListRow(
                 }
                 "allEvents" -> {
                     navController.navigate("eventDetails/${event.eventID}")
+                }
+                "userEvents" -> {
+                    val eventJson = Uri.encode(Gson().toJson(event))
+                    navController.navigate("userParticipation/${eventJson}")
                 }
                 else -> {
                     navController.navigate("eventDetails/${event.eventID}")

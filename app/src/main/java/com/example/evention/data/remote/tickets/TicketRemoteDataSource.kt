@@ -2,14 +2,16 @@ package com.example.evention.data.remote.tickets
 
 import com.example.evention.model.CreateFeedbackRequest
 import com.example.evention.model.CreateTicketRequest
-import com.example.evention.model.Event
 import com.example.evention.model.Feedback
 import com.example.evention.model.Ticket
+import com.example.evention.model.TicketReputation
 
 class TicketRemoteDataSource(private val api: TicketApiService) {
     suspend fun getTickets(): List<Ticket> = api.getTickets()
 
     suspend fun getTicketById(ticketId: String): Ticket = api.getTicketById(ticketId)
+
+    suspend fun getTicketsByEvent(eventId: String): List<TicketReputation> = api.getTicketsByEvent(eventId)
 
     suspend fun createTicket(eventId: String): Ticket {
         val request = CreateTicketRequest(eventId)

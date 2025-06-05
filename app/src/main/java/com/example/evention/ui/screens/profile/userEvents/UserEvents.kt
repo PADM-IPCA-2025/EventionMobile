@@ -70,7 +70,8 @@ fun UserEvents(events: List<Event>, navController: NavController, viewModel: Use
                             navController.navigate("eventEdit/$eventJson")
                         },
                         onRemove = { viewModel.deleteEvent(events[index].eventID) },
-                        navController = navController
+                        navController = navController,
+                        thirdSection = "Scan QR Code"
                     )
                 }
             }

@@ -5,6 +5,7 @@ import com.example.evention.model.CreateTicketRequest
 import com.example.evention.model.Event
 import com.example.evention.model.Feedback
 import com.example.evention.model.Ticket
+import com.example.evention.model.TicketReputation
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -17,6 +18,9 @@ interface TicketApiService {
 
     @GET("userinevent/api/tickets/{id}")
     suspend fun getTicketById(@Path("id") ticketId: String): Ticket
+
+    @GET("userinevent/api/tickets/event/{id}")
+    suspend fun getTicketsByEvent(@Path("id") eventId: String): List<TicketReputation>
 
     @POST("userinevent/api/tickets")
     suspend fun createTicket(
