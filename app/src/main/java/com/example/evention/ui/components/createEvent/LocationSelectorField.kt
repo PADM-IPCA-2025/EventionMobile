@@ -18,19 +18,14 @@ import com.google.android.gms.maps.model.LatLng
 fun LocationSelectorField(
     labelText: String,
     selectedLocation: LatLng?,
+    displayAddress: String,
     onClick: () -> Unit
 ) {
-    val displayText = if (selectedLocation != null) {
-        "Lat: %.5f, Lng: %.5f".format(selectedLocation.latitude, selectedLocation.longitude)
-    } else {
-        ""
-    }
-
     OutlinedTextField(
-        value = displayText,
+        value = displayAddress,
         onValueChange = {},
         readOnly = true,
-        enabled = false, // mesmo comportamento do campo de data
+        enabled = false,
         label = { Text(labelText, color = Color.Black) },
         textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
         modifier = Modifier
@@ -41,8 +36,6 @@ fun LocationSelectorField(
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Black,
             cursorColor = Color.Black,
-            focusedLabelColor = Color.Black,
-            unfocusedLabelColor = Color.Black,
             disabledTextColor = Color.Black,
             disabledLabelColor = Color.Black,
             disabledBorderColor = Color.Black,

@@ -59,8 +59,6 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    val selectedLocation = remember { mutableStateOf<LatLng?>(null) }
-
     NavHost(navController = navController, startDestination = "home") {
         composable("splash") {
             SplashScreen(navController = navController)
@@ -92,20 +90,11 @@ fun AppNavHost() {
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                CreateEventScreen(
-                    navController = navController,
-                    selectedLocation = selectedLocation.value // passa localização
-                )
+                CreateEventScreen(navController = navController)
             }
         }
         composable("selectLocation") {
-            SelectLocationScreen(
-                navController = navController,
-                onLocationSelected = { location ->
-                    selectedLocation.value = location // guarda localização
-                    navController.popBackStack()      // volta para create
-                }
-            )
+            SelectLocationScreen(navController = navController)
         }
         composable("tickets"){
 //            val viewModel: TicketScreenViewModel = viewModel()

@@ -12,13 +12,15 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun CustomCreateEventTextField(labelText: String) {
-    var text by remember { mutableStateOf("") }
-
+fun CustomCreateEventTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        label = { Text(labelText, color = Color.Black) },
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label, color = Color.Black) },
         textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .fillMaxWidth()
@@ -33,10 +35,11 @@ fun CustomCreateEventTextField(labelText: String) {
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun CustomOutlinedTextFieldPreview() {
     EventionTheme {
-        CustomCreateEventTextField("Label")
+        //CustomCreateEventTextField("Label")
     }
 }

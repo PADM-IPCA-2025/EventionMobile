@@ -47,15 +47,14 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import moveToCurrentLocation
 
 @Composable
-fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatLng) -> Unit) {
+fun SelectLocationScreen(navController: NavController) {
     val context = LocalContext.current
     val query = remember { mutableStateOf("") }
+
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            com.google.android.gms.maps.model.LatLng(
-                38.7169,
-                -9.1399
-            ), 10f)
+            LatLng(38.7169, -9.1399), 10f
+        )
     }
 
     val markerPosition = remember { mutableStateOf<LatLng?>(null) }
@@ -65,9 +64,10 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
             Button(
                 onClick = {
                     markerPosition.value?.let { selectedLatLng ->
-                        onLocationSelected(selectedLatLng)
-                        //navController.popBackStack() // Voltar à tela anterior
-                        navController.navigate("create")
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("selectedLocation", selectedLatLng)
+                        navController.popBackStack()
                     }
                 },
                 modifier = Modifier
@@ -77,18 +77,15 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0081FF))
             ) {
-                Text(
-                    text = "Confirm Location",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Confirm Location", color = Color.White, fontWeight = FontWeight.Bold)
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
-
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
@@ -116,11 +113,7 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = {
-                        navController.navigate("create") {
-                            popUpTo("selectLocation") { inclusive = true }
-                        }
-                    },
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(
@@ -134,11 +127,7 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                     value = query.value,
                     onValueChange = { query.value = it },
                     placeholder = {
-                        Text(
-                            "Search location",
-                            color = Color.Gray,
-                            fontSize = 16.sp
-                        )
+                        Text("Search location", color = Color.Gray, fontSize = 16.sp)
                     },
                     singleLine = true,
                     modifier = Modifier
@@ -162,21 +151,13 @@ fun SelectLocationScreen(navController: NavController, onLocationSelected: (LatL
                         markerPosition.value = result
                     }
                 }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = Color.Gray
-                    )
+                    Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Gray)
                 }
 
                 IconButton(onClick = {
                     moveToCurrentLocation(context, cameraPositionState)
                 }) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = "My Location",
-                        tint = Color.Gray
-                    )
+                    Icon(Icons.Outlined.LocationOn, contentDescription = "My Location", tint = Color.Gray)
                 }
             }
         }
