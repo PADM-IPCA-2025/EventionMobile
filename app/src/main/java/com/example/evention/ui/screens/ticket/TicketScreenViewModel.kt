@@ -23,7 +23,18 @@ class TicketScreenViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _tickets.value = remoteDataSource.getTickets()
+            val rawTickets = remoteDataSource.getTickets()
+            val eventRemote = NetworkModule.eventRemoteDataSource
+
+            val enrichedTickets = rawTickets.map { rawTicket ->
+                val event = eventRemote.getEventById(rawTicket.event_id)
+                Ticket(
+                    ticketID = rawTicket.ticketID,
+                    event = event
+                )
+            }
+
+            _tickets.value = enrichedTickets
         }
     }
 

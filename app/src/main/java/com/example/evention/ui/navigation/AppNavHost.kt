@@ -45,6 +45,7 @@ import com.example.evention.ui.screens.profile.userEvents.UserEvents
 import com.example.evention.ui.screens.profile.userEvents.UserEventsViewModel
 import com.example.evention.ui.screens.profile.userEvents.userParticipation.UserParticipation
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
+import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
 import com.google.gson.Gson
 
@@ -90,13 +91,13 @@ fun AppNavHost() {
             CreateEventScreen(navController = navController)
         }
         composable("tickets"){
-//            val viewModel: TicketScreenViewModel = viewModel()
-//            val tickets by viewModel.tickets.collectAsState()
+            val viewModel: TicketScreenViewModel = viewModel()
+            val tickets by viewModel.tickets.collectAsState()
 
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                TicketsScreen(TicketMockData.tickets, navController = navController)
+                TicketsScreen(tickets, navController = navController)
             }
 
             //TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets

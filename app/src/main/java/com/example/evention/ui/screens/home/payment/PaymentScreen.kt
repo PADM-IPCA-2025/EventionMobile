@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,9 +60,15 @@ import java.io.IOException
 @Composable
 fun PaymentScreen(event: Event,ticketId: String, navController: NavController, viewModel: PaymentViewModel) {
 
-//    val paymentResult by viewModel.paymentResult.collectAsState()
-//    val errorMessage by viewModel.errorMessage.collectAsState()
+    val paymentResult by viewModel.paymentResult.collectAsState()
+    var paymentTriggered by remember { mutableStateOf(false) }
 
+    LaunchedEffect(paymentResult, paymentTriggered) {
+        if (paymentTriggered && paymentResult != null) {
+            navController.navigate("ticketDetails/$ticketId")
+            paymentTriggered = false
+        }
+    }
     //val event = MockData.events.find { event -> event.eventID == event.eventID }
     if (event == null) return
 
@@ -81,7 +88,7 @@ fun PaymentScreen(event: Event,ticketId: String, navController: NavController, v
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
-        TitleComponent("Checkout", true, navController)
+        TitleComponent("Checkout", false, navController)
 
         Text(
             text = "Payment",
@@ -187,12 +194,21 @@ fun PaymentScreen(event: Event,ticketId: String, navController: NavController, v
 
         Button(
             onClick = {
-                viewModel.createPayment(
-                    ticketId,
-                    event.userId,
-                    event.price,
-                    paymentType = selectedMethod,
-                )
+                val isPaypalValid = selectedMethod == "Paypal" && android.util.Patterns.EMAIL_ADDRESS.matcher(paypalEmail).matches()
+                val isCardValid = selectedMethod == "Credit Card" &&
+                        cardNumber.isNotBlank() &&
+                        cardExpiry.isNotBlank() &&
+                        cardCvv.isNotBlank()
+
+                if ((selectedMethod == "Paypal" && isPaypalValid) || (selectedMethod == "Credit Card" && isCardValid)) {
+                    paymentTriggered = true
+                    viewModel.createPayment(
+                        ticketId,
+                        event.userId,
+                        event.price,
+                        paymentType = selectedMethod,
+                    )
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),

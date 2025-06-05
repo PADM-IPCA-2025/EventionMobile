@@ -48,10 +48,17 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
     LaunchedEffect(ticketId) {
         viewModel.loadTicketById(ticketId)
     }
-    //val ticketNullable by viewModel.ticket.collectAsState()
-    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticketId }
+    val ticketNullable by viewModel.ticket.collectAsState()
+//    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticketId }
 
     ticketNullable?.let { ticket ->
+
+        val locale = Locale("pt", "PT")
+        val startDateTime = ticket.event.startAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val endDateTime = ticket.event.endAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+
+        val dateFormatter = DateTimeFormatter.ofPattern("d MMMM 'de' yyyy", locale)
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
         val qrBitmap = remember(ticket.ticketID) {
             generateQrCodeBitmap(ticket.ticketID)
@@ -101,12 +108,12 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
 
             Column {
                 Text(
-                    text = ticket.event.startAt.toString(),
+                    text = startDateTime.format(dateFormatter),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = ticket.event.endAt.toString(),
+                    text = "${startDateTime.format(timeFormatter)} - ${endDateTime.format(timeFormatter)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -136,7 +143,7 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = ticket.event.addressEvents[0].localtown,
+                    text = ticket.event.addressEvents[0].postCode,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -153,13 +160,13 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
             Image(
                 bitmap = qrBitmap.asImageBitmap(),    // painter = painterResource(id = R.drawable.qrcodemock),
                 contentDescription = "QR Code",
-                modifier = Modifier.size(180.dp)
+                modifier = Modifier.size(300.dp)
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (LocalDateTime.now().isAfter(eventEndAtLocalDateTime)) {
+        if (LocalDateTime.now().isAfter(eventEndAtLocalDateTime) && ticket.feedback_id == null) {
         Button(
             onClick = {  navController.navigate("ticketFeedback/${ticketId}") },
             modifier = Modifier
