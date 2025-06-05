@@ -69,7 +69,8 @@ fun EventListRow(
     secondSection: String,
     onEdit: (Event) -> Unit,
     onRemove: (Event) -> Unit,
-    navController: NavController
+    navController: NavController,
+    thirdSection: String? = null
 ) {
     val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
     val context = LocalContext.current
@@ -204,6 +205,28 @@ fun EventListRow(
                                 onRemove(event)
                             }
                         )
+
+                        if(thirdSection != null){
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.8f)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        thirdSection,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                },
+                                onClick = {
+                                    expanded = false
+                                    navController.navigate("scanQRCode")
+                                }
+                            )
+                        }
                     }
                 }
             }
