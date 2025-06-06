@@ -3,6 +3,7 @@ package com.example.evention.ui.screens.event.create
 import CustomCreateEventTextField
 import UserPreferences
 import android.location.Geocoder
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -99,10 +100,14 @@ fun CreateEventScreen(navController: NavController) {
     LaunchedEffect(navLocation) {
         navLocation?.let {
             selectedLocation.value = it
+
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
+
+
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
+
                 val fullAddress = buildString {
                     append(address.thoroughfare ?: "")
                     if (address.subThoroughfare != null) append(", ${address.subThoroughfare}")

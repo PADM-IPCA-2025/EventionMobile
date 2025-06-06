@@ -2,10 +2,12 @@ package com.example.evention.data.remote.events
 
 import android.util.Log
 import com.example.evention.model.AddressEventRequest
+import com.example.evention.model.AddressEventResponse
 import com.example.evention.model.Event
 import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.RoutesEventRequest
+import com.example.evention.model.RoutesEventResponse
 import retrofit2.Response
 import java.util.Date
 
@@ -57,44 +59,29 @@ class EventRemoteDataSource(private val api: EventApiService) {
         startAt: String, // <-- alterado para String
         endAt: String,   // <-- alterado para String
         price: Double,
-        road: String,
-        roadNumber: Int,
-        postCode: String,
-        localtown: String,
-        latitude: Double,
-        longitude: Double,
         eventPicture: String? = null
     ): Response<EventResponse> {
-        val addressRequest = AddressEventRequest(
-            road = road,
-            roadNumber = roadNumber,
-            postCode = postCode,
-            localtown = localtown,
-            routes = listOf(
-                RoutesEventRequest(
-                    latitude = latitude,
-                    longitude = longitude,
-                    order = 0
-                )
-            )
-        )
 
         val request = EventRequest(
             userId = userId,
             name = name,
             description = description,
-            startAt = startAt, // <-- agora String
-            endAt = endAt,     // <-- agora String
+            startAt = startAt,
+            endAt = endAt,
             price = price,
             eventStatusID = "11111111-1111-1111-1111-111111111111",
-            addressEvents = listOf(addressRequest),
             eventPicture = eventPicture
         )
 
         return api.createEvent(request)
     }
 
+    suspend fun createAddressEvent(request: AddressEventRequest): Response<AddressEventResponse> {
+        return api.createAddressEvent(request)
+    }
 
-
+    suspend fun createRouteEvent(request: RoutesEventRequest): Response<RoutesEventResponse> {
+        return api.createRouteEvent(request)
+    }
 
 }

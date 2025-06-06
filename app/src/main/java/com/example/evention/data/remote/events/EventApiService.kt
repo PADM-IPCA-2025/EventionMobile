@@ -1,9 +1,15 @@
 package com.example.evention.data.remote.events
 
+import com.example.evention.model.AddressEvent
+import com.example.evention.model.AddressEventRequest
+import com.example.evention.model.AddressEventResponse
 import com.example.evention.model.Event
 import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
+import com.example.evention.model.Location
 import com.example.evention.model.Reputation
+import com.example.evention.model.RoutesEventRequest
+import com.example.evention.model.RoutesEventResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -53,5 +59,11 @@ interface EventApiService {
         @Path("id") eventId: String,
         @Body eventData: UpdateEventRequest
     ): Event
+
+    @POST("event/api/addressEvents")
+    suspend fun createAddressEvent(@Body request: AddressEventRequest): Response<AddressEventResponse>
+
+    @POST("event/api/routesEvents")
+    suspend fun createRouteEvent(@Body request: RoutesEventRequest): Response<RoutesEventResponse>
 
 }

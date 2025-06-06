@@ -46,24 +46,49 @@ data class EventRequest(
     val endAt: String,
     val price: Double,
     val eventStatusID: String,
-    val addressEvents: List<AddressEventRequest>,
     val eventPicture: String? = null
 )
 
 data class AddressEventRequest(
+    val event_id: String,
     val road: String,
     val roadNumber: Int,
     val postCode: String,
-    val localtown: String,
-    val routes: List<RoutesEventRequest>
+    val localtown: String
 )
 
 data class RoutesEventRequest(
     val latitude: Double,
     val longitude: Double,
-    val order: Int
+    val order: Int,
+    val addressEvent_id: String
 )
 
 data class EventResponse(
-    val event: Event
+    val eventID: String,
+    val userId: String,
+    val name: String,
+    val description: String,
+    val startAt: String,
+    val endAt: String,
+    val price: Double,
+    val eventStatusID: String,
+    val eventPicture: String? = null
+)
+
+data class AddressEventResponse(
+    val addressEstablishmentID: String,
+    val event_id: String,
+    val road: String,
+    val roadNumber: Int,
+    val postCode: String,
+    val localtown: String
+)
+
+data class RoutesEventResponse(
+    val routeID: String,
+    val latitude: Double,
+    val longitude: Double,
+    val order: Int,
+    val addressEvent_id: String
 )

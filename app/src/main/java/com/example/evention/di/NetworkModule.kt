@@ -8,6 +8,8 @@ import UserPreferences
 import com.example.evention.data.remote.authentication.ResetPasswordRemoteDataSource
 import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.data.remote.events.EventRemoteDataSource
+import com.example.evention.data.remote.location.LocationApiService
+import com.example.evention.data.remote.location.LocationRemoteDataSource
 import com.example.evention.data.remote.payments.PaymentApiService
 import com.example.evention.data.remote.payments.PaymentRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketApiService
@@ -60,6 +62,10 @@ object NetworkModule {
         retrofit.create(RegisterApiService::class.java)
     }
 
+    private val locationApi: LocationApiService by lazy {
+        retrofit.create(LocationApiService::class.java)
+    }
+
     // Data Source
     val eventRemoteDataSource: EventRemoteDataSource by lazy {
         EventRemoteDataSource(eventApi)
@@ -87,6 +93,10 @@ object NetworkModule {
 
     val resetPasswordRemoteDataSource: ResetPasswordRemoteDataSource by lazy {
         ResetPasswordRemoteDataSource(loginApi)
+    }
+
+    val locationRemoteDataSource: LocationRemoteDataSource by lazy {
+        LocationRemoteDataSource(locationApi)
     }
 
 }
