@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.userEvents.userParticipation
 
+import UserPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -28,18 +31,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.mock.MockData
 import com.example.evention.model.Event
 import com.example.evention.model.User
 import com.example.evention.ui.components.TitleComponent
+import com.example.evention.ui.components.profile.ParticipantCard
 import com.example.evention.ui.theme.EventionTheme
+import getUnsafeOkHttpClient
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -55,88 +62,25 @@ fun UserParticipation(
 
     val ticketWithUsers by viewModel.ticketsWithUsers.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 25.dp, vertical = 18.dp)
     ) {
-        TitleComponent("Participants", true, navController)
-
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            TitleComponent("Participants", true, navController)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         if (ticketWithUsers.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "No participations yet.", style = MaterialTheme.typography.bodyMedium)
+            item {
+                Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No participations yet.", style = MaterialTheme.typography.bodyLarge)
+                }
             }
         } else {
-            ticketWithUsers.forEach { item ->
-                ParticipantCard(
-                    user = item.user,
-                    ticketDate = item.ticket.createdAt
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ParticipantCard(
-    user: User,
-    ticketDate: String,
-    modifier: Modifier = Modifier
-) {
-    val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
-    var hasError by remember { mutableStateOf(false) }
-
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            if (user.profilePicture == null || hasError) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                )
-            } else {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "User Image",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray),
-                    onError = { hasError = true }
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = user.username,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = user.email,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-                Text(
-                    text = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(ticketDate),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+            items(ticketWithUsers) { item ->
+                ParticipantCard(user = item.user)
             }
         }
     }

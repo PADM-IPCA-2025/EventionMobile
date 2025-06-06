@@ -95,19 +95,19 @@ fun EventListRow(
         shape = RoundedCornerShape(12.dp),
         onClick = {
             val currentRoute = navController.currentBackStackEntry?.destination?.route
+            val eventJson = Uri.encode(Gson().toJson(event))
             when (currentRoute) {
                 "tickets" -> {
                     navController.navigate("ticketDetails/${ticketID}")
                 }
                 "allEvents" -> {
-                    navController.navigate("eventDetails/${event.eventID}")
+                    navController.navigate("eventDetails/${eventJson}")
                 }
                 "userEvents" -> {
-                    val eventJson = Uri.encode(Gson().toJson(event))
                     navController.navigate("userParticipation/${eventJson}")
                 }
                 else -> {
-                    navController.navigate("eventDetails/${event.eventID}")
+                    navController.navigate("eventDetails/${eventJson}")
                 }
             }
         }
