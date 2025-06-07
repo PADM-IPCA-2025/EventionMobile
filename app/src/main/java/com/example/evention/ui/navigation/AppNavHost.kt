@@ -54,7 +54,7 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = "signIn") {
+    NavHost(navController = navController, startDestination = "home") {
         composable("splash") {
             SplashScreen(navController = navController)
         }
