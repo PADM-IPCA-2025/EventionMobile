@@ -2,6 +2,7 @@ package com.example.evention.ui.navigation
 
 import SearchScreen
 import SplashScreen
+import TicketRepository
 import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -14,7 +15,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.evention.data.local.database.AppDatabase
+import com.example.evention.data.local.factory.TicketScreenViewModelFactory
 import com.example.evention.data.remote.authentication.RequireAuth
+import com.example.evention.di.NetworkModule
 import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.screens.home.details.EventDetails
 import com.example.evention.ui.screens.home.notifications.NotificationScreen
@@ -90,18 +94,25 @@ fun AppNavHost() {
 
             CreateEventScreen(navController = navController)
         }
-        composable("tickets"){
-            val viewModel: TicketScreenViewModel = viewModel()
+
+        composable("tickets") {
+            val database = AppDatabase.getDatabase(context)
+            val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, database.ticketDao())
+
+            val viewModel: TicketScreenViewModel = viewModel(
+                factory = TicketScreenViewModelFactory(repository)
+            )
+
             val tickets by viewModel.tickets.collectAsState()
 
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                TicketsScreen(tickets, navController = navController)
+                TicketsScreen(tickets = tickets, navController = navController)
             }
-
-            //TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
         }
+
+
         composable(
             "ticketDetails/{ticketId}",
             arguments = listOf(navArgument("ticketId") { type = NavType.StringType })

@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.ticket
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
@@ -60,7 +61,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                 .padding(innerPadding)
         ) {
 
-        TitleComponent("Tickets", false, navController)
+            TitleComponent("Tickets", false, navController)
 
             if (tickets.isEmpty()) {
                 Box(
@@ -93,7 +94,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                             firstSection = "",
                             secondSection = "",
                             onEdit = {},
-                            onRemove = {} ,
+                            onRemove = {},
                             navController = navController
                         )
                     }
