@@ -1,20 +1,17 @@
 package com.example.evention.data.remote.events
 
-import android.util.Log
 import com.example.evention.model.AddressEventRequest
 import com.example.evention.model.AddressEventResponse
 import com.example.evention.model.Event
-import com.example.evention.model.User
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.RoutesEventRequest
 import com.example.evention.model.RoutesEventResponse
 import retrofit2.Response
-import java.util.Date
+
 
 class EventRemoteDataSource(private val api: EventApiService) {
     suspend fun getEvents(): List<Event> = api.getEvents()
@@ -57,21 +54,14 @@ class EventRemoteDataSource(private val api: EventApiService) {
             price = pricePart,
             eventPicture = eventPicture
         )
-        Log.d("body eventId", eventId)
-        Log.d("body name", updateRequest.name)
-        Log.d("body description", updateRequest.description)
-        Log.d("body startAt", updateRequest.startAt)
-        Log.d("body endAt", updateRequest.endAt)
-        Log.d("body price", updateRequest.price.toString())
-        return api.updateEvent(eventId, updateRequest)
     }
 
     suspend fun createEvent(
         userId: String,
         name: String,
         description: String,
-        startAt: String, // <-- alterado para String
-        endAt: String,   // <-- alterado para String
+        startAt: String,
+        endAt: String,
         price: Double,
         eventPicture: String? = null
     ): Response<EventResponse> {

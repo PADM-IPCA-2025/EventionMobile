@@ -74,19 +74,19 @@ class CreateEventViewModel(
             val locality = addr.locality ?: ""
 
             val gson = Gson()
-            val defaultLocationId = "f0c19684-09c4-4960-bfe1-f8c2735d4f6d"
+            val defaultLocationId = "0281b20c-60d5-4805-bcc1-c17660feb55f"
             val localtown = try {
                 val locationResponse = locationRemoteDataSource.getLocationByLocaltown(locality)
                 locationResponse.locationId
             } catch (e: Exception) {
-                Log.w("EVENT_DEBUG", "⚠️ Erro ao buscar locationId, usando padrão: ${e.message}")
+                Log.w("EVENT_DEBUG", "Erro ao procurar locationId: ${e.message}")
                 defaultLocationId
             }
 
             Log.d("LOCALTOWN", "LOCALTOWN ID: $localtown")
 
             try {
-                // 1. Criar evento primeiro
+                // Criar evento
                 val eventRequest = EventRequest(
                     userId = userId,
                     name = name,
@@ -98,7 +98,7 @@ class CreateEventViewModel(
                     eventPicture = eventPicture
                 )
 
-                Log.d("EVENT_DEBUG", "📦 EventRequest JSON: ${gson.toJson(eventRequest)}")
+                Log.d("EVENT_DEBUG", "EventRequest JSON: ${gson.toJson(eventRequest)}")
 
                 val eventResponse = eventRemoteDataSource.createEvent(
                     userId = userId,
@@ -110,7 +110,7 @@ class CreateEventViewModel(
                     eventPicture = eventPicture
                 )
 
-                Log.d("EVENT_DEBUG", "✅ Event response: ${eventResponse.code()} ${eventResponse.message()}")
+                Log.d("EVENT_DEBUG", "Event response: ${eventResponse.code()} ${eventResponse.message()}")
 
                 if (!eventResponse.isSuccessful || eventResponse.body() == null) {
                     _createEventState.value = CreateEventState.Error("Erro ao criar evento: ${eventResponse.code()}")
@@ -119,11 +119,11 @@ class CreateEventViewModel(
 
                 val createdEvent = eventResponse.body()!!
 
-                Log.d("EVENT_DEBUG", "🔍 createdEventResponse JSON: ${gson.toJson(createdEvent)}")
+                Log.d("EVENT_DEBUG", "createdEventResponse JSON: ${gson.toJson(createdEvent)}")
 
                 val eventId = createdEvent.eventID
 
-                // 2. Criar endereço com event_id e localtown como ID
+                // Criar endereço
                 val addressRequest = AddressEventRequest(
                     event_id = eventId,
                     road = road,
@@ -132,11 +132,11 @@ class CreateEventViewModel(
                     localtown = localtown
                 )
 
-                Log.d("EVENT_DEBUG", "📦 AddressEventRequest JSON: ${gson.toJson(addressRequest)}")
+                Log.d("EVENT_DEBUG", "AddressEventRequest JSON: ${gson.toJson(addressRequest)}")
 
                 val addressResponse = eventRemoteDataSource.createAddressEvent(addressRequest)
 
-                Log.d("EVENT_DEBUG", "✅ Address response: ${addressResponse.code()} ${addressResponse.message()}")
+                Log.d("EVENT_DEBUG", "Address response: ${addressResponse.code()} ${addressResponse.message()}")
 
                 if (!addressResponse.isSuccessful || addressResponse.body() == null) {
                     _createEventState.value = CreateEventState.Error("Erro ao criar endereço")
@@ -146,7 +146,7 @@ class CreateEventViewModel(
                 val createdAddress = addressResponse.body()!!
                 val addressId = createdAddress.addressEstablishmentID
 
-                // 3. Criar rota com addressEvent_id
+                // Criar rota
                 val routeRequest = RoutesEventRequest(
                     latitude = location.latitude,
                     longitude = location.longitude,
@@ -154,11 +154,11 @@ class CreateEventViewModel(
                     addressEvent_id = addressId
                 )
 
-                Log.d("EVENT_DEBUG", "📦 RoutesEventRequest JSON: ${gson.toJson(routeRequest)}")
+                Log.d("EVENT_DEBUG", "RoutesEventRequest JSON: ${gson.toJson(routeRequest)}")
 
                 val routeResponse = eventRemoteDataSource.createRouteEvent(routeRequest)
 
-                Log.d("EVENT_DEBUG", "✅ Route response: ${routeResponse.code()} ${routeResponse.message()}")
+                Log.d("EVENT_DEBUG", "Route response: ${routeResponse.code()} ${routeResponse.message()}")
 
                 if (!routeResponse.isSuccessful || routeResponse.body() == null) {
                     _createEventState.value = CreateEventState.Error("Erro ao criar rota")
@@ -168,7 +168,7 @@ class CreateEventViewModel(
                 _createEventState.value = CreateEventState.Success(createdEvent)
 
             } catch (e: Exception) {
-                Log.e("EVENT_DEBUG", "❌ Exceção ao criar evento: ${e.message}", e)
+                Log.e("EVENT_DEBUG", "Exceção ao criar evento: ${e.message}", e)
                 _createEventState.value = CreateEventState.Error("Erro de rede: ${e.message}")
             }
         }

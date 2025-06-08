@@ -59,6 +59,9 @@ interface EventApiService {
         @Part eventPicture: MultipartBody.Part? = null
     ): Event
 
+    @POST("event/api/events")
+    suspend fun createEvent(@Body request: EventRequest): Response<EventResponse>
+
     @POST("event/api/addressEvents")
     suspend fun createAddressEvent(@Body request: AddressEventRequest): Response<AddressEventResponse>
 
