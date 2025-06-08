@@ -1,12 +1,15 @@
 import android.util.Log
 import com.example.evention.data.local.dao.TicketDao
+import com.example.evention.data.local.entities.EventEntity
 import com.example.evention.data.local.entities.TicketEntity
+import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.data.remote.tickets.TicketRemoteDataSource
 import com.example.evention.model.TicketRaw
 import kotlinx.coroutines.flow.Flow
 
 class TicketRepository(
     private val remote: TicketRemoteDataSource,
+    private val eventRemote: EventRemoteDataSource,
     private val local: TicketDao
 ) {
     fun getLocalTickets(): Flow<List<TicketEntity>> = local.getAllTickets()
@@ -15,23 +18,50 @@ class TicketRepository(
         val remoteTickets = remote.getTickets()
         Log.d("TicketRepository", "Tickets fetched from remote: ${remoteTickets.size}")
 
-        val localEntities = remoteTickets.map {
+        val localTicketEntities = remoteTickets.map { ticket ->
             TicketEntity(
-                ticketID = it.ticketID,
-                event_id = it.event_id,
-                user_id = it.user_id,
-                feedback_id = it.feedback_id,
-                participated = it.participated
+                ticketID = ticket.ticketID,
+                event_id = ticket.event_id,
+                user_id = ticket.user_id,
+                feedback_id = ticket.feedback_id,
+                participated = ticket.participated
             )
         }
 
-        local.insertAll(localEntities)
-        Log.d("TicketRepository", "Inserted tickets locally")
+        val uniqueEventIds = remoteTickets.map { it.event_id }.toSet()
 
-        localEntities.map { entity ->
-            Log.d("TicketRepository", "Ticket inserido: $entity")
+        val localEventEntities = uniqueEventIds.mapNotNull { eventId ->
+            try {
+                val remoteEvent = eventRemote.getEventById(eventId)
+                EventEntity(
+                    eventID = remoteEvent.eventID,
+                    userId = remoteEvent.userId,
+                    name = remoteEvent.name,
+                    description = remoteEvent.description,
+                    startAt = remoteEvent.startAt.toString(),
+                    endAt = remoteEvent.endAt.toString(),
+                    price = remoteEvent.price,
+                    eventPicture = remoteEvent.eventPicture
+                )
+            } catch (e: Exception) {
+                Log.e("TicketRepository", "Erro ao obter evento $eventId: ${e.message}")
+                null
+            }
         }
+
+        local.insertAll(localTicketEntities)
+        local.insertAllEvents(localEventEntities)
+
+        Log.d(
+            "TicketRepository",
+            "Inserted ${localTicketEntities.size} tickets and ${localEventEntities.size} events locally"
+        )
     }
+
+    suspend fun getLocalEventById(eventId: String): EventEntity? {
+        return local.getEventById(eventId)
+    }
+
 
 
     suspend fun getTicketById(ticketId: String): TicketEntity? {

@@ -5,9 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.evention.data.local.dao.TicketDao
+import com.example.evention.data.local.entities.EventEntity
 import com.example.evention.data.local.entities.TicketEntity
 
-@Database(entities = [TicketEntity::class], version = 2)
+@Database(entities = [TicketEntity::class, EventEntity::class], version = 9)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun ticketDao(): TicketDao
 

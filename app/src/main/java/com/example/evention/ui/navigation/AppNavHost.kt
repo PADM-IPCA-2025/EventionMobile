@@ -97,7 +97,7 @@ fun AppNavHost() {
 
         composable("tickets") {
             val database = AppDatabase.getDatabase(context)
-            val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, database.ticketDao())
+            val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, NetworkModule.eventRemoteDataSource, database.ticketDao())
 
             val viewModel: TicketScreenViewModel = viewModel(
                 factory = TicketScreenViewModelFactory(repository)
