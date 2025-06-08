@@ -8,14 +8,18 @@ import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.Location
 import com.example.evention.model.Reputation
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import com.example.evention.model.RoutesEventRequest
 import com.example.evention.model.RoutesEventResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface EventApiService {
@@ -31,7 +35,7 @@ interface EventApiService {
     @GET("event/api/events/my")
     suspend fun getMyEvents(): List<Event>
 
-    @GET("event/api/event/{id}")
+    @GET("event/api/events/{id}")
     suspend fun getEventById(@Path("id") eventId: String): Event
 
     @GET("event/api/events/suspended")
@@ -43,21 +47,16 @@ interface EventApiService {
     @DELETE("event/api/events/{id}")
     suspend fun deleteEvent(@Path("id") eventId: String)
 
-    @POST("event/api/events")
-    suspend fun createEvent(@Body request: EventRequest): Response<EventResponse>
-
-    data class UpdateEventRequest(
-        val name: String,
-        val description: String,
-        val startAt: String,
-        val endAt: String,
-        val price: Float
-    )
-
+    @Multipart
     @PUT("event/api/events/{id}")
     suspend fun updateEvent(
         @Path("id") eventId: String,
-        @Body eventData: UpdateEventRequest
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("startAt") startAt: RequestBody,
+        @Part("endAt") endAt: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part eventPicture: MultipartBody.Part? = null
     ): Event
 
     @POST("event/api/addressEvents")

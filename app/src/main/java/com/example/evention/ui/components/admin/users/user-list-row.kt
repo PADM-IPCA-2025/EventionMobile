@@ -72,7 +72,7 @@ fun UsersListRow(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/event$it" }
+        val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
         var hasError by remember { mutableStateOf(false) }
 
         if (user.profilePicture == null || hasError) {
@@ -104,12 +104,6 @@ fun UsersListRow(
                 text = user.username,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "3.9 rating",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
             )
         }
 

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.R
 import com.example.evention.mock.MockData
@@ -40,6 +41,22 @@ import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import java.text.SimpleDateFormat
 import java.util.*
+import UserPreferences
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import getUnsafeOkHttpClient
+import kotlinx.coroutines.delay
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.ui.zIndex
 
 @Composable
 fun EditEvent(
@@ -53,6 +70,21 @@ fun EditEvent(
         var price by remember { mutableStateOf(event.price.toString()) }
 
         val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+        val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+        val context = LocalContext.current
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let { viewModel.setSelectedImageUri(it) }
+        }
+
+        val hasNewImage = selectedImageUri != null
+        val imageModel: Any? = when {
+            hasNewImage -> selectedImageUri
+            event.eventPicture != null -> "https://10.0.2.2:5010/event${event.eventPicture}"
+            else -> null
+        }
 
         val isoFormatter = remember {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
@@ -64,8 +96,27 @@ fun EditEvent(
         var startDateMillis by remember { mutableStateOf(event.startAt.time) }
         var endDateMillis by remember { mutableStateOf(event.endAt.time) }
 
-        val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
-        var hasError by remember { mutableStateOf(false) }
+        val editSuccess by viewModel.editSuccess.collectAsState()
+        var showBanner by remember { mutableStateOf(false) }
+
+        LaunchedEffect(editSuccess) {
+            if (editSuccess) {
+                showBanner = true
+                delay(2000)
+                showBanner = false
+                viewModel.clearEditSuccess()
+                navController.popBackStack()
+            }
+        }
+
+        val userPreferences = remember { UserPreferences(context) }
+        val imageLoader = remember {
+            ImageLoader.Builder(context)
+                .okHttpClient {
+                    getUnsafeOkHttpClient(userPreferences)
+                }
+                .build()
+        }
 
         if (showDatePicker) {
             DateRangePickerModal(
@@ -86,6 +137,40 @@ fun EditEvent(
                 .fillMaxSize()
                 .padding(horizontal = 25.dp, vertical = 18.dp)
         ) {
+            AnimatedVisibility(
+                visible = showBanner,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { -it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { -it }),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+                    .zIndex(1f)
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = EventionBlue),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Success",
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Event updated successfully",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+                }
+            }
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,33 +213,26 @@ fun EditEvent(
                             .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        if (hasError) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Gray)
-                            )
-                        } else {
+                        if (imageModel != null) {
                             AsyncImage(
-                                model = imageUrl,
+                                model = imageModel,
+                                imageLoader = imageLoader,
                                 contentDescription = "Event Image",
+                                onError = {
+                                    Log.e("EventEditInfo", "Erro ao carregar imagem: $it")
+                                },
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Gray),
-                                onError = { hasError = true }
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
 
                         Button(
-                            onClick = { /* TODO: Change image */ },
+                            onClick = { launcher.launch("image/*") },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .size(width = 100.dp, height = 34.dp),
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.4f)
-                            ),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.4f)),
                             contentPadding = PaddingValues(horizontal = 12.dp)
                         ) {
                             Image(
@@ -207,13 +285,8 @@ fun EditEvent(
                         val isoEnd = isoFormatter.format(Date(endDateMillis))
                         val cleanedPrice = price.replace("[^\\d.]".toRegex(), "").toFloatOrNull() ?: 0f
 
-                        Log.d("eventId", event.eventID)
-                        Log.d("name", name)
-                        Log.d("description", description)
-                        Log.d("startAt", isoStart)
-                        Log.d("endAt", isoEnd)
-                        Log.d("price", cleanedPrice.toString())
                         viewModel.editEvent(
+                            context = context,
                             eventId = event.eventID,
                             name = name,
                             description = description,
@@ -221,7 +294,6 @@ fun EditEvent(
                             endAt = isoEnd,
                             price = cleanedPrice
                         )
-                        navController.popBackStack()
                     },
                     modifier = Modifier
                         .fillMaxWidth()

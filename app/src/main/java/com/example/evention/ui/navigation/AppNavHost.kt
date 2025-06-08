@@ -2,6 +2,7 @@ package com.example.evention.ui.navigation
 
 import SearchScreen
 import SplashScreen
+import TicketRepository
 import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,13 +16,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.evention.data.local.database.AppDatabase
+import com.example.evention.data.local.factory.TicketScreenViewModelFactory
 import com.example.evention.data.remote.authentication.RequireAuth
+import com.example.evention.di.NetworkModule
 import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.screens.home.details.EventDetails
 import com.example.evention.ui.screens.home.notifications.NotificationScreen
 import com.example.evention.ui.screens.home.payment.PaymentScreen
-import com.example.evention.mock.MockData
-import com.example.evention.mock.MockUserData
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Event
 import com.example.evention.model.User
@@ -33,9 +35,7 @@ import com.example.evention.ui.screens.event.create.CreateEventScreen
 import com.example.evention.ui.screens.event.create.SelectLocationScreen
 import com.example.evention.ui.screens.home.HomeScreenViewModel
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
-import com.example.evention.ui.screens.ticket.TicketDetailsPreview
 import com.example.evention.ui.screens.ticket.TicketDetailsScreen
-import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.profile.admin.AdminMenu
 import com.example.evention.ui.screens.profile.admin.editEvent.EditEvent
 import com.example.evention.ui.screens.profile.admin.events.AllEvents
@@ -49,7 +49,9 @@ import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
 import com.example.evention.ui.screens.profile.userEvents.UserEvents
 import com.example.evention.ui.screens.profile.userEvents.UserEventsViewModel
+import com.example.evention.ui.screens.profile.userEvents.userParticipation.UserParticipation
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
+import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -96,18 +98,25 @@ fun AppNavHost() {
         composable("selectLocation") {
             SelectLocationScreen(navController = navController)
         }
-        composable("tickets"){
-//            val viewModel: TicketScreenViewModel = viewModel()
-//            val tickets by viewModel.tickets.collectAsState()
+
+        composable("tickets") {
+            val database = AppDatabase.getDatabase(context)
+            val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, NetworkModule.eventRemoteDataSource, database.ticketDao())
+
+            val viewModel: TicketScreenViewModel = viewModel(
+                factory = TicketScreenViewModelFactory(repository)
+            )
+
+            val tickets by viewModel.tickets.collectAsState()
 
             val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
-                TicketsScreen(TicketMockData.tickets, navController = navController)
+                TicketsScreen(tickets = tickets, navController = navController)
             }
-
-            //TicketsScreen(TicketMockData.tickets, navController = navController) // TicketMockData.tickets
         }
+
+
         composable(
             "ticketDetails/{ticketId}",
             arguments = listOf(navArgument("ticketId") { type = NavType.StringType })
@@ -132,7 +141,6 @@ fun AppNavHost() {
                 }
             )
         ) { backStackEntry ->
-            val context = LocalContext.current
             val userPrefs = remember { UserPreferences(context) }
 
             val userJson = backStackEntry.arguments?.getString("userJson")
@@ -183,6 +191,14 @@ fun AppNavHost() {
             UserEdit(userToEdit = user, navController = navController)
         }
         composable(
+            "userParticipation/{eventJson}",
+            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val eventJson = backStackEntry.arguments?.getString("eventJson")
+            val event = Gson().fromJson(eventJson, Event::class.java)
+            UserParticipation(event, navController = navController)
+        }
+        composable(
             "eventEdit/{eventJson}",
             arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
         ) { backStackEntry ->
@@ -195,7 +211,8 @@ fun AppNavHost() {
             ScanQRCodeScreen(navController = navController)
         }
         composable("notifications") {
-            NotificationScreen(notifications = listOf(), navController = navController)
+
+            NotificationScreen( navController = navController)
         }
         composable(
             "eventDetails/{eventJson}",

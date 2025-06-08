@@ -11,6 +11,7 @@ class UserPreferences(context: Context) {
         private const val KEY_JWT_TOKEN = "TOKEN"
         private const val KEY_USER_ID = "USER_ID"
         private const val KEY_NOTIFICATION_PERMISSION_SHOWN = "notification_permission_shown"
+        private const val KEY_USERTYPE = "USERTYPE"
 
     }
 
@@ -44,6 +45,14 @@ class UserPreferences(context: Context) {
 
     fun isNotificationPermissionShown(): Boolean {
         return prefs.getBoolean(KEY_NOTIFICATION_PERMISSION_SHOWN, false)
+    }
+
+    fun saveUserType(userType: String) {
+        prefs.edit().putString(KEY_USERTYPE, userType).apply()
+    }
+
+    fun getUserType(): String? {
+        return prefs.getString(KEY_USERTYPE, null)
     }
 
 }

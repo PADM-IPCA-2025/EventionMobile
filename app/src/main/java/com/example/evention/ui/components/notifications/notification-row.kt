@@ -1,6 +1,7 @@
 package com.example.evention.ui.components.notifications
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,11 +54,12 @@ fun NotificationRow(notification: NotificationItem) {
                 )
             }
         } else {
-            Box(
+            Image(
+                painter = painterResource(id = com.example.evention.R.drawable.logosplash),
+                contentDescription = "User Profile Image",
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color.Red)
+//                    .clip(CircleShape)
             )
         }
 

@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.ticket
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
@@ -35,13 +36,25 @@ import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.components.MenuComponent
+import com.example.evention.utils.isNetworkAvailable
 
 @Composable
 fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
+    val context = LocalContext.current
+    val hasInternet = remember { mutableStateOf(isNetworkAvailable(context)) }
+
+    LaunchedEffect(Unit) {
+        hasInternet.value = isNetworkAvailable(context)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -60,7 +73,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                 .padding(innerPadding)
         ) {
 
-        TitleComponent("Tickets", false, navController)
+            TitleComponent("Tickets", false, navController)
 
             if (tickets.isEmpty()) {
                 Box(
@@ -93,8 +106,9 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                             firstSection = "",
                             secondSection = "",
                             onEdit = {},
-                            onRemove = {} ,
-                            navController = navController
+                            onRemove = {},
+                            navController = navController,
+                            isClickable = hasInternet.value
                         )
                     }
                 }

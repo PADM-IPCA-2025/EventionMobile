@@ -15,7 +15,20 @@ class EventsViewModel : ViewModel() {
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events
 
+    private val _deleteSuccess = MutableStateFlow(false)
+    val deleteSuccess: StateFlow<Boolean> = _deleteSuccess
+
     init {
+        viewModelScope.launch {
+            try {
+                _events.value = remoteDataSource.getEvents()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadEvents() {
         viewModelScope.launch {
             try {
                 _events.value = remoteDataSource.getEvents()
@@ -30,9 +43,14 @@ class EventsViewModel : ViewModel() {
             try {
                 remoteDataSource.deleteEvent(eventId)
                 _events.value = _events.value.filter { it.eventID != eventId }
+                _deleteSuccess.value = true
             } catch (e: Exception) {
-                // TODO: handle error (ex: show error message)
+                _deleteSuccess.value = false
             }
         }
+    }
+
+    fun clearDeleteSuccess() {
+        _deleteSuccess.value = false
     }
 }

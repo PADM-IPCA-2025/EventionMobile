@@ -37,9 +37,11 @@ class LoginScreenViewModel(
                     val token = response.token
                     val payload = decodeJWT(token)
                     val userGuid = payload.getString("userID")
+                    val userType = payload.getString("userType")
 
                     userPreferences.saveToken(token)
                     userPreferences.saveUserId(userGuid)
+                    userPreferences.saveUserType(userType)
 
                     //Log.d("LoginViewModel", "Token salvo: ${userPreferences.getToken()}")
                     Log.d("DEBUG", "userGuid: $userGuid")

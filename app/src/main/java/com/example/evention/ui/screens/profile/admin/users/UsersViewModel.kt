@@ -15,6 +15,9 @@ class UsersViewModel : ViewModel() {
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users
 
+    private val _deleteSuccess = MutableStateFlow(false)
+    val deleteSuccess: StateFlow<Boolean> = _deleteSuccess
+
     init {
         viewModelScope.launch {
             try {
@@ -30,9 +33,14 @@ class UsersViewModel : ViewModel() {
             try {
                 remoteDataSource.deleteUser(userId)
                 _users.value = _users.value.filter { it.userID != userId }
+                _deleteSuccess.value = true
             } catch (e: Exception) {
-                // TODO: handle error (ex: show error message)
+                _deleteSuccess.value = false
             }
         }
+    }
+
+    fun clearDeleteSuccess() {
+        _deleteSuccess.value = false
     }
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 
     //Firebase
     id("com.google.gms.google-services")
@@ -61,6 +62,11 @@ dependencies {
 
     implementation(libs.okhttp.tls)
 
+    implementation(libs.lifecycle.runtime.compose)
+
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
 
     // Retrofit e Gson
     implementation(libs.retrofit)

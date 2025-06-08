@@ -57,11 +57,13 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.ui.screens.home.payment.PaymentViewModel
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.google.gson.Gson
-
+import UserPreferences
+import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
     val localDate = date.toInstant()
@@ -88,10 +90,20 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: TicketScreenViewModel = viewModel()) {
+fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: TicketScreenViewModel = viewModel(), viewModelE: EventDetailsViewModel = viewModel()) {
     val viewModelT: TicketScreenViewModel = viewModel()
     val ticketId by viewModelT.ticketId.collectAsState()
     var navigateToPayment by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     LaunchedEffect(ticketId) {
         if (!ticketId.isNullOrBlank() && navigateToPayment) {
@@ -103,8 +115,17 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
     }
 
     var hasError by remember { mutableStateOf(false) }
+
     eventDetails.let { event ->
-        val imageUrl = "http://10.0.2.2:5010/event/${event.eventPicture}"
+        val user by viewModelE.user.collectAsState()
+
+        LaunchedEffect(event.userId) {
+            if (viewModelE.user.value == null) {
+                viewModelE.loadUserById(event.userId)
+            }
+        }
+
+        val imageUrl = "https://10.0.2.2:5010/event${event.eventPicture}"
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
@@ -126,6 +147,7 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                     } else {
                         AsyncImage(
                             model = imageUrl,
+                            imageLoader = imageLoader,
                             contentDescription = "Event Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize(),
@@ -169,14 +191,22 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                     subtitle = address?.road ?: "Unknown road"
                 )
 
-                val user = MockUserData.users.find { it.userID == event.userId }
+                val isLoadingUser = user == null
+
                 EventDetailsRow(
                     icon = Icons.Filled.Person,
                     contentDescription = "Person",
-                    title = user?.username ?: "Desconhecido",
-                    subtitle = user?.userType?.type ?: "Desconhecido",
-                    rating = 4.8
+                    title = if (isLoadingUser) "A carregar utilizador..." else user!!.username,
+                    subtitle = "",
+                    rating = if (isLoadingUser) 0.0 else 4.8,
+                    onClick = if (!isLoadingUser) {
+                        {
+                            val userJson = Uri.encode(Gson().toJson(user))
+                            navController.navigate("profile?userJson=$userJson")
+                        }
+                    } else null
                 )
+
 
                 EventDescription(event)
             }

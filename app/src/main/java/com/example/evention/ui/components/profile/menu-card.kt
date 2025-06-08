@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun MenuCard(navController: NavController){
+fun MenuCard(navController: NavController, isAdmin: Boolean? = null, isAdvertiser: Boolean? = null){
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp),
@@ -31,8 +31,12 @@ fun MenuCard(navController: NavController){
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            ProfileMenuItem(icon = Icons.Outlined.Person, label = "Admin Menu", sublabel = "Manage users and events", navController = navController)
-            ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "My Events", sublabel = "Manage and explore your events", navController = navController)
+            if(isAdmin == true){
+                ProfileMenuItem(icon = Icons.Outlined.Person, label = "Admin Menu", sublabel = "Manage users and events", navController = navController)
+            }
+            if(isAdvertiser == true || isAdmin == true){
+                ProfileMenuItem(icon = Icons.Outlined.DateRange, label = "My Events", sublabel = "Manage and explore your events", navController = navController)
+            }
             ProfileMenuItem(
                 icon = Icons.Outlined.Notifications,
                 label = "Notifications",

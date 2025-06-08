@@ -15,6 +15,12 @@ class EventsToApproveViewModel : ViewModel() {
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events
 
+    private val _approveSuccess = MutableStateFlow(false)
+    val approveSuccess: StateFlow<Boolean> = _approveSuccess
+
+    private val _deleteSuccess = MutableStateFlow(false)
+    val deleteSuccess: StateFlow<Boolean> = _deleteSuccess
+
     init {
         viewModelScope.launch {
             try {
@@ -30,8 +36,9 @@ class EventsToApproveViewModel : ViewModel() {
             try {
                 val approvedEvent = remoteDataSource.approveEvent(eventId)
                 _events.value = _events.value.filter { it.eventID != approvedEvent.eventID }
+                _approveSuccess.value = true
             } catch (e: Exception) {
-                // TODO: Handle error (e.g., log or show message)
+                _approveSuccess.value = false
             }
         }
     }
@@ -41,9 +48,18 @@ class EventsToApproveViewModel : ViewModel() {
             try {
                 remoteDataSource.deleteEvent(eventId)
                 _events.value = _events.value.filter { it.eventID != eventId }
+                _deleteSuccess.value = true
             } catch (e: Exception) {
-                // TODO: handle error (ex: show error message)
+                _deleteSuccess.value = false
             }
         }
+    }
+
+    fun clearApproveSuccess() {
+        _approveSuccess.value = false
+    }
+
+    fun clearDeleteSuccess() {
+        _deleteSuccess.value = false
     }
 }

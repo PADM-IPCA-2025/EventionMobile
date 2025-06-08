@@ -243,7 +243,7 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                     val route = address?.routes?.firstOrNull()
 
                     val locationText = if (address != null) {
-                        "${address.localtown}, ${address.road} ${address.roadNumber}"
+                        "${address.postCode}, ${address.road} ${address.roadNumber}"
                     } else {
                         "Localização desconhecida"
                     }

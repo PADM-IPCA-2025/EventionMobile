@@ -34,46 +34,62 @@ import coil.compose.AsyncImage
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
+import UserPreferences
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.layout.ContentScale
+import coil.ImageLoader
+import com.example.evention.ui.screens.profile.user.userEdit.UserEditViewModel
+import getUnsafeOkHttpClient
 
 @Composable
-fun UserEditInfo(user: User) {
-    val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
-    var hasError by remember { mutableStateOf(false) }
+fun UserEditInfo(user: User, viewModel: UserEditViewModel) {
+    val context = LocalContext.current
+    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+    val userPreferences = remember { UserPreferences(context) }
+
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let {
-            Log.d("UserEditInfo", "Imagem escolhida: $uri")
-        }
+        uri?.let { viewModel.setSelectedImageUri(it) }
     }
 
-    if (user.profilePicture != null && !hasError) {
-        Box(
-            modifier = Modifier
-                .size(170.dp)
-                .clip(CircleShape)
-                .border(3.dp, EventionBlue, CircleShape)
-                .clickable {
-                    launcher.launch("image/*")
-                }
-        ) {
+    val hasNewImage = selectedImageUri != null
+    val imageModel: Any? = when {
+        hasNewImage -> selectedImageUri
+        user.profilePicture != null -> "https://10.0.2.2:5010/user${user.profilePicture}"
+        else -> null
+    }
+
+    Box(
+        modifier = Modifier
+            .size(170.dp)
+            .clip(CircleShape)
+            .background(Color.Gray.takeIf { imageModel == null } ?: Color.Transparent)
+            .clickable {
+                launcher.launch("image/*")
+            }
+    ) {
+        if (imageModel != null) {
             AsyncImage(
-                model = imageUrl,
+                model = imageModel,
+                imageLoader = imageLoader,
                 contentDescription = "User Profile Image",
-                onError = { hasError = true }
+                onError = {
+                    Log.e("UserEditInfo", "Erro ao carregar imagem: $it")
+                },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
-    } else {
-        Box(
-            modifier = Modifier
-                .size(170.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-                .clickable {
-                    launcher.launch("image/*")
-                }
-        )
     }
 
     Spacer(modifier = Modifier.height(12.dp))
@@ -97,3 +113,4 @@ fun UserEditInfo(user: User) {
         )
     }
 }
+

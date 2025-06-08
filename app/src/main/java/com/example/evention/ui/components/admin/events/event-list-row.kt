@@ -50,6 +50,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import UserPreferences
+import android.net.Uri
+import androidx.compose.foundation.layout.fillMaxSize
+import com.google.gson.Gson
 import getUnsafeOkHttpClient
 
 fun formatDate(date: Date): String {
@@ -68,7 +71,9 @@ fun EventListRow(
     secondSection: String,
     onEdit: (Event) -> Unit,
     onRemove: (Event) -> Unit,
-    navController: NavController
+    navController: NavController,
+    thirdSection: String? = null,
+    isClickable: Boolean? = true
 ) {
     val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
     val context = LocalContext.current
@@ -90,16 +95,14 @@ fun EventListRow(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
-            val currentRoute = navController.currentBackStackEntry?.destination?.route
-            when (currentRoute) {
-                "tickets" -> {
-                    navController.navigate("ticketDetails/${ticketID}")
-                }
-                "allEvents" -> {
-                    navController.navigate("eventDetails/${event.eventID}")
-                }
-                else -> {
-                    navController.navigate("eventDetails/${event.eventID}")
+            if (isClickable == true) {
+                val currentRoute = navController.currentBackStackEntry?.destination?.route
+                val eventJson = Uri.encode(Gson().toJson(event))
+                when (currentRoute) {
+                    "tickets" -> navController.navigate("ticketDetails/${ticketID}")
+                    "allEvents" -> navController.navigate("eventDetails/${eventJson}")
+                    "userEvents" -> navController.navigate("userParticipation/${eventJson}")
+                    else -> navController.navigate("eventDetails/${eventJson}")
                 }
             }
         }
@@ -112,9 +115,8 @@ fun EventListRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
-            var hasError by remember { mutableStateOf(false) }
 
-            if (event.eventPicture == null || hasError) {
+            if (event.eventPicture == null) {
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -130,7 +132,7 @@ fun EventListRow(
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.Gray),
-                    onError = { hasError = true }
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -204,6 +206,28 @@ fun EventListRow(
                                 onRemove(event)
                             }
                         )
+
+                        if (thirdSection != null) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.8f)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        thirdSection,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                },
+                                onClick = {
+                                    expanded = false
+                                    navController.navigate("scanQRCode")
+                                }
+                            )
+                        }
                     }
                 }
             }
