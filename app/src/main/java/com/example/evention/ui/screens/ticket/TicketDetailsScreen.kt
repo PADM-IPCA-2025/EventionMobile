@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.ticket
 
+import TicketRepository
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,8 +27,10 @@ import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Ticket
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
@@ -37,25 +40,45 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.evention.data.local.database.AppDatabase
+import com.example.evention.data.local.factory.TicketDetailsViewModelFactory
+import com.example.evention.data.local.factory.TicketScreenViewModelFactory
+import com.example.evention.di.NetworkModule
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
+import com.example.evention.utils.isNetworkAvailable
 import generateQrCodeBitmap
 import java.time.ZoneId
 
 @Composable
-fun TicketDetailsScreen(ticketId: String, navController: NavController, viewModel: TicketDetailsScreenViewModel = viewModel()) {
+fun TicketDetailsScreen(ticketId: String, navController: NavController) {
+    val context = LocalContext.current
+    val hasInternet = remember { mutableStateOf(isNetworkAvailable(context)) }
+    val repository = remember {
+        val db = AppDatabase.getDatabase(context)
+        TicketRepository(
+            remote = NetworkModule.ticketRemoteDataSource,
+            eventRemote = NetworkModule.eventRemoteDataSource,
+            local = db.ticketDao()
+        )
+    }
 
+    val viewModel: TicketDetailsScreenViewModel = viewModel(
+        factory = TicketDetailsViewModelFactory(repository)
+    )
+
+    val ticketNullable by viewModel.ticket.collectAsState()
 
     LaunchedEffect(ticketId) {
         viewModel.loadTicketById(ticketId)
     }
-    val ticketNullable by viewModel.ticket.collectAsState()
-//    val ticketNullable = TicketMockData.tickets.find { ticket -> ticket.ticketID == ticketId }
 
     ticketNullable?.let { ticket ->
 
         val locale = Locale("pt", "PT")
-        val startDateTime = ticket.event.startAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
-        val endDateTime = ticket.event.endAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val startDateTime =
+            ticket.event.startAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val endDateTime =
+            ticket.event.endAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
 
         val dateFormatter = DateTimeFormatter.ofPattern("d MMMM 'de' yyyy", locale)
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -68,60 +91,29 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 25.dp, vertical = 28.dp)
-    ) {
-
-        TitleComponent("Ticket Details", true, navController)
-
-        // Nome do evento
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .fillMaxSize()
+                .padding(horizontal = 25.dp, vertical = 28.dp)
         ) {
-            Text(
-                text = ticket.event.name,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
 
-        // Calendário + data e hora
-        Row(
-            verticalAlignment = Alignment.Top,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = "Date",
-                modifier = Modifier.size(28.dp),
-                tint = EventionBlue
-            )
+            TitleComponent("Ticket Details", true, navController)
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column {
+            // Nome do evento
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
                 Text(
-                    text = startDateTime.format(dateFormatter),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = "${startDateTime.format(timeFormatter)} - ${endDateTime.format(timeFormatter)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    text = ticket.event.name,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
-        }
 
-        // Localização
-        if (ticket.event.addressEvents.isNotEmpty()) {
+            // Calendário + data e hora
             Row(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
@@ -129,8 +121,8 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
                     .padding(vertical = 12.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Location",
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Date",
                     modifier = Modifier.size(28.dp),
                     tint = EventionBlue
                 )
@@ -139,60 +131,93 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController, viewMode
 
                 Column {
                     Text(
-                        text = ticket.event.addressEvents[0].road,
+                        text = startDateTime.format(dateFormatter),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = ticket.event.addressEvents[0].postCode,
+                        text = "${startDateTime.format(timeFormatter)} - ${
+                            endDateTime.format(
+                                timeFormatter
+                            )
+                        }",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
                 }
             }
-        }
 
-        // QR Code
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 100.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                bitmap = qrBitmap.asImageBitmap(),    // painter = painterResource(id = R.drawable.qrcodemock),
-                contentDescription = "QR Code",
-                modifier = Modifier.size(300.dp)
-            )
-        }
+            // Localização
+            if (ticket.event.addressEvents.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        modifier = Modifier.size(28.dp),
+                        tint = EventionBlue
+                    )
 
-        Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.width(12.dp))
 
-        if (LocalDateTime.now().isAfter(eventEndAtLocalDateTime) && ticket.feedback_id == null) {
-        Button(
-            onClick = {  navController.navigate("ticketFeedback/${ticketId}") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Text(
-                text = "Give Feedback",
-                style = MaterialTheme.typography.labelLarge,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        }
-    }
-    }
-}
+                    Column {
+                        Text(
+                            text = ticket.event.addressEvents[0].road,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = ticket.event.addressEvents[0].postCode,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
 
-@Preview(showBackground = true)
-@Composable
-fun TicketDetailsPreview() {
-    EventionTheme {
-        TicketDetailsScreen(TicketMockData.tickets[0].ticketID, navController = rememberNavController())
+            // QR Code
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 100.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    bitmap = qrBitmap.asImageBitmap(),    // painter = painterResource(id = R.drawable.qrcodemock),
+                    contentDescription = "QR Code",
+                    modifier = Modifier.size(300.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (LocalDateTime.now()
+                    .isAfter(eventEndAtLocalDateTime) && ticket.feedback_id == null
+            ) {
+                Button(
+                    onClick = {
+                        if(hasInternet.value){
+                            navController.navigate("ticketFeedback/${ticketId}")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Text(
+                        text = "Give Feedback",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
     }
 }

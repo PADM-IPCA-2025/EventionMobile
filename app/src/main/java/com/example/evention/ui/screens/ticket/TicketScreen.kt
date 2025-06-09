@@ -48,13 +48,6 @@ import com.example.evention.utils.isNetworkAvailable
 
 @Composable
 fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
-    val context = LocalContext.current
-    val hasInternet = remember { mutableStateOf(isNetworkAvailable(context)) }
-
-    LaunchedEffect(Unit) {
-        hasInternet.value = isNetworkAvailable(context)
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -107,8 +100,7 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                             secondSection = "",
                             onEdit = {},
                             onRemove = {},
-                            navController = navController,
-                            isClickable = hasInternet.value
+                            navController = navController
                         )
                     }
                 }

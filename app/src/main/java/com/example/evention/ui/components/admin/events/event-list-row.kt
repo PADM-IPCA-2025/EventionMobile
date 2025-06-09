@@ -51,6 +51,7 @@ import java.util.Date
 import java.util.Locale
 import UserPreferences
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import com.google.gson.Gson
 import getUnsafeOkHttpClient
@@ -72,8 +73,7 @@ fun EventListRow(
     onEdit: (Event) -> Unit,
     onRemove: (Event) -> Unit,
     navController: NavController,
-    thirdSection: String? = null,
-    isClickable: Boolean? = true
+    thirdSection: String? = null
 ) {
     val showMenu = firstSection.isNotBlank() || secondSection.isNotBlank()
     val context = LocalContext.current
@@ -95,15 +95,13 @@ fun EventListRow(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
-            if (isClickable == true) {
-                val currentRoute = navController.currentBackStackEntry?.destination?.route
-                val eventJson = Uri.encode(Gson().toJson(event))
-                when (currentRoute) {
-                    "tickets" -> navController.navigate("ticketDetails/${ticketID}")
-                    "allEvents" -> navController.navigate("eventDetails/${eventJson}")
-                    "userEvents" -> navController.navigate("userParticipation/${eventJson}")
-                    else -> navController.navigate("eventDetails/${eventJson}")
-                }
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            val eventJson = Uri.encode(Gson().toJson(event))
+            when (currentRoute) {
+                "tickets" -> navController.navigate("ticketDetails/${ticketID}")
+                "allEvents" -> navController.navigate("eventDetails/${eventJson}")
+                "userEvents" -> navController.navigate("userParticipation/${eventJson}")
+                else -> navController.navigate("eventDetails/${eventJson}")
             }
         }
 
