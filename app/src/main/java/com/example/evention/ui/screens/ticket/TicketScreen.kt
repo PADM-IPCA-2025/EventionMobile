@@ -54,8 +54,6 @@ import com.example.evention.utils.isNetworkAvailable
 
 @Composable
 fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
-    val context = LocalContext.current
-    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -74,77 +72,42 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                 .padding(innerPadding)
         ) {
 
-            if (isConnected) {
-                TitleComponent("Tickets", false, navController)
+            TitleComponent("Tickets", false, navController)
 
-                if (tickets.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 150.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.noevents),
-                                contentDescription = "No tickets"
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "No tickets available",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                } else {
-                    LazyColumn {
-                        items(tickets.size) { index ->
-                            EventListRow(
-                                event = tickets[index].event,
-                                ticketID = tickets[index].ticketID,
-                                firstSection = "",
-                                secondSection = "",
-                                onEdit = {},
-                                onRemove = {},
-                                navController = navController
-                            )
-                        }
-                    }
-                }
-            } else {
+            if (tickets.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(top = 150.dp),
+                    contentAlignment = Alignment.TopCenter
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.Warning,
-                            contentDescription = "No connection",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(80.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.noevents),
+                            contentDescription = "No tickets"
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No internet connection",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "No tickets available",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = {
-                                isConnected = isNetworkAvailable(context)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = EventionBlue,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text("Try again")
-                        }
+                    }
+                }
+            } else {
+                LazyColumn {
+                    items(tickets.size) { index ->
+                        EventListRow(
+                            event = tickets[index].event,
+                            ticketID = tickets[index].ticketID,
+                            firstSection = "",
+                            secondSection = "",
+                            onEdit = {},
+                            onRemove = {},
+                            navController = navController
+                        )
                     }
                 }
             }
