@@ -88,4 +88,34 @@ class EventRemoteDataSource(private val api: EventApiService) {
         return api.createRouteEvent(request)
     }
 
+    suspend fun createEventWithImage(
+        userId: String,
+        name: String,
+        description: String,
+        startAt: String,
+        endAt: String,
+        price: Double,
+        eventPicture: MultipartBody.Part?
+    ): Response<EventResponse> {
+        val userIdPart = userId.toRequestBody("text/plain".toMediaType())
+        val namePart = name.toRequestBody("text/plain".toMediaType())
+        val descriptionPart = description.toRequestBody("text/plain".toMediaType())
+        val startAtPart = startAt.toRequestBody("text/plain".toMediaType())
+        val endAtPart = endAt.toRequestBody("text/plain".toMediaType())
+        val pricePart = price.toString().toRequestBody("text/plain".toMediaType())
+        val eventStatusIdPart = "11111111-1111-1111-1111-111111111111".toRequestBody("text/plain".toMediaType())
+
+        return api.createEventWithImage(
+            userId = userIdPart,
+            name = namePart,
+            description = descriptionPart,
+            startAt = startAtPart,
+            endAt = endAtPart,
+            price = pricePart,
+            eventStatusID = eventStatusIdPart,
+            eventPicture = eventPicture
+        )
+    }
+
+
 }

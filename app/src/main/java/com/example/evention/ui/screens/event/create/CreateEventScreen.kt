@@ -3,8 +3,11 @@ package com.example.evention.ui.screens.event.create
 import CustomCreateEventTextField
 import UserPreferences
 import android.location.Geocoder
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,11 +51,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.components.createEvent.CustomDateRangeTextField
 import com.example.evention.ui.components.createEvent.LocationSelectorField
@@ -62,9 +69,7 @@ import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
-//fun CreateEventScreen(navController: NavController, viewModel: CreateEventViewModel = viewModel()) {
-
-// Para permitir salvar LatLng com rememberSaveable
+// Salvar LatLng com rememberSaveable
 val LatLngSaver: Saver<LatLng?, *> = Saver(
     save = { listOf(it?.latitude, it?.longitude) },
     restore = {
@@ -78,7 +83,11 @@ val LatLngSaver: Saver<LatLng?, *> = Saver(
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
-    val viewModel = remember { CreateEventViewModel(userPreferences) }
+    
+    val viewModel: CreateEventViewModel = viewModel(
+        factory = CreateEventViewModelFactory(userPreferences)
+    )
+
     val createEventState by viewModel.createEventState.collectAsState()
 
     val selectedStartDate = rememberSaveable { mutableStateOf<Date?>(null) }
@@ -94,7 +103,15 @@ fun CreateEventScreen(navController: NavController) {
 
     val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
-    // ✅ Recebe localização da SelectLocationScreen
+    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { viewModel.setSelectedImageUri(it) }
+    }
+
+    // localização da SelectLocationScreen
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     val navLocation = currentBackStackEntry?.savedStateHandle?.get<LatLng>("selectedLocation")
     LaunchedEffect(navLocation) {
@@ -120,7 +137,7 @@ fun CreateEventScreen(navController: NavController) {
         }
     }
 
-    // ✅ Navegação e Toast em caso de sucesso ou erro
+    // Navegação e Toast
     LaunchedEffect(createEventState) {
         when (val state = createEventState) {
             is CreateEventState.Success -> {
@@ -155,20 +172,42 @@ fun CreateEventScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-                    .border(1.dp, EventionBlue, RoundedCornerShape(15.dp))
-                    .background(Color(0xFF8296AA).copy(alpha = 0.1f), RoundedCornerShape(15.dp))
                     .height(180.dp)
-                    .clickable { /* TODO: Upload image */ },
-                contentAlignment = Alignment.Center
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.TopEnd
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                selectedImageUri?.let { uri ->
+                    AsyncImage(
+                        model = uri,
+                        contentDescription = "Selected Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                Button(
+                    onClick = { launcher.launch("image/*") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(width = 100.dp, height = 34.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.4f)),
+                    contentPadding = PaddingValues(horizontal = 12.dp)
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.blue_camera),
                         contentDescription = "Blue camera icon",
                     )
+
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("CHANGE", fontSize = 12.sp, color = EventionBlue)
+
+                    Text(
+                        text = "CHANGE",
+                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = EventionBlue,
+                    )
                 }
             }
 
