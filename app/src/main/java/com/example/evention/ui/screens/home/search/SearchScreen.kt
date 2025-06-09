@@ -69,6 +69,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
@@ -304,15 +305,21 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                             tint = Color.Gray,
                             modifier = Modifier.size(80.dp)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No connection to the internet",
+                            text = "No internet connection",
                             style = MaterialTheme.typography.titleMedium
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = {
-                            isConnected = isNetworkAvailable(context)
-                        }) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                isConnected = isNetworkAvailable(context)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = EventionBlue,
+                                contentColor = Color.White
+                            )
+                        ) {
                             Text("Try again")
                         }
                     }

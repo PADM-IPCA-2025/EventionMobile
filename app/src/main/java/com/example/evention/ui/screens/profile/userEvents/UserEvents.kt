@@ -20,6 +20,7 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -30,6 +31,16 @@ import com.google.gson.Gson
 
 @Composable
 fun UserEvents(events: List<Event>, navController: NavController, viewModel: UserEventsViewModel = viewModel()) {
+
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { backStackEntry ->
+            val destination = backStackEntry.destination.route
+            if (destination == "userEvents") {
+                viewModel.loadUserEvents()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

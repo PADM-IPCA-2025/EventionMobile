@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -51,6 +52,9 @@ import com.example.evention.model.FeedbackReputation
 import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.evention.ui.components.profile.FeedbackRow
+import com.example.evention.ui.components.profile.RatingStars
+import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.utils.isNetworkAvailable
 
 @Composable
@@ -59,12 +63,10 @@ fun UserProfile(
     userProfile: User? = null,
     viewModel: UserProfileViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
-
     val userNullable by viewModel.user.collectAsState()
     val reputation by viewModel.reputation.collectAsState()
     val eventsMap by viewModel.events.collectAsState()
+    val context = LocalContext.current
 
     val userPrefs = remember { UserPreferences(context) }
     val usertype = userPrefs.getUserType()
@@ -74,19 +76,20 @@ fun UserProfile(
 
     val user = userProfile ?: userNullable
 
+    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
+
     LaunchedEffect(navController) {
         navController.currentBackStackEntryFlow.collect { backStackEntry ->
             val destination = backStackEntry.destination.route
             if (destination == "profile?userJson={userJson}") {
-                if (userProfile == null) {
+                if (userProfile == null && isConnected) {
                     viewModel.loadUserProfile()
-                } else {
+                } else if (userProfile != null) {
                     viewModel.loadUserReputation(userProfile.userID)
                 }
             }
         }
     }
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -101,78 +104,14 @@ fun UserProfile(
         }
     ) { innerPadding ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 25.dp, vertical = 18.dp)
-                .padding(innerPadding)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isConnected) {
-                TitleComponent("Profile", userProfile != null, navController)
 
-                if (user != null) {
-                    UserInfo(user, navController = navController, userProfile != null)
-                }
-
-                reputation?.let { rep ->
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    RatingStars(rating = rep.reputation)
-
-                    val feedbackEventCount = rep.tickets
-                        .filter { it.feedback != null }
-                        .map { it.event_id }
-                        .distinct()
-                        .count()
-
-                    Text(
-                        text = "($feedbackEventCount)",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                if (userProfile == null) {
-                    MenuCard(navController, isAdmin, isAdvertiser)
-                } else {
-                    Text(
-                        text = "Feedbacks Received",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(bottom = 16.dp)
-                    )
-
-                    LaunchedEffect(reputation) {
-                        reputation?.tickets
-                            ?.map { it.event_id }
-                            ?.distinct()
-                            ?.forEach { viewModel.loadEventById(it) }
-                    }
-
-                    val ticketsWithFeedback =
-                        reputation?.tickets?.filter { it.feedback != null }.orEmpty()
-
-                    if (ticketsWithFeedback.isEmpty()) {
-                        Text(
-                            "No feedbacks received.",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    } else {
-                        ticketsWithFeedback.forEach { ticket ->
-                            val eventName = eventsMap[ticket.event_id]?.name ?: "A carregar..."
-
-                            FeedbackRow(
-                                feedback = ticket.feedback!!,
-                                eventName = eventName
-                            )
-                        }
-                    }
-                }
-            } else {
+            if (!isConnected) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -186,16 +125,85 @@ fun UserProfile(
                             tint = Color.Gray,
                             modifier = Modifier.size(80.dp)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No connection to the internet",
+                            text = "No internet connection",
                             style = MaterialTheme.typography.titleMedium
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = {
-                            isConnected = isNetworkAvailable(context)
-                        }) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                isConnected = isNetworkAvailable(context)
+                                if (isConnected && userProfile == null) {
+                                    viewModel.loadUserProfile()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = EventionBlue,
+                                contentColor = Color.White
+                            )
+                        ) {
                             Text("Try again")
+                        }
+                    }
+                }
+            } else {
+                user?.let {
+                    TitleComponent("Profile", userProfile != null, navController)
+
+                    UserInfo(it, navController, userProfile != null)
+
+                    reputation?.let { rep ->
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        RatingStars(rating = rep.reputation)
+
+                        val feedbackEventCount = rep.tickets
+                            .filter { it.feedback != null }
+                            .map { it.event_id }
+                            .distinct()
+                            .count()
+
+                        Text(
+                            text = "($feedbackEventCount)",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    if (userProfile == null) {
+                        MenuCard(navController, isAdmin, isAdvertiser)
+                    } else {
+                        Text(
+                            text = "Feedbacks Received",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(bottom = 16.dp)
+                        )
+
+                        LaunchedEffect(reputation) {
+                            reputation?.tickets
+                                ?.map { it.event_id }
+                                ?.distinct()
+                                ?.forEach { viewModel.loadEventById(it) }
+                        }
+
+                        val ticketsWithFeedback = reputation?.tickets?.filter { it.feedback != null }.orEmpty()
+
+                        if (ticketsWithFeedback.isEmpty()) {
+                            Text("No feedbacks received.", style = MaterialTheme.typography.bodyMedium)
+                        } else {
+                            ticketsWithFeedback.forEach { ticket ->
+                                val eventName = eventsMap[ticket.event_id]?.name ?: "Loading..."
+                                FeedbackRow(
+                                    feedback = ticket.feedback!!,
+                                    eventName = eventName
+                                )
+                            }
                         }
                     }
                 }
@@ -204,41 +212,6 @@ fun UserProfile(
     }
 }
 
-@Composable
-fun RatingStars(rating: Int) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat(5) { index ->
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                tint = if (index < rating) Color(0xFFFFD700) else Color.LightGray,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun FeedbackRow(
-    feedback: FeedbackReputation,
-    eventName: String
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Event: $eventName", style = MaterialTheme.typography.labelLarge)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Rating: ${feedback.rating} ⭐", style = MaterialTheme.typography.titleSmall)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(feedback.commentary, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

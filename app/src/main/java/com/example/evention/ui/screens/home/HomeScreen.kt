@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.ui.components.home.FilterButtonWithDateRange
+import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.utils.isNetworkAvailable
 
 @Composable
@@ -202,15 +204,21 @@ fun HomeScreen(events: List<Event>, navController: NavController, modifier: Modi
                                 tint = Color.Gray,
                                 modifier = Modifier.size(80.dp)
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "No connection to the internet",
+                                text = "No internet connection",
                                 style = MaterialTheme.typography.titleMedium
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(onClick = {
-                                isConnected = isNetworkAvailable(context)
-                            }) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    isConnected = isNetworkAvailable(context)
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = EventionBlue,
+                                    contentColor = Color.White
+                                )
+                            ) {
                                 Text("Try again")
                             }
                         }

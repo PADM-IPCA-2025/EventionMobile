@@ -16,6 +16,10 @@ class UserEventsViewModel : ViewModel() {
     val events: StateFlow<List<Event>> = _events
 
     init {
+        loadUserEvents()
+    }
+
+    fun loadUserEvents() {
         viewModelScope.launch {
             try {
                 _events.value = remoteDataSource.getMyEvents()
