@@ -218,9 +218,14 @@ fun AppNavHost() {
             "eventDetails/{eventJson}",
             arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
         ) { backStackEntry ->
+            val database = AppDatabase.getDatabase(context)
+            val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, NetworkModule.eventRemoteDataSource, database.ticketDao())
+
             val eventJson = backStackEntry.arguments?.getString("eventJson")
             val event = Gson().fromJson(eventJson, Event::class.java)
-            EventDetails(eventDetails = event, navController = navController)
+
+            val ticketViewModel: TicketScreenViewModel = viewModel(factory = TicketScreenViewModelFactory(repository))
+            EventDetails(eventDetails = event, navController = navController, viewModel = ticketViewModel)
         }
         composable(
             "payment/{eventJson}/{ticketId}",

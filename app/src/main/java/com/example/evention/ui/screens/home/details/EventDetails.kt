@@ -90,9 +90,14 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: TicketScreenViewModel = viewModel(), viewModelE: EventDetailsViewModel = viewModel()) {
-    val viewModelT: TicketScreenViewModel = viewModel()
-    val ticketId by viewModelT.ticketId.collectAsState()
+fun EventDetails(
+    eventDetails: Event,
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: TicketScreenViewModel = viewModel(),
+    viewModelE: EventDetailsViewModel = viewModel()
+) {
+    val ticketId by viewModel.ticketId.collectAsState()
     var navigateToPayment by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
@@ -198,7 +203,6 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                     contentDescription = "Person",
                     title = if (isLoadingUser) "A carregar utilizador..." else user!!.username,
                     subtitle = "",
-                    rating = if (isLoadingUser) 0.0 else 4.8,
                     onClick = if (!isLoadingUser) {
                         {
                             val userJson = Uri.encode(Gson().toJson(user))
