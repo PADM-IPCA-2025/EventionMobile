@@ -68,4 +68,18 @@ interface EventApiService {
     @POST("event/api/routesEvents")
     suspend fun createRouteEvent(@Body request: RoutesEventRequest): Response<RoutesEventResponse>
 
+    @Multipart
+    @POST("event/api/events")
+    suspend fun createEventWithImage(
+        @Part("userId") userId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("startAt") startAt: RequestBody,
+        @Part("endAt") endAt: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("eventStatusID") eventStatusID: RequestBody,
+        @Part eventPicture: MultipartBody.Part?
+    ): Response<EventResponse>
+
+
 }

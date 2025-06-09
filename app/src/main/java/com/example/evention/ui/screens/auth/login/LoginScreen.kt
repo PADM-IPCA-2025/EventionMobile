@@ -69,6 +69,7 @@ fun LoginScreen(navController: NavController) {
     ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
+
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken != null) {

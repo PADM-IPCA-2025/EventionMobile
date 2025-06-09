@@ -3,7 +3,9 @@ package com.example.evention.ui.screens.event.create
 import UserPreferences
 import android.content.Context
 import android.location.Geocoder
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.data.remote.location.LocationRemoteDataSource
@@ -19,6 +21,13 @@ import com.google.type.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,6 +44,13 @@ class CreateEventViewModel(
     private val _createEventState = MutableStateFlow<CreateEventState>(CreateEventState.Idle)
     val createEventState: StateFlow<CreateEventState> = _createEventState
 
+    private val _selectedImageUri = MutableStateFlow<Uri?>(null)
+    val selectedImageUri: StateFlow<Uri?> = _selectedImageUri
+
+    fun setSelectedImageUri(uri: Uri) {
+        _selectedImageUri.value = uri
+    }
+
     private fun formatDateToIso(date: Date): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
         formatter.timeZone = TimeZone.getTimeZone("UTC")
@@ -48,22 +64,21 @@ class CreateEventViewModel(
         endAt: Date,
         price: Double,
         location: com.google.android.gms.maps.model.LatLng,
-        context: Context,
-        eventPicture: String? = null
+        context: Context
     ) {
         viewModelScope.launch {
             _createEventState.value = CreateEventState.Loading
 
             val userId = userPreferences.getUserId()
             if (userId == null) {
-                _createEventState.value = CreateEventState.Error("Utilizador não autenticado")
+                _createEventState.value = CreateEventState.Error("User authentication failed")
                 return@launch
             }
 
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
             if (addresses.isNullOrEmpty()) {
-                _createEventState.value = CreateEventState.Error("Não foi possível obter o endereço")
+                _createEventState.value = CreateEventState.Error("Address not found")
                 return@launch
             }
 
@@ -73,105 +88,114 @@ class CreateEventViewModel(
             val postCode = addr.postalCode ?: ""
             val locality = addr.locality ?: ""
 
-            val gson = Gson()
             val defaultLocationId = "0281b20c-60d5-4805-bcc1-c17660feb55f"
             val localtown = try {
-                val locationResponse = locationRemoteDataSource.getLocationByLocaltown(locality)
-                locationResponse.locationId
+                locationRemoteDataSource.getLocationByLocaltown(locality).locationId
             } catch (e: Exception) {
-                Log.w("EVENT_DEBUG", "Erro ao procurar locationId: ${e.message}")
+                Log.e("EVENT_DEBUG", "Erro a obter localidade: ${e.message}")
                 defaultLocationId
             }
 
-            Log.d("LOCALTOWN", "LOCALTOWN ID: $localtown")
-
             try {
-                // Criar evento
-                val eventRequest = EventRequest(
+                // 📸 Tratar imagem
+                val imagePart = selectedImageUri.value?.let { uri ->
+                    val inputStream = context.contentResolver.openInputStream(uri)!!
+                    val fileBytes = inputStream.readBytes()
+                    inputStream.close()
+
+                    val fileName = "event_${System.currentTimeMillis()}.jpg"
+                    val requestFile = fileBytes.toRequestBody("image/*".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("eventPicture", fileName, requestFile)
+                }
+
+                Log.d("EVENT_DEBUG", "Imagem criada: ${imagePart != null}")
+
+                // 📤 Criar evento
+                val response = eventRemoteDataSource.createEventWithImage(
                     userId = userId,
                     name = name,
                     description = description,
                     startAt = formatDateToIso(startAt),
                     endAt = formatDateToIso(endAt),
                     price = price,
-                    eventStatusID = "11111111-1111-1111-1111-111111111111",
-                    eventPicture = eventPicture
+                    eventPicture = imagePart
                 )
 
-                Log.d("EVENT_DEBUG", "EventRequest JSON: ${gson.toJson(eventRequest)}")
-
-                val eventResponse = eventRemoteDataSource.createEvent(
-                    userId = userId,
-                    name = name,
-                    description = description,
-                    startAt = formatDateToIso(startAt),
-                    endAt = formatDateToIso(endAt),
-                    price = price,
-                    eventPicture = eventPicture
-                )
-
-                Log.d("EVENT_DEBUG", "Event response: ${eventResponse.code()} ${eventResponse.message()}")
-
-                if (!eventResponse.isSuccessful || eventResponse.body() == null) {
-                    _createEventState.value = CreateEventState.Error("Erro ao criar evento: ${eventResponse.code()}")
+                if (!response.isSuccessful || response.body() == null) {
+                    Log.e("EVENT_DEBUG", "Erro a criar evento: ${response.code()} ${response.errorBody()?.string()}")
+                    _createEventState.value = CreateEventState.Error("Erro a criar evento: ${response.code()}")
                     return@launch
                 }
 
-                val createdEvent = eventResponse.body()!!
-
-                Log.d("EVENT_DEBUG", "createdEventResponse JSON: ${gson.toJson(createdEvent)}")
+                val createdEvent = response.body()!!
+                Log.d("EVENT_DEBUG", "Evento criado: ${createdEvent.eventID}")
 
                 val eventId = createdEvent.eventID
+                if (eventId.isNullOrEmpty()) {
+                    _createEventState.value = CreateEventState.Error("ID do evento inválido.")
+                    return@launch
+                }
 
-                // Criar endereço
-                val addressRequest = AddressEventRequest(
-                    event_id = eventId,
-                    road = road,
-                    roadNumber = roadNumber,
-                    postCode = postCode,
-                    localtown = localtown
+                // 🏠 Criar endereço
+                val addressResponse = eventRemoteDataSource.createAddressEvent(
+                    AddressEventRequest(
+                        event_id = eventId,
+                        road = road,
+                        roadNumber = roadNumber,
+                        postCode = postCode,
+                        localtown = localtown
+                    )
                 )
-
-                Log.d("EVENT_DEBUG", "AddressEventRequest JSON: ${gson.toJson(addressRequest)}")
-
-                val addressResponse = eventRemoteDataSource.createAddressEvent(addressRequest)
-
-                Log.d("EVENT_DEBUG", "Address response: ${addressResponse.code()} ${addressResponse.message()}")
 
                 if (!addressResponse.isSuccessful || addressResponse.body() == null) {
-                    _createEventState.value = CreateEventState.Error("Erro ao criar endereço")
+                    Log.e("EVENT_DEBUG", "Erro a criar endereço: ${addressResponse.code()} ${addressResponse.errorBody()?.string()}")
+                    _createEventState.value = CreateEventState.Error("Erro a criar endereço")
                     return@launch
                 }
 
-                val createdAddress = addressResponse.body()!!
-                val addressId = createdAddress.addressEstablishmentID
+                val addressId = addressResponse.body()!!.addressEstablishmentID
+                Log.d("EVENT_DEBUG", "Endereço criado: $addressId")
 
-                // Criar rota
-                val routeRequest = RoutesEventRequest(
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    order = 0,
-                    addressEvent_id = addressId
+                // 🧭 Criar rota
+                val routeResponse = eventRemoteDataSource.createRouteEvent(
+                    RoutesEventRequest(
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        order = 0,
+                        addressEvent_id = addressId
+                    )
                 )
 
-                Log.d("EVENT_DEBUG", "RoutesEventRequest JSON: ${gson.toJson(routeRequest)}")
-
-                val routeResponse = eventRemoteDataSource.createRouteEvent(routeRequest)
-
-                Log.d("EVENT_DEBUG", "Route response: ${routeResponse.code()} ${routeResponse.message()}")
-
                 if (!routeResponse.isSuccessful || routeResponse.body() == null) {
-                    _createEventState.value = CreateEventState.Error("Erro ao criar rota")
+                    Log.e("EVENT_DEBUG", "Erro a criar rota: ${routeResponse.code()} ${routeResponse.errorBody()?.string()}")
+                    _createEventState.value = CreateEventState.Error("Erro a criar rota")
                     return@launch
                 }
 
+                Log.d("EVENT_DEBUG", "Rota criada com sucesso")
                 _createEventState.value = CreateEventState.Success(createdEvent)
 
             } catch (e: Exception) {
-                Log.e("EVENT_DEBUG", "Exceção ao criar evento: ${e.message}", e)
+                Log.e("EVENT_DEBUG", "Erro geral: ${e.message}", e)
                 _createEventState.value = CreateEventState.Error("Erro de rede: ${e.message}")
             }
         }
+    }
+}
+
+fun persistImageToCache(context: Context, uri: Uri): Uri? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File(context.cacheDir, "persisted_image_${System.currentTimeMillis()}.jpg")
+        inputStream?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+        FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    } catch (e: Exception) {
+        Log.e("EVENT_DEBUG", "Erro ao persistir imagem: ${e.message}", e)
+        null
     }
 }
 
