@@ -97,7 +97,7 @@ class CreateEventViewModel(
             }
 
             try {
-                // 📸 Tratar imagem
+                // Tratar imagem
                 val imagePart = selectedImageUri.value?.let { uri ->
                     val inputStream = context.contentResolver.openInputStream(uri)!!
                     val fileBytes = inputStream.readBytes()
@@ -110,7 +110,7 @@ class CreateEventViewModel(
 
                 Log.d("EVENT_DEBUG", "Imagem criada: ${imagePart != null}")
 
-                // 📤 Criar evento
+                // Criar evento
                 val response = eventRemoteDataSource.createEventWithImage(
                     userId = userId,
                     name = name,
@@ -136,7 +136,7 @@ class CreateEventViewModel(
                     return@launch
                 }
 
-                // 🏠 Criar endereço
+                // Criar endereço
                 val addressResponse = eventRemoteDataSource.createAddressEvent(
                     AddressEventRequest(
                         event_id = eventId,
@@ -156,7 +156,7 @@ class CreateEventViewModel(
                 val addressId = addressResponse.body()!!.addressEstablishmentID
                 Log.d("EVENT_DEBUG", "Endereço criado: $addressId")
 
-                // 🧭 Criar rota
+                // Criar rota
                 val routeResponse = eventRemoteDataSource.createRouteEvent(
                     RoutesEventRequest(
                         latitude = location.latitude,

@@ -83,7 +83,11 @@ val LatLngSaver: Saver<LatLng?, *> = Saver(
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
-    val viewModel = remember { CreateEventViewModel(userPreferences) }
+    
+    val viewModel: CreateEventViewModel = viewModel(
+        factory = CreateEventViewModelFactory(userPreferences)
+    )
+
     val createEventState by viewModel.createEventState.collectAsState()
 
     val selectedStartDate = rememberSaveable { mutableStateOf<Date?>(null) }
