@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,8 +39,10 @@ import com.example.evention.ui.components.admin.events.EventListRow
 import com.example.evention.ui.theme.EventionTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -48,6 +52,8 @@ import com.example.evention.utils.isNetworkAvailable
 
 @Composable
 fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
+    val context = LocalContext.current
+    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -66,49 +72,77 @@ fun TicketsScreen(tickets: List<Ticket>, navController: NavController) {
                 .padding(innerPadding)
         ) {
 
-            TitleComponent("Tickets", false, navController)
+            if (isConnected) {
+                TitleComponent("Tickets", false, navController)
 
-            if (tickets.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 150.dp),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                if (tickets.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 150.dp),
+                        contentAlignment = Alignment.TopCenter
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.noevents),
-                            contentDescription = "No tickets"
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "No tickets available",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.noevents),
+                                contentDescription = "No tickets"
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "No tickets available",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn {
+                        items(tickets.size) { index ->
+                            EventListRow(
+                                event = tickets[index].event,
+                                ticketID = tickets[index].ticketID,
+                                firstSection = "",
+                                secondSection = "",
+                                onEdit = {},
+                                onRemove = {},
+                                navController = navController
+                            )
+                        }
                     }
                 }
             } else {
-                LazyColumn {
-                    items(tickets.size) { index ->
-                        EventListRow(
-                            event = tickets[index].event,
-                            ticketID = tickets[index].ticketID,
-                            firstSection = "",
-                            secondSection = "",
-                            onEdit = {},
-                            onRemove = {},
-                            navController = navController
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "No connection",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(80.dp)
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No connection to the internet",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            isConnected = isNetworkAvailable(context)
+                        }) {
+                            Text("Try again")
+                        }
                     }
                 }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

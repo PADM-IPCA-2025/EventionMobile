@@ -12,6 +12,7 @@ import com.example.evention.model.Event
 import com.example.evention.model.EventStatus
 import com.example.evention.model.Ticket
 import com.example.evention.model.TicketRaw
+import com.example.evention.utils.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -82,33 +83,6 @@ class TicketScreenViewModel(
     fun clearCreateResult() {
         _createTicketResult.value = null
     }
-
-    fun EventEntity.toDomain(): Event {
-        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-
-        val startDate = dateFormat.parse(this.startAt)
-
-        val endDate = dateFormat.parse(this.endAt)
-
-
-        return Event(
-            eventID = this.eventID,
-            userId = this.userId,
-            name = this.name,
-            description = this.description,
-            startAt = startDate!!,
-            endAt = endDate!!,
-            price = this.price,
-            eventPicture = this.eventPicture,
-            createdAt = Date(),
-            eventStatus = EventStatus(
-                eventStatusID = "",
-                status = ""
-            ),
-            addressEvents = listOf<AddressEvent>()
-        )
-    }
-
 }
 
 

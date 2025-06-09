@@ -2,6 +2,7 @@ package com.example.evention.ui.screens.profile.user.userProfile
 
 import UserPreferences
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,7 +36,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -46,6 +51,7 @@ import com.example.evention.model.FeedbackReputation
 import com.example.evention.ui.components.MenuComponent
 import com.example.evention.ui.screens.home.details.EventDetailsViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.evention.utils.isNetworkAvailable
 
 @Composable
 fun UserProfile(
@@ -53,10 +59,12 @@ fun UserProfile(
     userProfile: User? = null,
     viewModel: UserProfileViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
+
     val userNullable by viewModel.user.collectAsState()
     val reputation by viewModel.reputation.collectAsState()
     val eventsMap by viewModel.events.collectAsState()
-    val context = LocalContext.current
 
     val userPrefs = remember { UserPreferences(context) }
     val usertype = userPrefs.getUserType()
@@ -79,29 +87,32 @@ fun UserProfile(
         }
     }
 
-    user?.let {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = Color.White,
-            bottomBar = {
-                if (userProfile == null) {
-                    MenuComponent(
-                        currentPage = "Profile",
-                        navController = navController
-                    )
-                }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color.White,
+        bottomBar = {
+            if (userProfile == null) {
+                MenuComponent(
+                    currentPage = "Profile",
+                    navController = navController
+                )
             }
-        ) { innerPadding ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 25.dp, vertical = 18.dp)
-                    .padding(innerPadding)
-            ) {
+        }
+    ) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 25.dp, vertical = 18.dp)
+                .padding(innerPadding)
+        ) {
+            if (isConnected) {
                 TitleComponent("Profile", userProfile != null, navController)
 
-                UserInfo(it, navController = navController, userProfile != null)
+                if (user != null) {
+                    UserInfo(user, navController = navController, userProfile != null)
+                }
 
                 reputation?.let { rep ->
                     Spacer(modifier = Modifier.height(12.dp))
@@ -142,10 +153,14 @@ fun UserProfile(
                             ?.forEach { viewModel.loadEventById(it) }
                     }
 
-                    val ticketsWithFeedback = reputation?.tickets?.filter { it.feedback != null }.orEmpty()
+                    val ticketsWithFeedback =
+                        reputation?.tickets?.filter { it.feedback != null }.orEmpty()
 
                     if (ticketsWithFeedback.isEmpty()) {
-                        Text("No feedbacks received.", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "No feedbacks received.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     } else {
                         ticketsWithFeedback.forEach { ticket ->
                             val eventName = eventsMap[ticket.event_id]?.name ?: "A carregar..."
@@ -154,6 +169,33 @@ fun UserProfile(
                                 feedback = ticket.feedback!!,
                                 eventName = eventName
                             )
+                        }
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "No connection",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(80.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No connection to the internet",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            isConnected = isNetworkAvailable(context)
+                        }) {
+                            Text("Try again")
                         }
                     }
                 }

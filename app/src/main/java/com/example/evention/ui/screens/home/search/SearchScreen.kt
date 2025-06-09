@@ -67,12 +67,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.mock.MockData.events
 import com.example.evention.model.Event
 import com.example.evention.ui.theme.EventionBlue
+import com.example.evention.utils.isNetworkAvailable
 import com.google.gson.Gson
 
 private const val REQUEST_LOCATION_PERMISSION = 1
@@ -117,6 +122,7 @@ fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionS
 fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navController: NavController) {
 //    val events = remember { events }
     val context = LocalContext.current
+    var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
     val query = remember { mutableStateOf("") }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(38.7169, -9.1399), 10f)
@@ -138,151 +144,181 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1.3f)
-                    .background(Color.Gray)
-            ) {
-                GoogleMap(
-                    modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState
+            if(isConnected){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1.3f)
+                        .background(Color.Gray)
                 ) {
-                    events.forEach { event ->
-                        event.addressEvents.forEach { address ->
-                            address.routes.forEach { route ->
-                                Marker(
-                                    state = MarkerState(position = LatLng(route.latitude, route.longitude)),
-                                    title = event.name,
-                                    snippet = "${address.localtown}, ${address.road} ${address.roadNumber}",
-                                    onClick = {
-                                        val eventJson = Uri.encode(Gson().toJson(event))
-                                        navController.navigate("eventDetails/$eventJson")
-                                        true
-                                    }
-                                )
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = cameraPositionState
+                    ) {
+                        events.forEach { event ->
+                            event.addressEvents.forEach { address ->
+                                address.routes.forEach { route ->
+                                    Marker(
+                                        state = MarkerState(position = LatLng(route.latitude, route.longitude)),
+                                        title = event.name,
+                                        snippet = "${address.localtown}, ${address.road} ${address.roadNumber}",
+                                        onClick = {
+                                            val eventJson = Uri.encode(Gson().toJson(event))
+                                            navController.navigate("eventDetails/$eventJson")
+                                            true
+                                        }
+                                    )
+                                }
                             }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp)
+                            .shadow(4.dp, shape = RoundedCornerShape(30))
+                            .clip(RoundedCornerShape(20))
+                            .background(Color.White)
+                            .padding(horizontal = 9.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.Gray,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+
+                        TextField(
+                            value = query.value,
+                            onValueChange = { query.value = it },
+                            placeholder = {
+                                Text(
+                                    "Find for city, localtown",
+                                    color = Color.Gray,
+                                    fontSize = 16.sp
+                                )
+                            },
+                            singleLine = true,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp)
+                                .height(48.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                cursorColor = Color.Black,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black
+                            )
+                        )
+
+                        IconButton(onClick = {
+                            fetchCoordinates(context, query.value, cameraPositionState)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = "Search",
+                                tint = Color.Gray
+                            )
+                        }
+                        IconButton(onClick = {
+                            moveToCurrentLocation(context, cameraPositionState)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.LocationOn,
+                                contentDescription = "Search",
+                                tint = Color.Gray
+                            )
                         }
                     }
                 }
 
-                Row(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp)
-                        .shadow(4.dp, shape = RoundedCornerShape(30))
-                        .clip(RoundedCornerShape(20))
-                        .background(Color.White)
-                        .padding(horizontal = 9.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .weight(1f)
+                        .padding(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.Gray,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
+                    items(events.size) { eventIndex ->
+                        val event = events[eventIndex]
+                        val address = event.addressEvents.firstOrNull()
+                        val route = address?.routes?.firstOrNull()
 
-                    TextField(
-                        value = query.value,
-                        onValueChange = { query.value = it },
-                        placeholder = {
-                            Text(
-                                "Find for city, localtown",
-                                color = Color.Gray,
-                                fontSize = 16.sp
-                            )
-                        },
-                        singleLine = true,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            cursorColor = Color.Black,
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black
-                        )
-                    )
+                        val locationText = if (address != null) {
+                            "${address.postCode}, ${address.road} ${address.roadNumber}"
+                        } else {
+                            "Localização desconhecida"
+                        }
 
-                    IconButton(onClick = {
-                        fetchCoordinates(context, query.value, cameraPositionState)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Search,
-                            contentDescription = "Search",
-                            tint = Color.Gray
-                        )
-                    }
-                    IconButton(onClick = {
-                        moveToCurrentLocation(context, cameraPositionState)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.LocationOn,
-                            contentDescription = "Search",
-                            tint = Color.Gray
-                        )
-                    }
-                }
-            }
+                        val isSelected = selectedEventIndex.value == eventIndex
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(8.dp)
-            ) {
-                items(events.size) { eventIndex ->
-                    val event = events[eventIndex]
-                    val address = event.addressEvents.firstOrNull()
-                    val route = address?.routes?.firstOrNull()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    route?.let {
+                                        val latLng = LatLng(it.latitude, it.longitude)
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            cameraPositionState.animate(
+                                                update = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                                            )
+                                        }
+                                    }
 
-                    val locationText = if (address != null) {
-                        "${address.postCode}, ${address.road} ${address.roadNumber}"
-                    } else {
-                        "Localização desconhecida"
-                    }
-
-                    val isSelected = selectedEventIndex.value == eventIndex
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                route?.let {
-                                    val latLng = LatLng(it.latitude, it.longitude)
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        cameraPositionState.animate(
-                                            update = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-                                        )
+                                    if (selectedEventIndex.value == eventIndex) {
+                                        val eventJson = Uri.encode(Gson().toJson(event))
+                                        navController.navigate("eventDetails/$eventJson")
+                                    } else {
+                                        selectedEventIndex.value = eventIndex
                                     }
                                 }
+                        ) {
+                            EventRow(
+                                imageUrl = "",
+                                title = event.name,
+                                location = locationText,
+                                date = event.createdAt,
+                                isSelected = isSelected
+                            )
+                        }
 
-                                if (selectedEventIndex.value == eventIndex) {
-                                    val eventJson = Uri.encode(Gson().toJson(event))
-                                    navController.navigate("eventDetails/$eventJson")
-                                } else {
-                                    selectedEventIndex.value = eventIndex
-                                }
-                            }
-                    ) {
-                        EventRow(
-                            imageUrl = "",
-                            title = event.name,
-                            location = locationText,
-                            date = event.createdAt,
-                            isSelected = isSelected
-                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "No connection",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(80.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No connection to the internet",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            isConnected = isNetworkAvailable(context)
+                        }) {
+                            Text("Try again")
+                        }
+                    }
                 }
             }
+
         }
     }
 }
