@@ -110,6 +110,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+    implementation("com.google.firebase:firebase-auth-ktx")
+
 
     // Create QRCode
     implementation("com.google.zxing:core:3.5.1")
