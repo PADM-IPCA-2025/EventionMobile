@@ -192,8 +192,8 @@ fun EventDetails(
                 EventDetailsRow(
                     icon = Icons.Filled.LocationOn,
                     contentDescription = "Location",
-                    title = address?.localtown ?: "Unknown location",
-                    subtitle = address?.road ?: "Unknown road"
+                    title = address?.road ?: "Unknown road",
+                    subtitle = address?.postCode ?: "Unknown postCode"
                 )
 
                 val isLoadingUser = user == null
@@ -201,7 +201,7 @@ fun EventDetails(
                 EventDetailsRow(
                     icon = Icons.Filled.Person,
                     contentDescription = "Person",
-                    title = if (isLoadingUser) "A carregar utilizador..." else user!!.username,
+                    title = if (isLoadingUser) "Loading..." else user!!.username,
                     subtitle = "",
                     onClick = if (!isLoadingUser) {
                         {
