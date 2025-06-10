@@ -8,4 +8,7 @@ interface LocationApiService {
 
     @GET("/location/api/location/localtown/{locality}")
     suspend fun getLocationByLocaltown(@Path("locality")locality: String): Location
+
+    @GET("/location/api/location/{locationId}")
+    suspend fun getLocationById(@Path("locationId")locationId: String): Location
 }

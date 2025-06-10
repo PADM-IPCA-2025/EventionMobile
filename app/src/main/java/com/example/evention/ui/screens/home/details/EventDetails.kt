@@ -123,10 +123,18 @@ fun EventDetails(
 
     eventDetails.let { event ->
         val user by viewModelE.user.collectAsState()
+        val location by viewModelE.location.collectAsState()
 
         LaunchedEffect(event.userId) {
             if (viewModelE.user.value == null) {
                 viewModelE.loadUserById(event.userId)
+            }
+        }
+
+        LaunchedEffect(event.addressEvents.firstOrNull()?.localtown) {
+            val address = event.addressEvents.firstOrNull()
+            if (address?.localtown != null && viewModelE.location.value == null) {
+                viewModelE.loadLocationById(address.localtown)
             }
         }
 
@@ -188,12 +196,19 @@ fun EventDetails(
                 )
 
                 val address = event.addressEvents.firstOrNull()
+                val isLoadingLocation = location == null
+
+                location?.let { Log.d("location found", it.localtown) }
 
                 EventDetailsRow(
                     icon = Icons.Filled.LocationOn,
                     contentDescription = "Location",
-                    title = address?.road ?: "Unknown road",
-                    subtitle = address?.postCode ?: "Unknown postCode"
+                    title = if (isLoadingLocation) {
+                        address?.localtown ?: "Unknown localtown"
+                    } else {
+                        location!!.localtown
+                    },
+                    subtitle = address?.road ?: "Unknown road"
                 )
 
                 val isLoadingUser = user == null
