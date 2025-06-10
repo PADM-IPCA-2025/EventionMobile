@@ -44,6 +44,9 @@ class CreateEventViewModel(
     private val _createEventState = MutableStateFlow<CreateEventState>(CreateEventState.Idle)
     val createEventState: StateFlow<CreateEventState> = _createEventState
 
+    private val _createSuccess = MutableStateFlow(false)
+    val createSuccess: StateFlow<Boolean> = _createSuccess
+
     private val _selectedImageUri = MutableStateFlow<Uri?>(null)
     val selectedImageUri: StateFlow<Uri?> = _selectedImageUri
 
@@ -180,22 +183,6 @@ class CreateEventViewModel(
                 _createEventState.value = CreateEventState.Error("Erro de rede: ${e.message}")
             }
         }
-    }
-}
-
-fun persistImageToCache(context: Context, uri: Uri): Uri? {
-    return try {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val file = File(context.cacheDir, "persisted_image_${System.currentTimeMillis()}.jpg")
-        inputStream?.use { input ->
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
-            }
-        }
-        FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-    } catch (e: Exception) {
-        Log.e("EVENT_DEBUG", "Erro ao persistir imagem: ${e.message}", e)
-        null
     }
 }
 

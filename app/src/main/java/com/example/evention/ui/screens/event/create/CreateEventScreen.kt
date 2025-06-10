@@ -8,6 +8,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,9 +30,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,9 +62,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -64,6 +77,7 @@ import com.example.evention.ui.components.createEvent.CustomDateRangeTextField
 import com.example.evention.ui.components.createEvent.LocationSelectorField
 import com.example.evention.ui.components.home.FilterButtonWithDateRange
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
@@ -83,7 +97,7 @@ val LatLngSaver: Saver<LatLng?, *> = Saver(
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
-    
+
     val viewModel: CreateEventViewModel = viewModel(
         factory = CreateEventViewModelFactory(userPreferences)
     )
@@ -101,6 +115,10 @@ fun CreateEventScreen(navController: NavController) {
     val selectedLocation = rememberSaveable(stateSaver = LatLngSaver) { mutableStateOf<LatLng?>(null) }
     val addressText = rememberSaveable { mutableStateOf("") }
 
+    val showMessage = remember { mutableStateOf(false) }
+    val messageText = remember { mutableStateOf("") }
+    val isSuccessMessage = remember { mutableStateOf(true) }
+
     val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     val selectedImageUri by viewModel.selectedImageUri.collectAsState()
@@ -117,14 +135,10 @@ fun CreateEventScreen(navController: NavController) {
     LaunchedEffect(navLocation) {
         navLocation?.let {
             selectedLocation.value = it
-
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
-
-
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
-
                 val fullAddress = buildString {
                     append(address.thoroughfare ?: "")
                     if (address.subThoroughfare != null) append(", ${address.subThoroughfare}")
@@ -137,18 +151,31 @@ fun CreateEventScreen(navController: NavController) {
         }
     }
 
-    // Navegação e Toast
+    // logica mensagens
     LaunchedEffect(createEventState) {
         when (val state = createEventState) {
             is CreateEventState.Success -> {
-                Toast.makeText(context, "Event created successfully!", Toast.LENGTH_SHORT).show()
+                messageText.value = "Event created successfully!"
+                isSuccessMessage.value = true
+                showMessage.value = true
+
+                delay(3000)
+                showMessage.value = false
+
                 navController.navigate("userEvents") {
                     popUpTo("create") { inclusive = true }
                 }
             }
+
             is CreateEventState.Error -> {
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                messageText.value = state.message
+                isSuccessMessage.value = false
+                showMessage.value = true
+
+                delay(4000)
+                showMessage.value = false
             }
+
             else -> Unit
         }
     }
@@ -160,139 +187,181 @@ fun CreateEventScreen(navController: NavController) {
             MenuComponent(currentPage = "Create", navController = navController)
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 25.dp, vertical = 18.dp)
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TitleComponent("Create Event", false, navController)
 
-            Box(
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Floating card
+            AnimatedVisibility(
+                visible = showMessage.value,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.TopEnd
+                    .padding(top = 16.dp)
+                    .zIndex(2f)
             ) {
-                selectedImageUri?.let { uri ->
-                    AsyncImage(
-                        model = uri,
-                        contentDescription = "Selected Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
-                Button(
-                    onClick = { launcher.launch("image/*") },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(width = 100.dp, height = 34.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.4f)),
-                    contentPadding = PaddingValues(horizontal = 12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_camera),
-                        contentDescription = "Blue camera icon",
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    Text(
-                        text = "CHANGE",
-                        fontSize = 12.sp,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = EventionBlue,
-                    )
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSuccessMessage.value) EventionBlue else Color(0xFFD32F2F)
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isSuccessMessage.value) Icons.Default.CheckCircle else Icons.Default.Close,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = messageText.value,
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                            )
+                        }
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            // Main
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 25.dp, vertical = 18.dp)
+                    .padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TitleComponent("Create Event", false, navController)
 
-            CustomDateRangeTextField(
-                labelText = "Event Duration",
-                startDate = selectedStartDate.value,
-                endDate = selectedEndDate.value,
-                formatter = formatter,
-                onDateRangeSelected = { start, end ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    selectedImageUri?.let { uri ->
+                        AsyncImage(
+                            model = uri,
+                            contentDescription = "Selected Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Button(
+                        onClick = { launcher.launch("image/*") },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(width = 100.dp, height = 34.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.4f)),
+                        contentPadding = PaddingValues(horizontal = 12.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_camera),
+                            contentDescription = "Blue camera icon",
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "CHANGE",
+                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = EventionBlue,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                CustomDateRangeTextField(
+                    labelText = "Event Duration",
+                    startDate = selectedStartDate.value,
+                    endDate = selectedEndDate.value,
+                    formatter = formatter
+                ) { start, end ->
                     selectedStartDate.value = start
                     selectedEndDate.value = end
                 }
-            )
 
-            if (showDatePicker.value) {
-                FilterButtonWithDateRange { startMillis, endMillis ->
-                    if (startMillis != null && endMillis != null) {
-                        selectedStartDate.value = Date(startMillis)
-                        selectedEndDate.value = Date(endMillis)
+                if (showDatePicker.value) {
+                    FilterButtonWithDateRange { startMillis, endMillis ->
+                        if (startMillis != null && endMillis != null) {
+                            selectedStartDate.value = Date(startMillis)
+                            selectedEndDate.value = Date(endMillis)
+                        }
+                        showDatePicker.value = false
                     }
-                    showDatePicker.value = false
                 }
-            }
 
-            Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-            CustomCreateEventTextField("Event Name", eventName.value) {
-                eventName.value = it
-            }
+                CustomCreateEventTextField("Event Name", eventName.value) {
+                    eventName.value = it
+                }
 
-            CustomCreateEventTextField("Description", eventDescription.value) {
-                eventDescription.value = it
-            }
+                CustomCreateEventTextField("Description", eventDescription.value) {
+                    eventDescription.value = it
+                }
 
-            LocationSelectorField(
-                labelText = "Event Location",
-                selectedLocation = selectedLocation.value,
-                displayAddress = addressText.value,
-                onClick = { navController.navigate("selectLocation") }
-            )
+                LocationSelectorField(
+                    labelText = "Event Location",
+                    selectedLocation = selectedLocation.value,
+                    displayAddress = addressText.value,
+                    onClick = { navController.navigate("selectLocation") }
+                )
 
-            CustomCreateEventTextField("Price", eventPrice.value) {
-                eventPrice.value = it
-            }
+                CustomCreateEventTextField("Price", eventPrice.value) {
+                    eventPrice.value = it
+                }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = {
-                    val name = eventName.value
-                    val description = eventDescription.value
-                    val price = eventPrice.value.toDoubleOrNull()
-                    val start = selectedStartDate.value
-                    val end = selectedEndDate.value
-                    val location = selectedLocation.value
+                Button(
+                    onClick = {
+                        val name = eventName.value
+                        val description = eventDescription.value
+                        val price = eventPrice.value.toDoubleOrNull()
+                        val start = selectedStartDate.value
+                        val end = selectedEndDate.value
+                        val location = selectedLocation.value
 
-                    if (name.isNotBlank() && description.isNotBlank() && start != null && end != null && location != null && price != null) {
-                        viewModel.createEvent(
-                            name, description, start, end, price, location, context
+                        if (name.isNotBlank() && description.isNotBlank() && start != null && end != null && location != null && price != null) {
+                            viewModel.createEvent(name, description, start, end, price, location, context)
+                        } else {
+                            Toast.makeText(context, "Incorrect fields", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EventionBlue)
+                ) {
+                    if (createEventState is CreateEventState.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(24.dp)
                         )
                     } else {
-                        Toast.makeText(context, "Incorrect fields", Toast.LENGTH_SHORT).show()
+                        Text("Create Event", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
-                },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = EventionBlue)
-            ) {
-                if (createEventState is CreateEventState.Loading) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(24.dp)
-                    )
-                } else {
-                    Text("Create Event", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 }
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
