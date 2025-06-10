@@ -198,8 +198,6 @@ fun EventDetails(
                 val address = event.addressEvents.firstOrNull()
                 val isLoadingLocation = location == null
 
-                location?.let { Log.d("location found", it.localtown) }
-
                 EventDetailsRow(
                     icon = Icons.Filled.LocationOn,
                     contentDescription = "Location",
