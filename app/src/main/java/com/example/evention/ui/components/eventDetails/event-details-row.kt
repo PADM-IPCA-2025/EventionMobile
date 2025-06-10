@@ -32,7 +32,6 @@ fun EventDetailsRow(
     contentDescription: String,
     title: String,
     subtitle: String,
-    rating: Double? = null,
     onClick: (() -> Unit)? = null
 ) {
     val clickableModifier = if (onClick != null) {
@@ -79,19 +78,6 @@ fun EventDetailsRow(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge
                 )
-            }
-        }
-
-        if (rating != null) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Star",
-                    tint = EventionBlue,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = rating.toString(), style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

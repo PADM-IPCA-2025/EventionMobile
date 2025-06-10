@@ -90,9 +90,14 @@ fun getDrawableId(name: String): Int {
 }
 
 @Composable
-fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navController: NavController, viewModel: TicketScreenViewModel = viewModel(), viewModelE: EventDetailsViewModel = viewModel()) {
-    val viewModelT: TicketScreenViewModel = viewModel()
-    val ticketId by viewModelT.ticketId.collectAsState()
+fun EventDetails(
+    eventDetails: Event,
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: TicketScreenViewModel = viewModel(),
+    viewModelE: EventDetailsViewModel = viewModel()
+) {
+    val ticketId by viewModel.ticketId.collectAsState()
     var navigateToPayment by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
@@ -118,10 +123,18 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
 
     eventDetails.let { event ->
         val user by viewModelE.user.collectAsState()
+        val location by viewModelE.location.collectAsState()
 
         LaunchedEffect(event.userId) {
             if (viewModelE.user.value == null) {
                 viewModelE.loadUserById(event.userId)
+            }
+        }
+
+        LaunchedEffect(event.addressEvents.firstOrNull()?.localtown) {
+            val address = event.addressEvents.firstOrNull()
+            if (address?.localtown != null && viewModelE.location.value == null) {
+                viewModelE.loadLocationById(address.localtown)
             }
         }
 
@@ -183,11 +196,16 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                 )
 
                 val address = event.addressEvents.firstOrNull()
+                val isLoadingLocation = location == null
 
                 EventDetailsRow(
                     icon = Icons.Filled.LocationOn,
                     contentDescription = "Location",
-                    title = address?.localtown ?: "Unknown location",
+                    title = if (isLoadingLocation) {
+                        address?.localtown ?: "Unknown localtown"
+                    } else {
+                        location!!.localtown
+                    },
                     subtitle = address?.road ?: "Unknown road"
                 )
 
@@ -196,9 +214,8 @@ fun EventDetails(eventDetails: Event, modifier: Modifier = Modifier, navControll
                 EventDetailsRow(
                     icon = Icons.Filled.Person,
                     contentDescription = "Person",
-                    title = if (isLoadingUser) "A carregar utilizador..." else user!!.username,
+                    title = if (isLoadingUser) "Loading..." else user!!.username,
                     subtitle = "",
-                    rating = if (isLoadingUser) 0.0 else 4.8,
                     onClick = if (!isLoadingUser) {
                         {
                             val userJson = Uri.encode(Gson().toJson(user))

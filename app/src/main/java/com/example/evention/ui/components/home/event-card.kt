@@ -73,7 +73,7 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
         shape = RoundedCornerShape(16.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp),
+            .height(260.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = {
             val eventJson = Uri.encode(Gson().toJson(event))
@@ -180,10 +180,13 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                val timeFormatted = remember(event.startAt) {
+                val timeFormatted =
                     SimpleDateFormat("HH:mm", Locale.getDefault()).format(event.startAt)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector),
                         contentDescription = "Event time",

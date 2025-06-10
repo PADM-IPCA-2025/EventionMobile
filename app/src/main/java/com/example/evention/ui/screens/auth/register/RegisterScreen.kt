@@ -62,6 +62,7 @@ fun RegisterScreen(navController: NavController) {
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken != null) {
+                Log.d("Token", idToken)
                 viewModel.registerWithGoogle(idToken)
             } else {
                 Log.e("GOOGLE", "Token inválido")
@@ -197,7 +198,7 @@ fun RegisterScreen(navController: NavController) {
         AuthGoogle(
             text = "Registar com Google",
             onClick = {
-                //signInWithGoogle(context, launcher)
+                signInWithGoogle(context, launcher)
             }
         )
 
@@ -221,6 +222,8 @@ fun RegisterScreen(navController: NavController) {
         }
     }
 }
+
+
 
 
 @Preview(showBackground = true)

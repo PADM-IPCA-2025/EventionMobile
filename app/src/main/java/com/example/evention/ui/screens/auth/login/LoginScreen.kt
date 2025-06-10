@@ -2,7 +2,7 @@ package com.example.evention.ui.screens.auth.login
 import AuthConfirmButton
 import AuthTextField
 import UserPreferences
-import android.app.Instrumentation
+import androidx.activity.result.ActivityResult
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -58,6 +58,8 @@ import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
 
+
+
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
@@ -69,11 +71,10 @@ fun LoginScreen(navController: NavController) {
     ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
-
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken != null) {
-                // ViewModel login com Google
+                Log.d("Token", idToken)
                 viewModel.loginWithGoogle(idToken)
             } else {
                 Log.e("GOOGLE", "Token inválido")
@@ -238,7 +239,7 @@ fun LoginScreen(navController: NavController) {
         AuthGoogle(
             text = "Login com Google",
             onClick = {
-                //signInWithGoogle(context, launcher)
+                signInWithGoogle(context, launcher)
             }
         )
 
@@ -262,13 +263,12 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
-@Composable
 fun signInWithGoogle(
     context: Context,
-    launcher: ManagedActivityResultLauncher<Intent, Instrumentation.ActivityResult>
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        //.requestIdToken(context.getString(R.string.default_web_client_id)) // Usar o CLIENT_ID (ainda nao foi implementado)
+        .requestIdToken(context.getString(R.string.default_web_client_id))
         .requestEmail()
         .build()
 
@@ -276,6 +276,7 @@ fun signInWithGoogle(
     val signInIntent = googleSignInClient.signInIntent
     launcher.launch(signInIntent)
 }
+
 
 
 @Preview(showBackground = true)
