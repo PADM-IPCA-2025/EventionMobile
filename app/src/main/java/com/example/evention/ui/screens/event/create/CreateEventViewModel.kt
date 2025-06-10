@@ -92,6 +92,7 @@ class CreateEventViewModel(
             val postCode = addr.postalCode ?: ""
             val locality = addr.locality ?: ""
 
+            //val defaultLocationId = "0281b20c-60d5-4805-bcc1-c17660feb55f"
             val defaultLocationId = "0281b20c-60d5-4805-bcc1-c17660feb55f"
             val localtown = try {
                 locationRemoteDataSource.getLocationByLocaltown(locality).locationId
@@ -127,7 +128,7 @@ class CreateEventViewModel(
 
                 if (!response.isSuccessful || response.body() == null) {
                     Log.e("EVENT_DEBUG", "Erro a criar evento: ${response.code()} ${response.errorBody()?.string()}")
-                    _createEventState.value = CreateEventState.Error("Erro a criar evento: ${response.code()}")
+                    _createEventState.value = CreateEventState.Error("Error creating Event!")
                     return@launch
                 }
 
@@ -149,7 +150,7 @@ class CreateEventViewModel(
 
                 val eventId = createdEvent.eventID
                 if (eventId.isNullOrEmpty()) {
-                    _createEventState.value = CreateEventState.Error("Evento inválido.")
+                    _createEventState.value = CreateEventState.Error("Invalid Event!")
                     return@launch
                 }
 
@@ -166,7 +167,7 @@ class CreateEventViewModel(
 
                 if (!addressResponse.isSuccessful || addressResponse.body() == null) {
                     Log.e("EVENT_DEBUG", "Erro a criar endereço: ${addressResponse.code()} ${addressResponse.errorBody()?.string()}")
-                    _createEventState.value = CreateEventState.Error("Erro a criar endereço")
+                    _createEventState.value = CreateEventState.Error("Error creating Event!")
                     return@launch
                 }
 
