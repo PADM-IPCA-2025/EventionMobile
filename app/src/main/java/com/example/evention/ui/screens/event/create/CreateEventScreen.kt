@@ -362,7 +362,6 @@ fun CreateEventScreen(navController: NavController) {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun Preview() {

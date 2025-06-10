@@ -15,6 +15,7 @@ import com.example.evention.model.AddressEventRequest
 import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.RoutesEventRequest
+import com.example.evention.ui.screens.auth.login.decodeJWT
 import com.google.android.gms.common.api.Response
 import com.google.gson.Gson
 import com.google.type.LatLng
@@ -133,9 +134,22 @@ class CreateEventViewModel(
                 val createdEvent = response.body()!!
                 Log.d("EVENT_DEBUG", "Evento criado: ${createdEvent.eventID}")
 
+                // Guardar novo token, se vier na resposta
+                createdEvent.newToken?.let { token ->
+                    val payload = decodeJWT(token)
+                    val userGuid = payload.getString("userID")
+                    val userType = payload.getString("userType")
+
+                    userPreferences.clearToken()
+                    userPreferences.saveToken(token)
+                    userPreferences.saveUserId(userGuid)
+                    userPreferences.saveUserType(userType)
+                    Log.d("EVENT_DEBUG", "Novo token guardado.")
+                }
+
                 val eventId = createdEvent.eventID
                 if (eventId.isNullOrEmpty()) {
-                    _createEventState.value = CreateEventState.Error("ID do evento inválido.")
+                    _createEventState.value = CreateEventState.Error("Evento inválido.")
                     return@launch
                 }
 

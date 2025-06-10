@@ -73,7 +73,8 @@ data class EventResponse(
     val endAt: String,
     val price: Double,
     val eventStatusID: String,
-    val eventPicture: String? = null
+    val eventPicture: String? = null,
+    val newToken: String?
 )
 
 data class AddressEventResponse(
