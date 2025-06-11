@@ -95,6 +95,7 @@ fun UsersListRow(
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray),
+                contentScale = ContentScale.Crop,
                 onError = { hasError = true }
             )
         }

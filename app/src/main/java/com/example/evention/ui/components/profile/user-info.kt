@@ -68,6 +68,7 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
             modifier = Modifier
                 .size(110.dp)
                 .clip(CircleShape),
+            contentScale = ContentScale.Crop
         )
     } else {
         AsyncImage(
@@ -77,6 +78,7 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
             modifier = Modifier
                 .size(110.dp)
                 .clip(CircleShape),
+            contentScale = ContentScale.Crop,
             onError = { hasError = true }
         )
     }
