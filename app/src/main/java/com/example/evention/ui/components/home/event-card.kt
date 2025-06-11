@@ -87,10 +87,11 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
                     .weight(1f)
             ) {
                 if (hasError) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.LightGray)
+                    Image(
+                        painter = painterResource(id = R.drawable.default_event),
+                        contentDescription = "Event Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
                     )
                 } else {
                     AsyncImage(
@@ -101,11 +102,7 @@ fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavCon
                         modifier = Modifier.fillMaxSize(),
                         onError = {
                             hasError = true
-                            Log.e("AsyncImage", "Image load failed: ${it.result.throwable}")
                         },
-                        onSuccess = {
-                            Log.d("AsyncImage", "Image loaded successfully")
-                        }
                     )
 
                 }

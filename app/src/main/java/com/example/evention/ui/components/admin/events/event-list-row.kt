@@ -55,6 +55,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import com.google.gson.Gson
 import getUnsafeOkHttpClient
+import com.example.evention.R
 
 fun formatDate(date: Date): String {
     val zonedDateTime = date.toInstant()
@@ -115,11 +116,14 @@ fun EventListRow(
             val imageUrl = event.eventPicture?.let { "https://10.0.2.2:5010/event$it" }
 
             if (event.eventPicture == null) {
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.default_event),
+                    contentDescription = "Event Image",
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Color.Gray)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
                 )
             } else {
                 AsyncImage(

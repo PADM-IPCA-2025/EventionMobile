@@ -44,9 +44,10 @@ import com.google.gson.Gson
 import UserPreferences
 import android.util.Log
 import getUnsafeOkHttpClient
+import com.example.evention.R
 
 @Composable
-fun UserInfo(user: User, navController: NavController, receive: Boolean? = false){
+fun UserInfo(user: User, navController: NavController, receive: Boolean? = false) {
     val imageUrl = user.profilePicture?.let { "https://10.0.2.2:5010/user$it" }
     var hasError by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -61,13 +62,13 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
     }
 
     if (user.profilePicture == null) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.default_user),
+            contentDescription = "User Profile Image",
             modifier = Modifier
                 .size(110.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
+                .clip(CircleShape),
         )
-
     } else {
         AsyncImage(
             model = imageUrl,
@@ -87,7 +88,7 @@ fun UserInfo(user: User, navController: NavController, receive: Boolean? = false
         fontWeight = FontWeight.Bold
     )
 
-    if(receive == false){
+    if (receive == false) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(

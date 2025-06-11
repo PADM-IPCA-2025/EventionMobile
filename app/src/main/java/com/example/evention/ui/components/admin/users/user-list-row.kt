@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
+import com.example.evention.R
 import com.example.evention.model.User
 import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
@@ -76,11 +77,14 @@ fun UsersListRow(
         var hasError by remember { mutableStateOf(false) }
 
         if (user.profilePicture == null || hasError) {
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.default_user),
+                contentDescription = "Default User Image",
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(Color.LightGray),
+                contentScale = ContentScale.Crop
             )
         } else {
             AsyncImage(

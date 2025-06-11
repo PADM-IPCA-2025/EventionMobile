@@ -41,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import coil.ImageLoader
 import com.example.evention.ui.screens.profile.user.userEdit.UserEditViewModel
 import getUnsafeOkHttpClient
+import com.example.evention.R
 
 @Composable
 fun UserEditInfo(user: User, viewModel: UserEditViewModel) {
@@ -86,6 +87,13 @@ fun UserEditInfo(user: User, viewModel: UserEditViewModel) {
                 onError = {
                     Log.e("UserEditInfo", "Erro ao carregar imagem: $it")
                 },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.default_user),
+                contentDescription = "User Profile Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )

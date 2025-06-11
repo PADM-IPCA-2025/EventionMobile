@@ -64,6 +64,7 @@ import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.google.gson.Gson
 import UserPreferences
 import getUnsafeOkHttpClient
+import com.example.evention.R
 
 fun formatDate(date: Date): String {
     val localDate = date.toInstant()
@@ -151,11 +152,12 @@ fun EventDetails(
                         .fillMaxWidth()
                         .height(200.dp)
                 ) {
-                    if (hasError) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.LightGray)
+                    if (hasError || event.eventPicture == null) {
+                        Image(
+                            painter = painterResource(id = R.drawable.default_event),
+                            contentDescription = "Event Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
                         )
                     } else {
                         AsyncImage(
