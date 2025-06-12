@@ -30,3 +30,8 @@ data class Address(
     val NIF: String?,
     val localtown_id: String,
 )
+
+data class ChangePasswordRequest(
+    val oldPassword: String,
+    val newPassword: String
+)

@@ -45,6 +45,7 @@ import com.example.evention.ui.screens.profile.admin.events.EventsViewModel
 import com.example.evention.ui.screens.profile.admin.users.AllUsers
 import com.example.evention.ui.screens.profile.admin.users.UsersViewModel
 import com.example.evention.ui.screens.profile.user.ScanQRCodeScreen
+import com.example.evention.ui.screens.profile.user.changePassword.ChangePasswordScreen
 import com.example.evention.ui.screens.profile.user.userEdit.UserEdit
 import com.example.evention.ui.screens.profile.user.userProfile.UserProfile
 import com.example.evention.ui.screens.profile.userEvents.UserEvents
@@ -181,6 +182,10 @@ fun AppNavHost() {
             val viewModel: UserEventsViewModel = viewModel()
             val events by viewModel.events.collectAsState()
             UserEvents(events = events, navController)
+        }
+        composable("changePassword") {
+
+            ChangePasswordScreen( navController = navController)
         }
         composable(
             "userEdit/{userJson}",

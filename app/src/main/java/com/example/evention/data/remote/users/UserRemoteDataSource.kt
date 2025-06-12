@@ -1,10 +1,12 @@
 package com.example.evention.data.remote.users
 
 import android.util.Log
+import com.example.evention.model.ChangePasswordRequest
 import com.example.evention.model.User
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
 
 class UserRemoteDataSource(private val api: UserApiService) {
     suspend fun getUsers(): List<User> = api.getUsers()
@@ -34,5 +36,18 @@ class UserRemoteDataSource(private val api: UserApiService) {
             profilePicture = profilePicture
         )
     }
+
+    suspend fun changePassword(oldPassword: String, newPassword: String): Result<Unit> {
+        return try {
+            val request = ChangePasswordRequest(oldPassword, newPassword)
+            api.changePassword(request)
+            Result.success(Unit)
+        } catch (e: HttpException) {
+            Result.failure(Exception("HTTP error: ${e.code()} ${e.message()}"))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
 }

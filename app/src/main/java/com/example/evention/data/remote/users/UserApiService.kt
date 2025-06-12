@@ -1,5 +1,6 @@
 package com.example.evention.data.remote.users
 
+import com.example.evention.model.ChangePasswordRequest
 import com.example.evention.model.User
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,4 +35,8 @@ interface UserApiService {
         @Part profilePicture: MultipartBody.Part? = null
     ): User
 
+    @PUT("user/api/users/change-password")
+    suspend fun changePassword(
+        @Body changePasswordRequest: ChangePasswordRequest
+    )
 }
