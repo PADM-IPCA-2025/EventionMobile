@@ -287,7 +287,7 @@ fun CreateEventScreen(navController: NavController) {
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     CustomDateRangeTextField(
                         labelText = "Event Duration",
@@ -311,11 +311,11 @@ fun CreateEventScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    CustomCreateEventTextField("Event Name", eventName.value) {
+                    CustomCreateEventTextField("Event Name", eventName.value, description = false) {
                         eventName.value = it
                     }
 
-                    CustomCreateEventTextField("Description", eventDescription.value) {
+                    CustomCreateEventTextField("Description", eventDescription.value, description = true) {
                         eventDescription.value = it
                     }
 
@@ -326,17 +326,18 @@ fun CreateEventScreen(navController: NavController) {
                         onClick = { navController.navigate("selectLocation") }
                     )
 
-                    CustomCreateEventTextField("Price", eventPrice.value) {
+                    CustomCreateEventTextField("Price", eventPrice.value, isPrice = true) {
                         eventPrice.value = it
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
                     Button(
                         onClick = {
                             val name = eventName.value
                             val description = eventDescription.value
-                            val price = eventPrice.value.toDoubleOrNull()
+                            val priceString = eventPrice.value.replace("€", "").trim()
+                            val price = priceString.toDoubleOrNull()
                             val start = selectedStartDate.value
                             val end = selectedEndDate.value
                             val location = selectedLocation.value
