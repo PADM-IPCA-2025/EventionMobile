@@ -75,6 +75,9 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.Coil.imageLoader
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import com.example.evention.mock.MockData.events
 import com.example.evention.model.Event
 import com.example.evention.ui.theme.EventionBlue
@@ -280,7 +283,7 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
                                 }
                         ) {
                             EventRow(
-                                imageUrl = "",
+                                imageUrl = event.eventPicture!!,
                                 title = event.name,
                                 location = locationText,
                                 date = event.createdAt,
@@ -332,6 +335,16 @@ fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navControll
 
 @Composable
 fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSelected: Boolean = false) {
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+    val imageLoader = remember {
+        ImageLoader.Builder(context)
+            .okHttpClient {
+                getUnsafeOkHttpClient(userPreferences)
+            }
+            .build()
+    }
+    val imageUrl = "https://10.0.2.2:5010/event${imageUrl}"
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -358,12 +371,20 @@ fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSe
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.LightGray)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.event1),
-                    contentDescription = "Imagem do Evento",
+                AsyncImage(
+                    model = imageUrl,
+                    imageLoader = imageLoader,
+                    contentDescription = "Event Image",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    onError = { var hasError = true }
                 )
+//                Image(
+//                    painter = painterResource(id = R.drawable.event1),
+//                    contentDescription = "Imagem do Evento",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.fillMaxSize()
+//                )
             }
 
             Column(
