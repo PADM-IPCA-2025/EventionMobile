@@ -114,7 +114,7 @@ fun LoginScreen(navController: NavController) {
             }
 
             is LoginScreenViewModel.LoginState.Error -> {
-                errorMessage = "Email ou palavra-passe incorretos"
+                errorMessage = "Incorrect Email or Password!"
                 delay(2000)
                 viewModel.resetState()
             }
@@ -132,8 +132,7 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .background(Color.White),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
