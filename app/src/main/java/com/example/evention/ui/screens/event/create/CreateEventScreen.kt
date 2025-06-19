@@ -204,7 +204,7 @@ fun CreateEventScreen(navController: NavController) {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = if (isSuccessMessage.value) Color.Green else Color(0xFFD32F2F)
+                            containerColor = if (isSuccessMessage.value) Color(0xFF66BB6A) else Color(0xFFD32F2F)
                         ),
                         shape = RoundedCornerShape(8.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),

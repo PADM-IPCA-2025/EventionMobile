@@ -10,9 +10,9 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,6 +57,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
@@ -85,6 +86,8 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
     var showNotificationPermission by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
 
     val loginState = viewModel.loginState
 
@@ -101,6 +104,7 @@ fun LoginScreen(navController: NavController) {
                 if (!userPreferences.isNotificationPermissionShown()) {
                     showNotificationPermission = true
                 }
+                errorMessage = null
                 delay(500)
                 viewModel.resetState()
                 navController.navigate("home") {
@@ -109,6 +113,7 @@ fun LoginScreen(navController: NavController) {
             }
 
             is LoginScreenViewModel.LoginState.Error -> {
+                errorMessage = "Incorrect Email or Password!"
                 delay(2000)
                 viewModel.resetState()
             }
@@ -126,8 +131,7 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .background(Color.White),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -155,7 +159,10 @@ fun LoginScreen(navController: NavController) {
             iconResId = R.drawable.mail,
             value = email,
             password = false,
-            onValueChange = { email = it }
+            onValueChange = {
+                email = it
+                errorMessage = null
+            }
         )
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -165,8 +172,29 @@ fun LoginScreen(navController: NavController) {
             iconResId = R.drawable.lock,
             value = password,
             password = true,
-            onValueChange = { password = it }
+            onValueChange = {
+                password = it
+                errorMessage = null
+            }
         )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!errorMessage.isNullOrBlank()) {
+                Text(
+                    text = errorMessage ?: "",
+                    color = Color.Red,
+                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
