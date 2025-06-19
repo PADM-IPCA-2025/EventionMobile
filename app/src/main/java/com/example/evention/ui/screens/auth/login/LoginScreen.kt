@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -160,7 +161,10 @@ fun LoginScreen(navController: NavController) {
             iconResId = R.drawable.mail,
             value = email,
             password = false,
-            onValueChange = { email = it }
+            onValueChange = {
+                email = it
+                errorMessage = null
+            }
         )
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -170,8 +174,29 @@ fun LoginScreen(navController: NavController) {
             iconResId = R.drawable.lock,
             value = password,
             password = true,
-            onValueChange = { password = it }
+            onValueChange = {
+                password = it
+                errorMessage = null
+            }
         )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!errorMessage.isNullOrBlank()) {
+                Text(
+                    text = errorMessage ?: "",
+                    color = Color.Red,
+                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
