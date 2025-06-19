@@ -83,7 +83,7 @@ fun ScanQRCodeScreen(navController: NavController) {
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        // TODO: ação de voltar
+                        navController.popBackStack()
                     }
             )
 

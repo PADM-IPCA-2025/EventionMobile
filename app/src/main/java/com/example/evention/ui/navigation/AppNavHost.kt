@@ -119,12 +119,20 @@ fun AppNavHost() {
 
 
         composable(
-            "ticketDetails/{ticketId}",
-            arguments = listOf(navArgument("ticketId") { type = NavType.StringType })
+            "ticketDetails/{ticketId}?fromPayment={fromPayment}",
+            arguments = listOf(
+                navArgument("ticketId") { type = NavType.StringType },
+                navArgument("fromPayment") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
         ) { backStackEntry ->
-            val ticketId = backStackEntry.arguments?.getString("ticketId")
-            TicketDetailsScreen(ticketId = ticketId ?: "", navController)
+            val ticketId = backStackEntry.arguments?.getString("ticketId") ?: ""
+            val fromPayment = backStackEntry.arguments?.getBoolean("fromPayment") ?: false
+            TicketDetailsScreen(ticketId = ticketId, navController = navController, fromPayment = fromPayment)
         }
+
         composable(
             "ticketFeedback/{ticketId}",
             arguments = listOf(navArgument("ticketId") { type = NavType.StringType })

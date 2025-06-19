@@ -24,7 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.evention.ui.theme.EventionTheme
 
 @Composable
-fun TitleComponent(title: String, arrowBack:Boolean, navController: NavController) {
+fun TitleComponent(title: String, arrowBack:Boolean, navController: NavController, fromPayment: Boolean = false) {
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -39,7 +39,11 @@ fun TitleComponent(title: String, arrowBack:Boolean, navController: NavControlle
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        navController.popBackStack()
+                        if (!fromPayment){
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate("home")
+                        }
                     }
             )
         } else {

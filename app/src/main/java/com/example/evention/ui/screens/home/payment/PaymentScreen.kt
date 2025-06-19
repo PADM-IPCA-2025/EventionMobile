@@ -65,7 +65,7 @@ fun PaymentScreen(event: Event,ticketId: String, navController: NavController, v
 
     LaunchedEffect(paymentResult, paymentTriggered) {
         if (paymentTriggered && paymentResult != null) {
-            navController.navigate("ticketDetails/$ticketId")
+            navController.navigate("ticketDetails/$ticketId?fromPayment=true")
             paymentTriggered = false
         }
     }

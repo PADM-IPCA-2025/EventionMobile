@@ -50,7 +50,7 @@ import generateQrCodeBitmap
 import java.time.ZoneId
 
 @Composable
-fun TicketDetailsScreen(ticketId: String, navController: NavController) {
+fun TicketDetailsScreen(ticketId: String, navController: NavController, fromPayment: Boolean = false) {
     val context = LocalContext.current
     val hasInternet = remember { mutableStateOf(isNetworkAvailable(context)) }
     val repository = remember {
@@ -97,7 +97,7 @@ fun TicketDetailsScreen(ticketId: String, navController: NavController) {
                 .padding(horizontal = 25.dp, vertical = 28.dp)
         ) {
 
-            TitleComponent("Ticket Details", true, navController)
+            TitleComponent("Ticket Details", true, navController, fromPayment)
 
             // Nome do evento
             Box(
