@@ -15,8 +15,6 @@ data class TicketWithUser(
     val ticket: TicketReputation,
     val user: User
 )
-
-
 class UserParticipationViewModel : ViewModel() {
 
     private val ticketRemoteDataSource = NetworkModule.ticketRemoteDataSource

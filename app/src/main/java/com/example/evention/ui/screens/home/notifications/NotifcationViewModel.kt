@@ -1,13 +1,9 @@
 package com.example.evention.ui.screens.home.notifications
 
 import UserPreferences
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-
-
 
 class NotificationViewModel(private val userPreferences: UserPreferences) : ViewModel() {
     private val _notifications = mutableStateListOf<NotificationItem>()

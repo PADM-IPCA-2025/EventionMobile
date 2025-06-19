@@ -9,16 +9,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.evention.ui.screens.home.payment.PaymentMethod
-import com.example.evention.ui.screens.home.payment.PaymentScreen
 import com.example.evention.ui.theme.EventionTheme
 import com.example.evention.R
-
 
 @Composable
 fun SplashScreen(navController: NavController) {

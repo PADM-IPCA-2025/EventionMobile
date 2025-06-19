@@ -1,7 +1,6 @@
 package com.example.evention.ui.screens.ticket
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule

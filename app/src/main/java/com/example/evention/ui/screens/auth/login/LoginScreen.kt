@@ -57,9 +57,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
-
-
-
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current

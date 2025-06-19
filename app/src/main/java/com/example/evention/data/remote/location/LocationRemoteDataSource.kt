@@ -1,6 +1,5 @@
 package com.example.evention.data.remote.location
 
-import com.example.evention.data.remote.events.EventApiService
 import com.example.evention.model.Location
 
 class LocationRemoteDataSource(private val api: LocationApiService) {

@@ -1,6 +1,5 @@
 package com.example.evention.data.remote.users
 
-import android.util.Log
 import com.example.evention.model.ChangePasswordRequest
 import com.example.evention.model.User
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,6 +47,4 @@ class UserRemoteDataSource(private val api: UserApiService) {
             Result.failure(e)
         }
     }
-
-
 }

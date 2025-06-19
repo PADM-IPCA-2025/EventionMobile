@@ -2,7 +2,6 @@ import android.annotation.SuppressLint
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
@@ -34,11 +31,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.evention.R
 import com.example.evention.ui.theme.EventionTheme
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -75,10 +70,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.Coil.imageLoader
 import coil.ImageLoader
 import coil.compose.AsyncImage
-import com.example.evention.mock.MockData.events
 import com.example.evention.model.Event
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.utils.isNetworkAvailable
@@ -124,7 +117,6 @@ fun moveToCurrentLocation(context: Context, cameraPositionState: CameraPositionS
 
 @Composable
 fun SearchScreen(events: List<Event>, modifier: Modifier = Modifier, navController: NavController) {
-//    val events = remember { events }
     val context = LocalContext.current
     var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
     val query = remember { mutableStateOf("") }
@@ -379,12 +371,6 @@ fun EventRow(imageUrl: String, title: String, location: String, date: Date, isSe
                     modifier = Modifier.fillMaxSize(),
                     onError = { var hasError = true }
                 )
-//                Image(
-//                    painter = painterResource(id = R.drawable.event1),
-//                    contentDescription = "Imagem do Evento",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.fillMaxSize()
-//                )
             }
 
             Column(

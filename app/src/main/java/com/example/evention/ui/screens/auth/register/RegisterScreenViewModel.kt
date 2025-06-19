@@ -1,17 +1,11 @@
 package com.example.evention.ui.screens.auth.register
 
 import UserPreferences
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.evention.data.remote.authentication.RegisterRemoteDataSource
-import com.example.evention.data.remote.authentication.RegisterRequest
-import com.example.evention.ui.screens.auth.login.LoginScreenViewModel.LoginState
 import com.example.evention.ui.screens.auth.login.decodeJWT
 import kotlinx.coroutines.launch
 

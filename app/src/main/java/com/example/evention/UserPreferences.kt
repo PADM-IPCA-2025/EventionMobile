@@ -6,7 +6,6 @@ class UserPreferences(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
-
     companion object {
         private const val KEY_JWT_TOKEN = "TOKEN"
         private const val KEY_USER_ID = "USER_ID"

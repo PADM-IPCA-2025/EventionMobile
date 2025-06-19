@@ -47,7 +47,6 @@ import com.example.evention.ui.screens.auth.login.signInWithGoogle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 
-
 @Composable
 fun RegisterScreen(navController: NavController) {
     val context = LocalContext.current
@@ -62,7 +61,6 @@ fun RegisterScreen(navController: NavController) {
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken != null) {
-                Log.d("Token", idToken)
                 viewModel.registerWithGoogle(idToken)
             } else {
                 Log.e("GOOGLE", "Token inválido")

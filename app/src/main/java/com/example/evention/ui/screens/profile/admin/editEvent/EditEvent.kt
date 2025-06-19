@@ -1,15 +1,12 @@
 package com.example.evention.ui.screens.profile.admin.editEvent
 
-import android.app.DatePickerDialog
 import android.util.Log
-import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,12 +28,9 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.evention.R
 import com.example.evention.mock.MockData
-import com.example.evention.mock.MockUserData
 import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.components.userEdit.LabeledTextField
-import com.example.evention.ui.screens.home.HomeScreenViewModel
-import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
 import java.text.SimpleDateFormat

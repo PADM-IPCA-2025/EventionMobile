@@ -5,30 +5,19 @@ import android.content.Context
 import android.location.Geocoder
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evention.data.remote.location.LocationRemoteDataSource
 import com.example.evention.di.NetworkModule
-import com.example.evention.di.NetworkModule.locationRemoteDataSource
 import com.example.evention.model.AddressEventRequest
-import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.RoutesEventRequest
 import com.example.evention.ui.screens.auth.login.decodeJWT
-import com.google.android.gms.common.api.Response
-import com.google.gson.Gson
-import com.google.type.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -46,7 +35,6 @@ class CreateEventViewModel(
     val createEventState: StateFlow<CreateEventState> = _createEventState
 
     private val _createSuccess = MutableStateFlow(false)
-    val createSuccess: StateFlow<Boolean> = _createSuccess
 
     private val _selectedImageUri = MutableStateFlow<Uri?>(null)
     val selectedImageUri: StateFlow<Uri?> = _selectedImageUri

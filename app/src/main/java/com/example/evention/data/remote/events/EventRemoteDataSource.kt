@@ -6,12 +6,10 @@ import com.example.evention.model.Event
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
 import com.example.evention.model.RoutesEventRequest
 import com.example.evention.model.RoutesEventResponse
 import retrofit2.Response
-
 
 class EventRemoteDataSource(private val api: EventApiService) {
     suspend fun getEvents(): List<Event> = api.getEvents()
@@ -54,30 +52,6 @@ class EventRemoteDataSource(private val api: EventApiService) {
             price = pricePart,
             eventPicture = eventPicture
         )
-    }
-
-    suspend fun createEvent(
-        userId: String,
-        name: String,
-        description: String,
-        startAt: String,
-        endAt: String,
-        price: Double,
-        eventPicture: String? = null
-    ): Response<EventResponse> {
-
-        val request = EventRequest(
-            userId = userId,
-            name = name,
-            description = description,
-            startAt = startAt,
-            endAt = endAt,
-            price = price,
-            eventStatusID = "11111111-1111-1111-1111-111111111111",
-            eventPicture = eventPicture
-        )
-
-        return api.createEvent(request)
     }
 
     suspend fun createAddressEvent(request: AddressEventRequest): Response<AddressEventResponse> {

@@ -1,10 +1,8 @@
 package com.example.evention.ui.components.home
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,9 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import UserPreferences
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.ImageLoader
 import com.example.evention.model.Event
 import java.text.SimpleDateFormat
@@ -50,7 +45,6 @@ import coil.compose.AsyncImage
 import com.example.evention.R
 import com.google.gson.Gson
 import getUnsafeOkHttpClient
-
 
 @Composable
 fun EventCard(event: Event, modifier: Modifier = Modifier, navController: NavController) {

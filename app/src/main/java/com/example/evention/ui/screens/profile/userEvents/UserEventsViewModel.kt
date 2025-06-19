@@ -1,5 +1,6 @@
 package com.example.evention.ui.screens.profile.userEvents
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
@@ -35,7 +36,7 @@ class UserEventsViewModel : ViewModel() {
                 remoteDataSource.deleteEvent(eventId)
                 _events.value = _events.value.filter { it.eventID != eventId }
             } catch (e: Exception) {
-                // TODO: handle error (ex: show error message)
+                Log.e("Error", "Error deleting event!")
             }
         }
     }

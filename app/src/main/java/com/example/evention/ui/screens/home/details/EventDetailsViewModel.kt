@@ -3,7 +3,6 @@ package com.example.evention.ui.screens.home.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
-import com.example.evention.model.Event
 import com.example.evention.model.Location
 import com.example.evention.model.User
 import kotlinx.coroutines.flow.MutableStateFlow

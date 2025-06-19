@@ -1,7 +1,6 @@
 package com.example.evention.ui.screens.profile.userEvents
 
 import android.net.Uri
-import com.example.evention.ui.screens.profile.admin.events.EventsViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

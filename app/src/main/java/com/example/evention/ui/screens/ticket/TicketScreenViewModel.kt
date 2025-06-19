@@ -4,34 +4,18 @@ import TicketRepository
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evention.data.local.entities.EventEntity
-import com.example.evention.data.remote.events.EventRemoteDataSource
 import com.example.evention.di.NetworkModule
-import com.example.evention.model.AddressEvent
-import com.example.evention.model.Event
-import com.example.evention.model.EventStatus
 import com.example.evention.model.Ticket
-import com.example.evention.model.TicketRaw
 import com.example.evention.utils.toDomain
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 class TicketScreenViewModel(
     private val repository: TicketRepository
 ) : ViewModel() {
 
     private val _createTicketResult = MutableStateFlow<Result<Unit>?>(null)
-    val createTicketResult: StateFlow<Result<Unit>?> = _createTicketResult
 
     private val _ticketId = MutableStateFlow<String?>(null)
     val ticketId: StateFlow<String?> = _ticketId

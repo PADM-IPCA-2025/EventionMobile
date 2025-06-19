@@ -1,10 +1,7 @@
 package com.example.evention.ui.screens.event.create
 
 import android.content.Context
-import android.location.Address
 import android.location.Geocoder
-
-import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng

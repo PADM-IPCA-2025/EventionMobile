@@ -1,9 +1,7 @@
 package com.example.evention.ui.screens.profile.user.userEdit
 
-import android.app.Application
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
@@ -55,7 +53,6 @@ class UserEditViewModel : ViewModel() {
 
                 _editSuccess.value = true
             } catch (e: Exception) {
-                Log.e("UserEditViewModel", "Erro ao atualizar: ${e.message}", e)
                 _editSuccess.value = false
             }
         }

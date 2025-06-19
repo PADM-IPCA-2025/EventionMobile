@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
 import com.example.evention.data.remote.authentication.ResetPasswordViewModelFactory
-import com.example.evention.ui.screens.auth.register.RegisterScreenViewModel
 import com.example.evention.ui.theme.EventionTheme
 import kotlinx.coroutines.delay
 

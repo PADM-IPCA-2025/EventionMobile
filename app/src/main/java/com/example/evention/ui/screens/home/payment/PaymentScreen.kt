@@ -3,7 +3,6 @@ package com.example.evention.ui.screens.home.payment
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,11 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -47,15 +43,6 @@ import com.example.evention.model.Event
 import com.example.evention.ui.components.TitleComponent
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.FirebaseFirestore
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import org.json.JSONObject
-import java.io.IOException
 
 @Composable
 fun PaymentScreen(event: Event,ticketId: String, navController: NavController, viewModel: PaymentViewModel) {
@@ -69,7 +56,7 @@ fun PaymentScreen(event: Event,ticketId: String, navController: NavController, v
             paymentTriggered = false
         }
     }
-    //val event = MockData.events.find { event -> event.eventID == event.eventID }
+
     if (event == null) return
 
     var selectedMethod by remember { mutableStateOf("Paypal") }

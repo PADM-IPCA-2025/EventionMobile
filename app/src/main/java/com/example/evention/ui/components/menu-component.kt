@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.evention.R
 import com.example.evention.ui.theme.EventionBlue

@@ -1,12 +1,9 @@
 package com.example.evention.data.remote.events
 
-import com.example.evention.model.AddressEvent
 import com.example.evention.model.AddressEventRequest
 import com.example.evention.model.AddressEventResponse
 import com.example.evention.model.Event
-import com.example.evention.model.EventRequest
 import com.example.evention.model.EventResponse
-import com.example.evention.model.Location
 import com.example.evention.model.Reputation
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -59,9 +56,6 @@ interface EventApiService {
         @Part eventPicture: MultipartBody.Part? = null
     ): Event
 
-    @POST("event/api/events")
-    suspend fun createEvent(@Body request: EventRequest): Response<EventResponse>
-
     @POST("event/api/addressEvents")
     suspend fun createAddressEvent(@Body request: AddressEventRequest): Response<AddressEventResponse>
 
@@ -80,6 +74,4 @@ interface EventApiService {
         @Part("eventStatusID") eventStatusID: RequestBody,
         @Part eventPicture: MultipartBody.Part?
     ): Response<EventResponse>
-
-
 }

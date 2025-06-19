@@ -2,14 +2,12 @@ package com.example.evention.data.remote.tickets
 
 import com.example.evention.model.CreateFeedbackRequest
 import com.example.evention.model.CreateTicketRequest
-import com.example.evention.model.Event
 import com.example.evention.model.Feedback
 import com.example.evention.model.Ticket
 import com.example.evention.model.TicketRaw
 import com.example.evention.model.TicketReputation
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 

@@ -2,12 +2,10 @@ package com.example.evention.ui.screens.profile.user
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,16 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evention.ui.theme.EventionBlue
 import com.example.evention.ui.theme.EventionTheme
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -131,7 +126,6 @@ fun ScanQRCodeScreen(navController: NavController) {
                     }
                 }
             } else {
-
                 Text(
                     text = "Câmera não tem permissão!",
                     color = Color.White,
@@ -142,7 +136,6 @@ fun ScanQRCodeScreen(navController: NavController) {
                         .padding(8.dp)
                 )
             }
-
 
             scannedCode?.let { code ->
                 Text(
@@ -158,26 +151,8 @@ fun ScanQRCodeScreen(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
-        // Botão de feedback
-//        Button(
-//            onClick = { },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 20.dp),
-//            colors = ButtonDefaults.buttonColors(containerColor = EventionBlue),
-//            shape = RoundedCornerShape(8.dp),
-//        ) {
-//            Text(
-//                text = "Scan QR Code",
-//                style = MaterialTheme.typography.labelLarge,
-//                color = Color.White,
-//                fontWeight = FontWeight.Bold
-//            )
-//        }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

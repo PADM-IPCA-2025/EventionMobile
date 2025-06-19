@@ -34,8 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.evention.R
-import com.example.evention.ui.screens.profile.admin.editEvent.EditEventViewModel
-import com.example.evention.ui.screens.profile.admin.events.EventsViewModel
 import com.example.evention.ui.theme.EventionTheme
 import kotlinx.coroutines.delay
 

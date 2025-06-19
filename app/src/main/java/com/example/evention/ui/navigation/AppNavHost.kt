@@ -7,7 +7,6 @@ import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,7 +23,6 @@ import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.screens.home.details.EventDetails
 import com.example.evention.ui.screens.home.notifications.NotificationScreen
 import com.example.evention.ui.screens.home.payment.PaymentScreen
-import com.example.evention.mock.TicketMockData
 import com.example.evention.model.Event
 import com.example.evention.model.User
 import com.example.evention.ui.screens.auth.confirmpassword.ConfirmPasswordScreen
@@ -54,7 +52,6 @@ import com.example.evention.ui.screens.profile.userEvents.userParticipation.User
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 
 @Composable
@@ -62,7 +59,7 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "splash") {
         composable("splash") {
             SplashScreen(navController = navController)
         }

@@ -55,7 +55,6 @@ class UserProfileViewModel : ViewModel() {
                     put(eventId, fetchedEvent)
                 }
             } catch (e: Exception) {
-                // Handle error
                 Log.e("UserProfileViewModel", "Error loading event $eventId", e)
             }
         }

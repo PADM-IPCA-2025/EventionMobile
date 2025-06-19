@@ -1,25 +1,20 @@
 package com.example.evention.ui.components.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.evention.ui.theme.EventionBlue
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun FilterButtonWithDateRange(
     onDateRangeSelected: (startDate: Long?, endDate: Long?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     FilterButton(onClick = { showDatePicker = true })
 
@@ -27,7 +22,6 @@ fun FilterButtonWithDateRange(
         DateRangePickerModal(
             onDateRangeSelected = { start, end ->
                 if (start != null && end != null) {
-                    Log.d("DateRange", "Selected: ${formatter.format(Date(start))} to ${formatter.format(Date(end))}")
                     onDateRangeSelected(start, end)
                 }
                 showDatePicker = false
@@ -36,7 +30,6 @@ fun FilterButtonWithDateRange(
         )
     }
 }
-
 
 @Composable
 fun FilterButton(onClick: () -> Unit) {

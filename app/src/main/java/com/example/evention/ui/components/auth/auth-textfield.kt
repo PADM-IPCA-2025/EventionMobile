@@ -70,10 +70,3 @@ fun AuthTextField(
         )
     )
 }
-
-
-//textStyle = TextStyle(
-//    color = Color(0xFF747688), // Cor do texto
-//    fontSize = 16.sp,
-//    fontWeight = FontWeight.Normal
-//),

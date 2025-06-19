@@ -1,10 +1,7 @@
 package com.example.evention.ui.components.notifications
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.R
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,13 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.evention.mock.MockUserData
-import com.example.evention.ui.screens.home.details.getDrawableId
 import com.example.evention.ui.screens.home.notifications.NotificationItem
 
 @Composable
 fun NotificationRow(notification: NotificationItem) {
-    val user = MockUserData.users.find { it.userID == notification.userId }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -42,37 +36,22 @@ fun NotificationRow(notification: NotificationItem) {
             .fillMaxWidth()
             .padding(vertical = 12.dp)
     ) {
-        if (user?.profilePicture != null) {
-            val drawableId = getDrawableId(user.profilePicture)
-            if (drawableId != 0) {
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "User Profile Image",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
-            }
-        } else {
+
             Image(
                 painter = painterResource(id = com.example.evention.R.drawable.logosplash),
                 contentDescription = "User Profile Image",
                 modifier = Modifier
                     .size(48.dp)
-//                    .clip(CircleShape)
+                   .clip(CircleShape)
             )
-        }
+
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        if (user != null) {
-                            append(user.username)
-                        }
-                    }
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {}
                     append(" ${notification.message}")
                 },
                 style = MaterialTheme.typography.bodyLarge,

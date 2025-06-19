@@ -1,7 +1,6 @@
 package com.example.evention.ui.screens.ticket
 
 import TicketRepository
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
@@ -38,8 +37,6 @@ class TicketDetailsScreenViewModel(
                 repository.syncTickets()
 
             } catch (e: Exception) {
-                Log.w("TicketDetailsVM", "Erro remoto, tentando local", e)
-
                 val localTicket = repository.getTicketById(ticketId)
                 val localEvent = localTicket?.let { repository.getLocalEventById(it.event_id) }
 

@@ -9,10 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.evention.ui.theme.EventionBlue
-import com.example.evention.ui.theme.EventionTheme
 
 @Composable
 fun CustomCreateEventTextField(
@@ -65,13 +62,4 @@ fun CustomCreateEventTextField(
         ),
         keyboardOptions = if (isPrice) KeyboardOptions(keyboardType = KeyboardType.Number) else KeyboardOptions.Default
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun CustomOutlinedTextFieldPreview() {
-    EventionTheme {
-        //CustomCreateEventTextField("Label")
-    }
 }
