@@ -58,8 +58,6 @@ import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
 
-
-
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
@@ -88,6 +86,8 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
     var showNotificationPermission by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
 
     val loginState = viewModel.loginState
 
@@ -104,6 +104,7 @@ fun LoginScreen(navController: NavController) {
                 if (!userPreferences.isNotificationPermissionShown()) {
                     showNotificationPermission = true
                 }
+                errorMessage = null
                 delay(500)
                 viewModel.resetState()
                 navController.navigate("home") {
@@ -112,6 +113,7 @@ fun LoginScreen(navController: NavController) {
             }
 
             is LoginScreenViewModel.LoginState.Error -> {
+                errorMessage = "Email ou palavra-passe incorretos"
                 delay(2000)
                 viewModel.resetState()
             }
