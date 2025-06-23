@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.evention.ui.theme.EventionBlue
+import java.time.LocalDate
+import java.time.ZoneId
 
 @Composable
 fun FilterButtonWithDateRange(
@@ -57,21 +59,30 @@ fun DateRangePickerModal(
     onDateRangeSelected: (startDate: Long?, endDate: Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val today = remember { LocalDate.now() }
+    val todayInMillis = remember { today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() }
+
     val dateRangePickerState = rememberDateRangePickerState()
+
+    val startDate = dateRangePickerState.selectedStartDateMillis
+    val endDate = dateRangePickerState.selectedEndDateMillis
+
+    val isValidRange = startDate != null && endDate != null &&
+            startDate >= todayInMillis && endDate >= todayInMillis
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
                 onClick = {
-                    onDateRangeSelected(
-                        dateRangePickerState.selectedStartDateMillis,
-                        dateRangePickerState.selectedEndDateMillis
-                    )
-                    onDismiss()
-                }
+                    if (isValidRange) {
+                        onDateRangeSelected(startDate, endDate)
+                        onDismiss()
+                    }
+                },
+                enabled = isValidRange
             ) {
-                Text("Confirm", color = EventionBlue)
+                Text("Confirm", color = if (isValidRange) EventionBlue else Color.Gray)
             }
         },
         dismissButton = {
@@ -99,3 +110,4 @@ fun DateRangePickerModal(
         )
     }
 }
+
