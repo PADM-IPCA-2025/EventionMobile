@@ -117,7 +117,7 @@ fun CreateEventScreen(navController: NavController) {
     val messageText = remember { mutableStateOf("") }
     val isSuccessMessage = remember { mutableStateOf(true) }
 
-    val formatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
     val selectedImageUri by viewModel.selectedImageUri.collectAsState()
 
