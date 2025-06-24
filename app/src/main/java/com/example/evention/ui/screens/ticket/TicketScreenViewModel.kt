@@ -1,7 +1,10 @@
 package com.example.evention.ui.screens.ticket
 
 import TicketRepository
+import UserPreferences
 import android.util.Log
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evention.di.NetworkModule
@@ -12,7 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TicketScreenViewModel(
-    private val repository: TicketRepository
+    private val repository: TicketRepository,
+    userPreferences: UserPreferences? = null
 ) : ViewModel() {
 
     private val _createTicketResult = MutableStateFlow<Result<Unit>?>(null)
@@ -26,6 +30,8 @@ class TicketScreenViewModel(
     private val remoteDataSource = NetworkModule.eventRemoteDataSource
     private val ticketRemoteDataSource = NetworkModule.ticketRemoteDataSource
 
+    private val userId = userPreferences?.getUserId()
+
     init {
         viewModelScope.launch {
             try {
@@ -34,20 +40,22 @@ class TicketScreenViewModel(
                 Log.w("TicketScreenVM", "Sync failed, using local data", e)
             }
 
-            repository.getLocalTickets().collect { localTickets ->
-                val ticketsWithEvents = localTickets.map { entity ->
-                    val event = try {
-                        remoteDataSource.getEventById(entity.event_id)
-                    } catch (e: Exception) {
-                        repository.getLocalEventById(entity.event_id)?.toDomain()
-                    }
+            if (userId != null) {
+                repository.getLocalTickets(userId).collect { localTickets ->
+                    val ticketsWithEvents = localTickets.map { entity ->
+                        val event = try {
+                            remoteDataSource.getEventById(entity.event_id)
+                        } catch (e: Exception) {
+                            repository.getLocalEventById(entity.event_id)?.toDomain()
+                        }
 
-                    Ticket(
-                        ticketID = entity.ticketID,
-                        event = event!!
-                    )
+                        Ticket(
+                            ticketID = entity.ticketID,
+                            event = event!!
+                        )
+                    }
+                    _tickets.value = ticketsWithEvents
                 }
-                _tickets.value = ticketsWithEvents
             }
         }
     }

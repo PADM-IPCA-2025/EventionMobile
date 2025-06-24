@@ -250,10 +250,17 @@ fun CreateEventScreen(navController: NavController) {
                             .background(Color.LightGray),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        selectedImageUri?.let { uri ->
+                        if (selectedImageUri != null) {
                             AsyncImage(
-                                model = uri,
+                                model = selectedImageUri,
                                 contentDescription = "Selected Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.default_event),
+                                contentDescription = "Default Image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )

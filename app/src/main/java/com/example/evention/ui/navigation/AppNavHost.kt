@@ -7,7 +7,9 @@ import UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -52,6 +54,7 @@ import com.example.evention.ui.screens.profile.userEvents.userParticipation.User
 import com.example.evention.ui.screens.ticket.TicketFeedbackScreen
 import com.example.evention.ui.screens.ticket.TicketScreenViewModel
 import com.example.evention.ui.screens.ticket.TicketsScreen
+import com.example.evention.utils.isNetworkAvailable
 import com.google.gson.Gson
 
 @Composable
@@ -100,14 +103,13 @@ fun AppNavHost() {
         composable("tickets") {
             val database = AppDatabase.getDatabase(context)
             val repository = TicketRepository(NetworkModule.ticketRemoteDataSource, NetworkModule.eventRemoteDataSource, database.ticketDao())
+            val userPrefs = remember { UserPreferences(context) }
 
             val viewModel: TicketScreenViewModel = viewModel(
-                factory = TicketScreenViewModelFactory(repository)
+                factory = TicketScreenViewModelFactory(repository, userPrefs)
             )
 
             val tickets by viewModel.tickets.collectAsState()
-
-            val userPrefs = remember { UserPreferences(context) }
 
             RequireAuth(navController, userPrefs) {
                 TicketsScreen(tickets = tickets, navController = navController)

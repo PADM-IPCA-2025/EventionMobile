@@ -14,6 +14,9 @@ interface TicketDao {
     @Query("SELECT * FROM tickets")
     fun getAllTickets(): Flow<List<TicketEntity>>
 
+    @Query("SELECT * FROM tickets WHERE user_id = :userId")
+    fun getUserTickets(userId: String): Flow<List<TicketEntity>>
+
     @Query("SELECT * FROM tickets WHERE ticket_id = :id")
     suspend fun getTicketById(id: String): TicketEntity?
 

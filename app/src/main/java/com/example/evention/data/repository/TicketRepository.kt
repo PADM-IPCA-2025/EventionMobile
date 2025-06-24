@@ -10,7 +10,7 @@ class TicketRepository(
     private val eventRemote: EventRemoteDataSource,
     private val local: TicketDao
 ) {
-    fun getLocalTickets(): Flow<List<TicketEntity>> = local.getAllTickets()
+    fun getLocalTickets(userId: String): Flow<List<TicketEntity>> = local.getUserTickets(userId)
 
     suspend fun syncTickets() {
         val remoteTickets = remote.getTickets()
