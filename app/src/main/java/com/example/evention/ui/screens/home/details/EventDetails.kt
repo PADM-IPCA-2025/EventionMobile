@@ -181,7 +181,7 @@ fun EventDetails(
                     icon = Icons.Outlined.DateRange,
                     contentDescription = "Calendar",
                     title = formatDate(event.startAt),
-                    subtitle = formatTime(event.endAt)
+                    subtitle = formatTime(event.startAt)
                 )
 
                 val address = event.addressEvents.firstOrNull()

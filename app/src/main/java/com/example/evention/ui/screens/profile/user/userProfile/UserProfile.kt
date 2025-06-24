@@ -65,15 +65,10 @@ fun UserProfile(
     var isConnected by remember { mutableStateOf(isNetworkAvailable(context)) }
 
     LaunchedEffect(navController) {
-        navController.currentBackStackEntryFlow.collect { backStackEntry ->
-            val destination = backStackEntry.destination.route
-            if (destination == "profile?userJson={userJson}") {
-                if (userProfile == null && isConnected) {
-                    viewModel.loadUserProfile()
-                } else if (userProfile != null) {
-                    viewModel.loadUserReputation(userProfile.userID)
-                }
-            }
+        if (userProfile == null && isConnected) {
+            viewModel.loadUserProfile()
+        } else if (userProfile != null) {
+            viewModel.loadUserReputation(userProfile.userID)
         }
     }
 
@@ -178,10 +173,14 @@ fun UserProfile(
                                 ?.forEach { viewModel.loadEventById(it) }
                         }
 
-                        val ticketsWithFeedback = reputation?.tickets?.filter { it.feedback != null }.orEmpty()
+                        val ticketsWithFeedback =
+                            reputation?.tickets?.filter { it.feedback != null }.orEmpty()
 
                         if (ticketsWithFeedback.isEmpty()) {
-                            Text("No feedbacks received.", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                "No feedbacks received.",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         } else {
                             ticketsWithFeedback.forEach { ticket ->
                                 val eventName = eventsMap[ticket.event_id]?.name ?: "Loading..."
