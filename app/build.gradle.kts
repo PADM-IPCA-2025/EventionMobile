@@ -86,6 +86,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
     androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("org.mockito:mockito-android:5.6.0")
 
     // Compose UI testing
     androidTestImplementation(platform(libs.androidx.compose.bom))
