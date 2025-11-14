@@ -10,6 +10,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.evention.di.NetworkModule
 import com.example.evention.ui.screens.auth.register.RegisterScreen
+import com.example.evention.ui.screens.home.HomeScreen
 import com.example.evention.ui.theme.EventionTheme
 import org.junit.Before
 import org.junit.Rule
@@ -39,7 +40,7 @@ class RegisterScreenTests {
         composeRule.setContent {
             EventionTheme {
                 val navController = rememberNavController()
-                RegisterScreen(navController = navController)
+                HomeScreen(navController = navController)
             }
         }
     }
