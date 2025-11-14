@@ -18,7 +18,7 @@ import com.example.evention.R
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(Unit) {
-        delay(2000L)
+        delay(1400L)
 
         navController.navigate("home") {
             popUpTo("splash") { inclusive = true }

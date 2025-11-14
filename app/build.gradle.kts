@@ -44,7 +44,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -57,13 +56,9 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom.v20250101))
     implementation(libs.navigation.compose)
-
     implementation(libs.coil.compose)
-
     implementation(libs.okhttp.tls)
-
     implementation(libs.lifecycle.runtime.compose)
-
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
@@ -83,19 +78,26 @@ dependencies {
     implementation(libs.androidx.navigation.common.android)
     implementation(libs.firebase.firestore.ktx)
 
+    // ---- TESTES ----
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+
+    // Compose UI testing
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Google Maps
+    // Google Maps
     implementation("com.google.maps.android:maps-compose:6.4.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    //Read QRCode
+    // Read QRCode
     implementation("androidx.camera:camera-core:1.3.0")
     implementation("androidx.camera:camera-camera2:1.3.0")
     implementation("androidx.camera:camera-lifecycle:1.3.0")
@@ -104,7 +106,7 @@ dependencies {
     // ML Kit Barcode Scanning
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
 
-    //Firebase
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore-ktx")
@@ -112,16 +114,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
     implementation("com.google.firebase:firebase-auth-ktx")
 
-
-    // Create QRCode
+    // QRCode
     implementation("com.google.zxing:core:3.5.1")
     implementation("androidx.compose.ui:ui-graphics:1.6.0")
 
-    //OkHttp3
+    // OkHttp3
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.0.0")
-
 }

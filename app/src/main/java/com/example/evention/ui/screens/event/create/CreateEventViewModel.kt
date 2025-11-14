@@ -81,7 +81,7 @@ class CreateEventViewModel(
             val locality = addr.locality ?: ""
 
             //val defaultLocationId = "0281b20c-60d5-4805-bcc1-c17660feb55f"
-            val defaultLocationId = "01c815ae-624a-42e8-8e9e-1d7b442548ab"
+            val defaultLocationId = "0175a49d-6d6c-4a82-88fb-515ee7374eb2"
             val localtown = try {
                 locationRemoteDataSource.getLocationByLocaltown(locality).locationId
             } catch (e: Exception) {
